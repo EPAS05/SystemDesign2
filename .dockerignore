@@ -1,0 +1,10 @@
+.git
+**/tmp
+**/bin
+**/dist
+*.exe
+*.log
+.env
+.idea
+.vscode
+.DS_Store

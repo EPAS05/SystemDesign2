@@ -7,5 +7,5 @@ import (
 )
 
 func main() {
-	grpcsvc.Run(os.Getenv("GRPC_PORT"), "8082")
+	grpcsvc.Run(os.Getenv("GRPC_PORT"), "8082", os.Getenv("DB_URL"))
 }

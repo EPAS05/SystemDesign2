@@ -47,27 +47,7 @@ func main() {
 	}
 
 	router := mux.NewRouter()
-	router.HandleFunc("/v1/ping", func(w http.ResponseWriter, r *http.Request) {
-		ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
-		defer cancel()
-
-		msg := r.URL.Query().Get("message")
-		log.Printf("ping: message=%q, fan-out to %d services", msg, len(callers))
-
-		req := &commonv1.PingRequest{Message: msg}
-		out := make(map[string]string, len(callers))
-		for _, c := range callers {
-			resp, err := c.api.Ping(ctx, req)
-			if err != nil {
-				out[c.name] = "error: " + err.Error()
-				continue
-			}
-			out[c.name] = resp.GetMessage()
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(out)
-	}).Methods(http.MethodGet)
+	router.HandleFunc("/v1/ping", pingHandler(callers)).Methods(http.MethodGet)
 
 	port := os.Getenv("HTTP_PORT")
 	if port == "" {
@@ -92,5 +72,29 @@ func main() {
 	log.Printf("gateway http listening on :%s", port)
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("listen: %v", err)
+	}
+}
+
+func pingHandler(callers []caller) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+		defer cancel()
+
+		msg := r.URL.Query().Get("message")
+		log.Printf("ping: message=%q, fan-out to %d services", msg, len(callers))
+
+		req := &commonv1.PingRequest{Message: msg}
+		out := make(map[string]string, len(callers))
+		for _, c := range callers {
+			resp, err := c.api.Ping(ctx, req)
+			if err != nil {
+				out[c.name] = "error: " + err.Error()
+				continue
+			}
+			out[c.name] = resp.GetMessage()
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(out)
 	}
 }

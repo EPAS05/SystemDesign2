@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package catalog.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/EPAS05/catalog-service/gen/go/catalog/v1;catalogv1";
+
+service NodeService {
+    rpc CreateNode(CreateNodeRequest) returns (CreateNodeResponse) {
+        option (google.api.http) = {
+            post: "/v1/nodes"
+            body: "*"
+        };
+    }
+
+    rpc GetNode(GetNodeRequest) returns (GetNodeResponse) {
+        option (google.api.http) = {
+            get: "/v1/nodes/{id}"
+        };
+    }
+
+    rpc ListChildren(ListChildrenRequest) returns (ListChildrenResponse) {
+        option (google.api.http) = {
+            get: "/v1/nodes/{parent_id}/children"
+        };
+    }
+
+    rpc UpdateNode(UpdateNodeRequest) returns (UpdateNodeResponse) {
+        option (google.api.http) = {
+            patch: "/v1/nodes/{id}"
+            body: "*"
+        };
+    }
+
+    rpc DeleteNode(DeleteNodeRequest) returns (DeleteNodeResponse) {
+        option (google.api.http) = {
+            delete: "/v1/nodes/{id}"
+        };
+    }
+}
+
+message Node {
+    string id        = 1;
+    string parent_id = 2;
+    string name      = 3;
+}
+
+message CreateNodeRequest {
+    string parent_id = 1;
+    string name      = 2;
+}
+message CreateNodeResponse {
+    Node node = 1;
+}
+
+message GetNodeRequest {
+    string id = 1;
+}
+message GetNodeResponse {
+    Node node = 1;
+}
+
+message ListChildrenRequest {
+    string parent_id = 1;
+}
+message ListChildrenResponse {
+    repeated Node nodes = 1;
+}
+
+message UpdateNodeRequest {
+    string id   = 1;
+    string name = 2;
+}
+message UpdateNodeResponse {
+    Node node = 1;
+}
+
+message DeleteNodeRequest {
+    string id = 1;
+}
+message DeleteNodeResponse {}

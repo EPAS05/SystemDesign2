@@ -1,4 +1,4 @@
-.PHONY: up down gen migrate
+.PHONY: all up down gen migrate
 
 all: gen migrate up
 
