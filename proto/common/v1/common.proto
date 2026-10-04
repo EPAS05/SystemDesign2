@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package common.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/EPAS05/catalog-service/gen/go/common/v1;commonv1";
+
+service HealthCheckService {
+    rpc Ping(PingRequest) returns (PingResponse) {
+        option (google.api.http) = {
+            get: "/v1/ping"
+        };
+    }
+}
+
+message PingRequest {
+    string message = 1;
+}
+
+message PingResponse {
+    string message = 1;
+}

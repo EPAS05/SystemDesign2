@@ -1,0 +1,10 @@
+root = "."
+tmp_dir = "cmd/configuration/tmp"
+
+[build]
+  cmd = "go build -o ./cmd/configuration/tmp/main ./cmd/configuration"
+  bin = "cmd/configuration/tmp/main"
+  include_ext = ["go", "proto"]
+  exclude_dir = ["gen", "cmd/catalog/tmp", "cmd/configuration/tmp", "cmd/gateway/tmp"]
+  delay = 1000
+  stop_on_error = true

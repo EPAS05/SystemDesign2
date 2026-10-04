@@ -1,0 +1,116 @@
+services:
+  catalog-db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: catalog
+    ports:
+      - "5432:5432"
+    volumes:
+      - catalog-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d catalog"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  configuration-db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: configuration
+    ports:
+      - "5433:5432"
+    volumes:
+      - configuration-db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d configuration"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  catalog-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+    command: ["air", "-c", "cmd/catalog/.air.toml"]
+    ports:
+      - "8081:8081"
+    environment:
+      - GRPC_PORT=8081
+      - DB_URL=postgres://dev:dev@catalog-db:5432/catalog?sslmode=disable
+    depends_on:
+      catalog-db:
+        condition: service_healthy
+      migrations-catalog:
+        condition: service_completed_successfully
+
+  configuration-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+    command: ["air", "-c", "cmd/configuration/.air.toml"]
+    ports:
+      - "8082:8082"
+    environment:
+      - GRPC_PORT=8082
+      - DB_URL=postgres://dev:dev@configuration-db:5432/configuration?sslmode=disable
+    depends_on:
+      configuration-db:
+        condition: service_healthy
+      migrations-configuration:
+        condition: service_completed_successfully
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+    command: ["air", "-c", "cmd/gateway/.air.toml"]
+    ports:
+      - "8080:8080"
+    environment:
+      - HTTP_PORT=8080
+      - CATALOG_SERVICE_ADDR=catalog-service:8081
+      - CONFIGURATION_SERVICE_ADDR=configuration-service:8082
+    depends_on:
+      - catalog-service
+      - configuration-service
+
+  migrations-catalog:
+    image: ghcr.io/kukymbr/goose-docker:3.28.0
+    volumes:
+      - ./migrations/catalog:/migrations
+    environment:
+      - GOOSE_DRIVER=postgres
+      - GOOSE_DBSTRING=postgres://dev:dev@catalog-db:5432/catalog?sslmode=disable
+      - GOOSE_MIGRATION_DIR=/migrations
+    command: ["up"]
+    depends_on:
+      catalog-db:
+        condition: service_healthy
+
+  migrations-configuration:
+    image: ghcr.io/kukymbr/goose-docker:3.28.0
+    volumes:
+      - ./migrations/configuration:/migrations
+    environment:
+      - GOOSE_DRIVER=postgres
+      - GOOSE_DBSTRING=postgres://dev:dev@configuration-db:5432/configuration?sslmode=disable
+      - GOOSE_MIGRATION_DIR=/migrations
+    command: ["up"]
+    depends_on:
+      configuration-db:
+        condition: service_healthy
+
+
+volumes:
+  catalog-db-data:
+  configuration-db-data:
