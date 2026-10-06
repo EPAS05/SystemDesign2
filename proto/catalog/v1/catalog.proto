@@ -80,3 +80,154 @@ message DeleteNodeRequest {
     string id = 1;
 }
 message DeleteNodeResponse {}
+
+
+service ComponentService {
+  rpc CreateComponent(CreateComponentRequest) returns (CreateComponentResponse) {
+    option (google.api.http) = {
+      post: "/v1/components"
+      body: "*"
+    };
+  }
+
+  rpc GetComponent(GetComponentRequest) returns (GetComponentResponse) {
+    option (google.api.http) = {
+      get: "/v1/components/{id}"
+    };
+  }
+
+  rpc ListComponents(ListComponentsRequest) returns (ListComponentsResponse) {
+    option (google.api.http) = {
+      get: "/v1/nodes/{node_id}/components"
+    };
+  }
+
+  rpc UpdateComponent(UpdateComponentRequest) returns (UpdateComponentResponse) {
+    option (google.api.http) = {
+      patch: "/v1/components/{id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteComponent(DeleteComponentRequest) returns (DeleteComponentResponse) {
+    option (google.api.http) = {
+      delete: "/v1/components/{id}"
+    };
+  }
+}
+
+message Component {
+  string id      = 1;
+  string node_id = 2;
+  string name    = 3;
+}
+
+message CreateComponentRequest {
+  string node_id = 1;
+  string name    = 2;
+}
+message CreateComponentResponse {
+  Component component = 1;
+}
+
+message GetComponentRequest {
+  string id = 1;
+}
+message GetComponentResponse {
+  Component component = 1;
+}
+
+message ListComponentsRequest {
+  string node_id = 1;
+}
+message ListComponentsResponse {
+  repeated Component components = 1;
+}
+
+message UpdateComponentRequest {
+  string id   = 1;
+  string name = 2;
+}
+message UpdateComponentResponse {
+  Component component = 1;
+}
+
+message DeleteComponentRequest {
+  string id = 1;
+}
+message DeleteComponentResponse {}
+
+service ProductService {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {
+    option (google.api.http) = {
+      post: "/v1/products"
+      body: "*"
+    };
+  }
+
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
+    option (google.api.http) = {
+      get: "/v1/products/{id}"
+    };
+  }
+
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse) {
+    option (google.api.http) = {
+      get: "/v1/nodes/{node_id}/products"
+    };
+  }
+
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse) {
+    option (google.api.http) = {
+      patch: "/v1/products/{id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse) {
+    option (google.api.http) = {
+      delete: "/v1/products/{id}"
+    };
+  }
+}
+
+message Product {
+  string id      = 1;
+  string node_id = 2;
+  string name    = 3;
+}
+
+message CreateProductRequest {
+  string node_id = 1;
+  string name    = 2;
+}
+message CreateProductResponse {
+  Product product = 1;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+message GetProductResponse {
+  Product product = 1;
+}
+
+message ListProductsRequest {
+  string node_id = 1;
+}
+message ListProductsResponse {
+  repeated Product products = 1;
+}
+
+message UpdateProductRequest {
+  string id   = 1;
+  string name = 2;
+}
+message UpdateProductResponse {
+  Product product = 1;
+}
+
+message DeleteProductRequest {
+  string id = 1;
+}
+message DeleteProductResponse {}

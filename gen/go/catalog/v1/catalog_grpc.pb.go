@@ -271,3 +271,511 @@ var NodeService_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "catalog/v1/catalog.proto",
 }
+
+const (
+	ComponentService_CreateComponent_FullMethodName = "/catalog.v1.ComponentService/CreateComponent"
+	ComponentService_GetComponent_FullMethodName    = "/catalog.v1.ComponentService/GetComponent"
+	ComponentService_ListComponents_FullMethodName  = "/catalog.v1.ComponentService/ListComponents"
+	ComponentService_UpdateComponent_FullMethodName = "/catalog.v1.ComponentService/UpdateComponent"
+	ComponentService_DeleteComponent_FullMethodName = "/catalog.v1.ComponentService/DeleteComponent"
+)
+
+// ComponentServiceClient is the client API for ComponentService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ComponentServiceClient interface {
+	CreateComponent(ctx context.Context, in *CreateComponentRequest, opts ...grpc.CallOption) (*CreateComponentResponse, error)
+	GetComponent(ctx context.Context, in *GetComponentRequest, opts ...grpc.CallOption) (*GetComponentResponse, error)
+	ListComponents(ctx context.Context, in *ListComponentsRequest, opts ...grpc.CallOption) (*ListComponentsResponse, error)
+	UpdateComponent(ctx context.Context, in *UpdateComponentRequest, opts ...grpc.CallOption) (*UpdateComponentResponse, error)
+	DeleteComponent(ctx context.Context, in *DeleteComponentRequest, opts ...grpc.CallOption) (*DeleteComponentResponse, error)
+}
+
+type componentServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewComponentServiceClient(cc grpc.ClientConnInterface) ComponentServiceClient {
+	return &componentServiceClient{cc}
+}
+
+func (c *componentServiceClient) CreateComponent(ctx context.Context, in *CreateComponentRequest, opts ...grpc.CallOption) (*CreateComponentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateComponentResponse)
+	err := c.cc.Invoke(ctx, ComponentService_CreateComponent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *componentServiceClient) GetComponent(ctx context.Context, in *GetComponentRequest, opts ...grpc.CallOption) (*GetComponentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetComponentResponse)
+	err := c.cc.Invoke(ctx, ComponentService_GetComponent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *componentServiceClient) ListComponents(ctx context.Context, in *ListComponentsRequest, opts ...grpc.CallOption) (*ListComponentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListComponentsResponse)
+	err := c.cc.Invoke(ctx, ComponentService_ListComponents_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *componentServiceClient) UpdateComponent(ctx context.Context, in *UpdateComponentRequest, opts ...grpc.CallOption) (*UpdateComponentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateComponentResponse)
+	err := c.cc.Invoke(ctx, ComponentService_UpdateComponent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *componentServiceClient) DeleteComponent(ctx context.Context, in *DeleteComponentRequest, opts ...grpc.CallOption) (*DeleteComponentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteComponentResponse)
+	err := c.cc.Invoke(ctx, ComponentService_DeleteComponent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ComponentServiceServer is the server API for ComponentService service.
+// All implementations must embed UnimplementedComponentServiceServer
+// for forward compatibility.
+type ComponentServiceServer interface {
+	CreateComponent(context.Context, *CreateComponentRequest) (*CreateComponentResponse, error)
+	GetComponent(context.Context, *GetComponentRequest) (*GetComponentResponse, error)
+	ListComponents(context.Context, *ListComponentsRequest) (*ListComponentsResponse, error)
+	UpdateComponent(context.Context, *UpdateComponentRequest) (*UpdateComponentResponse, error)
+	DeleteComponent(context.Context, *DeleteComponentRequest) (*DeleteComponentResponse, error)
+	mustEmbedUnimplementedComponentServiceServer()
+}
+
+// UnimplementedComponentServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedComponentServiceServer struct{}
+
+func (UnimplementedComponentServiceServer) CreateComponent(context.Context, *CreateComponentRequest) (*CreateComponentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateComponent not implemented")
+}
+func (UnimplementedComponentServiceServer) GetComponent(context.Context, *GetComponentRequest) (*GetComponentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetComponent not implemented")
+}
+func (UnimplementedComponentServiceServer) ListComponents(context.Context, *ListComponentsRequest) (*ListComponentsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListComponents not implemented")
+}
+func (UnimplementedComponentServiceServer) UpdateComponent(context.Context, *UpdateComponentRequest) (*UpdateComponentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateComponent not implemented")
+}
+func (UnimplementedComponentServiceServer) DeleteComponent(context.Context, *DeleteComponentRequest) (*DeleteComponentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteComponent not implemented")
+}
+func (UnimplementedComponentServiceServer) mustEmbedUnimplementedComponentServiceServer() {}
+func (UnimplementedComponentServiceServer) testEmbeddedByValue()                          {}
+
+// UnsafeComponentServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ComponentServiceServer will
+// result in compilation errors.
+type UnsafeComponentServiceServer interface {
+	mustEmbedUnimplementedComponentServiceServer()
+}
+
+func RegisterComponentServiceServer(s grpc.ServiceRegistrar, srv ComponentServiceServer) {
+	// If the following call panics, it indicates UnimplementedComponentServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ComponentService_ServiceDesc, srv)
+}
+
+func _ComponentService_CreateComponent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateComponentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ComponentServiceServer).CreateComponent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ComponentService_CreateComponent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ComponentServiceServer).CreateComponent(ctx, req.(*CreateComponentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ComponentService_GetComponent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetComponentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ComponentServiceServer).GetComponent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ComponentService_GetComponent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ComponentServiceServer).GetComponent(ctx, req.(*GetComponentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ComponentService_ListComponents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListComponentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ComponentServiceServer).ListComponents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ComponentService_ListComponents_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ComponentServiceServer).ListComponents(ctx, req.(*ListComponentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ComponentService_UpdateComponent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateComponentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ComponentServiceServer).UpdateComponent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ComponentService_UpdateComponent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ComponentServiceServer).UpdateComponent(ctx, req.(*UpdateComponentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ComponentService_DeleteComponent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteComponentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ComponentServiceServer).DeleteComponent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ComponentService_DeleteComponent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ComponentServiceServer).DeleteComponent(ctx, req.(*DeleteComponentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ComponentService_ServiceDesc is the grpc.ServiceDesc for ComponentService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ComponentService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "catalog.v1.ComponentService",
+	HandlerType: (*ComponentServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateComponent",
+			Handler:    _ComponentService_CreateComponent_Handler,
+		},
+		{
+			MethodName: "GetComponent",
+			Handler:    _ComponentService_GetComponent_Handler,
+		},
+		{
+			MethodName: "ListComponents",
+			Handler:    _ComponentService_ListComponents_Handler,
+		},
+		{
+			MethodName: "UpdateComponent",
+			Handler:    _ComponentService_UpdateComponent_Handler,
+		},
+		{
+			MethodName: "DeleteComponent",
+			Handler:    _ComponentService_DeleteComponent_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "catalog/v1/catalog.proto",
+}
+
+const (
+	ProductService_CreateProduct_FullMethodName = "/catalog.v1.ProductService/CreateProduct"
+	ProductService_GetProduct_FullMethodName    = "/catalog.v1.ProductService/GetProduct"
+	ProductService_ListProducts_FullMethodName  = "/catalog.v1.ProductService/ListProducts"
+	ProductService_UpdateProduct_FullMethodName = "/catalog.v1.ProductService/UpdateProduct"
+	ProductService_DeleteProduct_FullMethodName = "/catalog.v1.ProductService/DeleteProduct"
+)
+
+// ProductServiceClient is the client API for ProductService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ProductServiceClient interface {
+	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
+	GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error)
+	ListProducts(ctx context.Context, in *ListProductsRequest, opts ...grpc.CallOption) (*ListProductsResponse, error)
+	UpdateProduct(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*UpdateProductResponse, error)
+	DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...grpc.CallOption) (*DeleteProductResponse, error)
+}
+
+type productServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewProductServiceClient(cc grpc.ClientConnInterface) ProductServiceClient {
+	return &productServiceClient{cc}
+}
+
+func (c *productServiceClient) CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateProductResponse)
+	err := c.cc.Invoke(ctx, ProductService_CreateProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productServiceClient) GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetProductResponse)
+	err := c.cc.Invoke(ctx, ProductService_GetProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productServiceClient) ListProducts(ctx context.Context, in *ListProductsRequest, opts ...grpc.CallOption) (*ListProductsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListProductsResponse)
+	err := c.cc.Invoke(ctx, ProductService_ListProducts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productServiceClient) UpdateProduct(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*UpdateProductResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateProductResponse)
+	err := c.cc.Invoke(ctx, ProductService_UpdateProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productServiceClient) DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...grpc.CallOption) (*DeleteProductResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteProductResponse)
+	err := c.cc.Invoke(ctx, ProductService_DeleteProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ProductServiceServer is the server API for ProductService service.
+// All implementations must embed UnimplementedProductServiceServer
+// for forward compatibility.
+type ProductServiceServer interface {
+	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
+	GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error)
+	ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error)
+	UpdateProduct(context.Context, *UpdateProductRequest) (*UpdateProductResponse, error)
+	DeleteProduct(context.Context, *DeleteProductRequest) (*DeleteProductResponse, error)
+	mustEmbedUnimplementedProductServiceServer()
+}
+
+// UnimplementedProductServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedProductServiceServer struct{}
+
+func (UnimplementedProductServiceServer) CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateProduct not implemented")
+}
+func (UnimplementedProductServiceServer) GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetProduct not implemented")
+}
+func (UnimplementedProductServiceServer) ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListProducts not implemented")
+}
+func (UnimplementedProductServiceServer) UpdateProduct(context.Context, *UpdateProductRequest) (*UpdateProductResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateProduct not implemented")
+}
+func (UnimplementedProductServiceServer) DeleteProduct(context.Context, *DeleteProductRequest) (*DeleteProductResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteProduct not implemented")
+}
+func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
+func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
+
+// UnsafeProductServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ProductServiceServer will
+// result in compilation errors.
+type UnsafeProductServiceServer interface {
+	mustEmbedUnimplementedProductServiceServer()
+}
+
+func RegisterProductServiceServer(s grpc.ServiceRegistrar, srv ProductServiceServer) {
+	// If the following call panics, it indicates UnimplementedProductServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ProductService_ServiceDesc, srv)
+}
+
+func _ProductService_CreateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).CreateProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_CreateProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).CreateProduct(ctx, req.(*CreateProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductService_GetProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).GetProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_GetProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).GetProduct(ctx, req.(*GetProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductService_ListProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListProductsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).ListProducts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_ListProducts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).ListProducts(ctx, req.(*ListProductsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductService_UpdateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).UpdateProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_UpdateProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).UpdateProduct(ctx, req.(*UpdateProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductService_DeleteProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).DeleteProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_DeleteProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).DeleteProduct(ctx, req.(*DeleteProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ProductService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "catalog.v1.ProductService",
+	HandlerType: (*ProductServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateProduct",
+			Handler:    _ProductService_CreateProduct_Handler,
+		},
+		{
+			MethodName: "GetProduct",
+			Handler:    _ProductService_GetProduct_Handler,
+		},
+		{
+			MethodName: "ListProducts",
+			Handler:    _ProductService_ListProducts_Handler,
+		},
+		{
+			MethodName: "UpdateProduct",
+			Handler:    _ProductService_UpdateProduct_Handler,
+		},
+		{
+			MethodName: "DeleteProduct",
+			Handler:    _ProductService_DeleteProduct_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "catalog/v1/catalog.proto",
+}

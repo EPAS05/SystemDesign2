@@ -9,3 +9,15 @@ type Node struct {
 	ParentID *string
 	Name     string
 }
+
+type Component struct {
+	ID     string
+	NodeID string
+	Name   string
+}
+
+type Product struct {
+	ID     string
+	NodeID string
+	Name   string
+}

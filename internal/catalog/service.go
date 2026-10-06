@@ -29,3 +29,49 @@ func (s *Service) UpdateNode(ctx context.Context, id, name string) (*Node, error
 func (s *Service) DeleteNode(ctx context.Context, id string) error {
 	return s.repo.Delete(ctx, id)
 }
+
+func (s *Service) CreateComponent(ctx context.Context, nodeID, name string) (*Component, error) {
+	if _, err := s.repo.Get(ctx, nodeID); err != nil {
+		return nil, err
+	}
+	return s.repo.CreateComponent(ctx, nodeID, name)
+}
+
+func (s *Service) GetComponent(ctx context.Context, id string) (*Component, error) {
+	return s.repo.GetComponent(ctx, id)
+}
+
+func (s *Service) ListComponentsByNode(ctx context.Context, nodeID string) ([]*Component, error) {
+	return s.repo.ListComponentsByNode(ctx, nodeID)
+}
+
+func (s *Service) UpdateComponent(ctx context.Context, id, name string) (*Component, error) {
+	return s.repo.UpdateComponent(ctx, id, name)
+}
+
+func (s *Service) DeleteComponent(ctx context.Context, id string) error {
+	return s.repo.DeleteComponent(ctx, id)
+}
+
+func (s *Service) CreateProduct(ctx context.Context, nodeID, name string) (*Product, error) {
+	if _, err := s.repo.Get(ctx, nodeID); err != nil {
+		return nil, err
+	}
+	return s.repo.CreateProduct(ctx, nodeID, name)
+}
+
+func (s *Service) GetProduct(ctx context.Context, id string) (*Product, error) {
+	return s.repo.GetProduct(ctx, id)
+}
+
+func (s *Service) ListProductsByNode(ctx context.Context, nodeID string) ([]*Product, error) {
+	return s.repo.ListProductsByNode(ctx, nodeID)
+}
+
+func (s *Service) UpdateProduct(ctx context.Context, id, name string) (*Product, error) {
+	return s.repo.UpdateProduct(ctx, id, name)
+}
+
+func (s *Service) DeleteProduct(ctx context.Context, id string) error {
+	return s.repo.DeleteProduct(ctx, id)
+}
