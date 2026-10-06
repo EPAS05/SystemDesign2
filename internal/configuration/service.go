@@ -11,7 +11,7 @@ type BomRowInput struct {
 	Quantity    string
 }
 
-func ValidQuantity(q string) bool {
+func validQuantity(q string) bool {
 	f, err := strconv.ParseFloat(q, 64)
 	return err == nil && f > 0 && !math.IsInf(f, 0)
 }
@@ -35,18 +35,23 @@ func (s *Service) ReplaceDefaultBom(ctx context.Context, productID string, input
 	if productID == "" {
 		return nil, ErrInvalid
 	}
+	for _, in := range inputs {
+		if in.ComponentID == "" || !validQuantity(in.Quantity) {
+			return nil, ErrInvalid
+		}
+	}
 	return s.repo.ReplaceDefaultBom(ctx, productID, inputs)
 }
 
 func (s *Service) AddRow(ctx context.Context, productID, componentID, quantity string) (*BomRow, error) {
-	if productID == "" || componentID == "" || !ValidQuantity(quantity) {
+	if productID == "" || componentID == "" || !validQuantity(quantity) {
 		return nil, ErrInvalid
 	}
 	return s.repo.AddRow(ctx, productID, componentID, quantity)
 }
 
 func (s *Service) UpdateRow(ctx context.Context, id, componentID, quantity string) (*BomRow, error) {
-	if id == "" || componentID == "" || !ValidQuantity(quantity) {
+	if id == "" || componentID == "" || !validQuantity(quantity) {
 		return nil, ErrInvalid
 	}
 	return s.repo.UpdateRow(ctx, id, componentID, quantity)

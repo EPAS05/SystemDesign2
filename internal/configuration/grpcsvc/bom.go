@@ -20,9 +20,6 @@ func NewBomService(svc *configuration.Service) *bomService {
 }
 
 func (s *bomService) GetDefaultBom(ctx context.Context, req *configurationv1.GetDefaultBomRequest) (*configurationv1.GetDefaultBomResponse, error) {
-	if req.ProductId == "" {
-		return nil, status.Error(codes.InvalidArgument, "product_id is required")
-	}
 	bom, err := s.svc.GetDefaultBom(ctx, req.ProductId)
 	if errors.Is(err, configuration.ErrInvalid) {
 		return nil, status.Error(codes.InvalidArgument, "product_id is required")
@@ -37,14 +34,8 @@ func (s *bomService) GetDefaultBom(ctx context.Context, req *configurationv1.Get
 }
 
 func (s *bomService) ReplaceDefaultBom(ctx context.Context, req *configurationv1.ReplaceDefaultBomRequest) (*configurationv1.ReplaceDefaultBomResponse, error) {
-	if req.ProductId == "" {
-		return nil, status.Error(codes.InvalidArgument, "product_id is required")
-	}
 	inputs := make([]configuration.BomRowInput, 0, len(req.Rows))
 	for _, r := range req.Rows {
-		if r.ComponentId == "" || !configuration.ValidQuantity(r.Quantity) {
-			return nil, status.Error(codes.InvalidArgument, "each row requires component_id and quantity > 0")
-		}
 		inputs = append(inputs, configuration.BomRowInput{
 			ComponentID: r.ComponentId,
 			Quantity:    r.Quantity,
@@ -52,7 +43,7 @@ func (s *bomService) ReplaceDefaultBom(ctx context.Context, req *configurationv1
 	}
 	bom, err := s.svc.ReplaceDefaultBom(ctx, req.ProductId, inputs)
 	if errors.Is(err, configuration.ErrInvalid) {
-		return nil, status.Error(codes.InvalidArgument, "product_id is required")
+		return nil, status.Error(codes.InvalidArgument, "product_id and each row require component_id and quantity > 0")
 	}
 	if errors.Is(err, configuration.ErrNotFound) {
 		return nil, status.Error(codes.NotFound, "bom not found")
@@ -64,9 +55,6 @@ func (s *bomService) ReplaceDefaultBom(ctx context.Context, req *configurationv1
 }
 
 func (s *bomService) AddBomRow(ctx context.Context, req *configurationv1.AddBomRowRequest) (*configurationv1.AddBomRowResponse, error) {
-	if req.ProductId == "" || req.ComponentId == "" || !configuration.ValidQuantity(req.Quantity) {
-		return nil, status.Error(codes.InvalidArgument, "product_id, component_id and quantity > 0 required")
-	}
 	row, err := s.svc.AddRow(ctx, req.ProductId, req.ComponentId, req.Quantity)
 	if errors.Is(err, configuration.ErrInvalid) {
 		return nil, status.Error(codes.InvalidArgument, "product_id, component_id and quantity > 0 required")
@@ -81,12 +69,6 @@ func (s *bomService) AddBomRow(ctx context.Context, req *configurationv1.AddBomR
 }
 
 func (s *bomService) UpdateBomRow(ctx context.Context, req *configurationv1.UpdateBomRowRequest) (*configurationv1.UpdateBomRowResponse, error) {
-	if req.Id == "" {
-		return nil, status.Error(codes.InvalidArgument, "id is required")
-	}
-	if req.ComponentId == "" || !configuration.ValidQuantity(req.Quantity) {
-		return nil, status.Error(codes.InvalidArgument, "component_id and quantity > 0 required")
-	}
 	row, err := s.svc.UpdateRow(ctx, req.Id, req.ComponentId, req.Quantity)
 	if errors.Is(err, configuration.ErrInvalid) {
 		return nil, status.Error(codes.InvalidArgument, "id, component_id and quantity > 0 required")
@@ -101,9 +83,6 @@ func (s *bomService) UpdateBomRow(ctx context.Context, req *configurationv1.Upda
 }
 
 func (s *bomService) DeleteBomRow(ctx context.Context, req *configurationv1.DeleteBomRowRequest) (*configurationv1.DeleteBomRowResponse, error) {
-	if req.Id == "" {
-		return nil, status.Error(codes.InvalidArgument, "id is required")
-	}
 	err := s.svc.DeleteRow(ctx, req.Id)
 	if errors.Is(err, configuration.ErrInvalid) {
 		return nil, status.Error(codes.InvalidArgument, "id is required")
