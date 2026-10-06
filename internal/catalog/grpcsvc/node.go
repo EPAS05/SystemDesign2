@@ -35,6 +35,9 @@ func (s *nodeService) CreateNode(ctx context.Context, req *catalogv1.CreateNodeR
 }
 
 func (s *nodeService) GetNode(ctx context.Context, req *catalogv1.GetNodeRequest) (*catalogv1.GetNodeResponse, error) {
+	if req.Id == "" {
+		return nil, status.Error(codes.InvalidArgument, "id is required")
+	}
 	n, err := s.svc.GetNode(ctx, req.Id)
 	if errors.Is(err, catalog.ErrNotFound) {
 		return nil, status.Error(codes.NotFound, "node not found")
@@ -46,6 +49,9 @@ func (s *nodeService) GetNode(ctx context.Context, req *catalogv1.GetNodeRequest
 }
 
 func (s *nodeService) ListChildren(ctx context.Context, req *catalogv1.ListChildrenRequest) (*catalogv1.ListChildrenResponse, error) {
+	if req.ParentId == "" {
+		return nil, status.Error(codes.InvalidArgument, "parent_id is required")
+	}
 	nodes, err := s.svc.ListChildren(ctx, req.ParentId)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -58,6 +64,9 @@ func (s *nodeService) ListChildren(ctx context.Context, req *catalogv1.ListChild
 }
 
 func (s *nodeService) UpdateNode(ctx context.Context, req *catalogv1.UpdateNodeRequest) (*catalogv1.UpdateNodeResponse, error) {
+	if req.Id == "" {
+		return nil, status.Error(codes.InvalidArgument, "id is required")
+	}
 	if req.Name == "" {
 		return nil, status.Error(codes.InvalidArgument, "name is required")
 	}
@@ -72,6 +81,9 @@ func (s *nodeService) UpdateNode(ctx context.Context, req *catalogv1.UpdateNodeR
 }
 
 func (s *nodeService) DeleteNode(ctx context.Context, req *catalogv1.DeleteNodeRequest) (*catalogv1.DeleteNodeResponse, error) {
+	if req.Id == "" {
+		return nil, status.Error(codes.InvalidArgument, "id is required")
+	}
 	err := s.svc.DeleteNode(ctx, req.Id)
 	if errors.Is(err, catalog.ErrNotFound) {
 		return nil, status.Error(codes.NotFound, "node not found")
