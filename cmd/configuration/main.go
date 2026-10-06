@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/EPAS05/catalog-service/internal/grpcsvc"
+	"github.com/EPAS05/catalog-service/internal/configuration/grpcsvc"
 )
 
 func main() {

@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package configuration.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/EPAS05/catalog-service/gen/go/configuration/v1;configurationv1";
+
+service BomService {
+  rpc GetDefaultBom(GetDefaultBomRequest) returns (GetDefaultBomResponse) {
+    option (google.api.http) = {
+      get: "/v1/products/{product_id}/bom"
+    };
+  }
+
+  rpc ReplaceDefaultBom(ReplaceDefaultBomRequest) returns (ReplaceDefaultBomResponse) {
+    option (google.api.http) = {
+      put: "/v1/products/{product_id}/bom"
+      body: "*"
+    };
+  }
+
+  rpc AddBomRow(AddBomRowRequest) returns (AddBomRowResponse) {
+    option (google.api.http) = {
+      post: "/v1/products/{product_id}/bom/rows"
+      body: "*"
+    };
+  }
+
+  rpc UpdateBomRow(UpdateBomRowRequest) returns (UpdateBomRowResponse) {
+    option (google.api.http) = {
+      patch: "/v1/bom/rows/{id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteBomRow(DeleteBomRowRequest) returns (DeleteBomRowResponse) {
+    option (google.api.http) = {
+      delete: "/v1/bom/rows/{id}"
+    };
+  }
+}
+
+message Bom {
+  string id            = 1;
+  string product_id    = 2;
+  bool   is_default    = 3;
+  string name          = 4;
+  repeated BomRow rows = 5;
+}
+
+message BomRow {
+  string id           = 1;
+  string component_id = 2;
+  string quantity     = 3;
+}
+
+message GetDefaultBomRequest {
+  string product_id = 1;
+}
+message GetDefaultBomResponse {
+  Bom bom = 1;
+}
+
+message BomRowInput {
+  string component_id = 1;
+  string quantity     = 2;
+}
+message ReplaceDefaultBomRequest {
+  string product_id      = 1;
+  repeated BomRowInput rows = 2;
+}
+message ReplaceDefaultBomResponse {
+  Bom bom = 1;
+}
+
+message AddBomRowRequest {
+  string product_id   = 1;
+  string component_id = 2;
+  string quantity     = 3;
+}
+message AddBomRowResponse {
+  BomRow row = 1;
+}
+
+message UpdateBomRowRequest {
+  string id           = 1;
+  string component_id = 2;
+  string quantity     = 3;
+}
+message UpdateBomRowResponse {
+  BomRow row = 1;
+}
+
+message DeleteBomRowRequest {
+  string id = 1;
+}
+message DeleteBomRowResponse {}

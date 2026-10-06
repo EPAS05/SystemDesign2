@@ -1,0 +1,338 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "configuration/v1/configuration.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "BomService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/bom/rows/{id}": {
+      "delete": {
+        "operationId": "BomService_DeleteBomRow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteBomRowResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      },
+      "patch": {
+        "operationId": "BomService_UpdateBomRow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateBomRowResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BomServiceUpdateBomRowBody"
+            }
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      }
+    },
+    "/v1/products/{productId}/bom": {
+      "get": {
+        "operationId": "BomService_GetDefaultBom",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetDefaultBomResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      },
+      "put": {
+        "operationId": "BomService_ReplaceDefaultBom",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReplaceDefaultBomResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BomServiceReplaceDefaultBomBody"
+            }
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      }
+    },
+    "/v1/products/{productId}/bom/rows": {
+      "post": {
+        "operationId": "BomService_AddBomRow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AddBomRowResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BomServiceAddBomRowBody"
+            }
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "BomServiceAddBomRowBody": {
+      "type": "object",
+      "properties": {
+        "componentId": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        }
+      }
+    },
+    "BomServiceReplaceDefaultBomBody": {
+      "type": "object",
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1BomRowInput"
+          }
+        }
+      }
+    },
+    "BomServiceUpdateBomRowBody": {
+      "type": "object",
+      "properties": {
+        "componentId": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1AddBomRowResponse": {
+      "type": "object",
+      "properties": {
+        "row": {
+          "$ref": "#/definitions/v1BomRow"
+        }
+      }
+    },
+    "v1Bom": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "string"
+        },
+        "isDefault": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1BomRow"
+          }
+        }
+      }
+    },
+    "v1BomRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "componentId": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        }
+      }
+    },
+    "v1BomRowInput": {
+      "type": "object",
+      "properties": {
+        "componentId": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        }
+      }
+    },
+    "v1DeleteBomRowResponse": {
+      "type": "object"
+    },
+    "v1GetDefaultBomResponse": {
+      "type": "object",
+      "properties": {
+        "bom": {
+          "$ref": "#/definitions/v1Bom"
+        }
+      }
+    },
+    "v1ReplaceDefaultBomResponse": {
+      "type": "object",
+      "properties": {
+        "bom": {
+          "$ref": "#/definitions/v1Bom"
+        }
+      }
+    },
+    "v1UpdateBomRowResponse": {
+      "type": "object",
+      "properties": {
+        "row": {
+          "$ref": "#/definitions/v1BomRow"
+        }
+      }
+    }
+  }
+}
