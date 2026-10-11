@@ -19,22 +19,32 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	BomService_GetDefaultBom_FullMethodName     = "/configuration.v1.BomService/GetDefaultBom"
-	BomService_ReplaceDefaultBom_FullMethodName = "/configuration.v1.BomService/ReplaceDefaultBom"
-	BomService_AddBomRow_FullMethodName         = "/configuration.v1.BomService/AddBomRow"
-	BomService_UpdateBomRow_FullMethodName      = "/configuration.v1.BomService/UpdateBomRow"
-	BomService_DeleteBomRow_FullMethodName      = "/configuration.v1.BomService/DeleteBomRow"
+	BomService_GetBom_FullMethodName           = "/configuration.v1.BomService/GetBom"
+	BomService_ListBoms_FullMethodName         = "/configuration.v1.BomService/ListBoms"
+	BomService_CreateBom_FullMethodName        = "/configuration.v1.BomService/CreateBom"
+	BomService_DeleteBom_FullMethodName        = "/configuration.v1.BomService/DeleteBom"
+	BomService_ReplaceBomRows_FullMethodName   = "/configuration.v1.BomService/ReplaceBomRows"
+	BomService_AddBomRow_FullMethodName        = "/configuration.v1.BomService/AddBomRow"
+	BomService_UpdateBomRow_FullMethodName     = "/configuration.v1.BomService/UpdateBomRow"
+	BomService_DeleteBomRow_FullMethodName     = "/configuration.v1.BomService/DeleteBomRow"
+	BomService_ListBomRevisions_FullMethodName = "/configuration.v1.BomService/ListBomRevisions"
+	BomService_GetBomRevision_FullMethodName   = "/configuration.v1.BomService/GetBomRevision"
 )
 
 // BomServiceClient is the client API for BomService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BomServiceClient interface {
-	GetDefaultBom(ctx context.Context, in *GetDefaultBomRequest, opts ...grpc.CallOption) (*GetDefaultBomResponse, error)
-	ReplaceDefaultBom(ctx context.Context, in *ReplaceDefaultBomRequest, opts ...grpc.CallOption) (*ReplaceDefaultBomResponse, error)
+	GetBom(ctx context.Context, in *GetBomRequest, opts ...grpc.CallOption) (*GetBomResponse, error)
+	ListBoms(ctx context.Context, in *ListBomsRequest, opts ...grpc.CallOption) (*ListBomsResponse, error)
+	CreateBom(ctx context.Context, in *CreateBomRequest, opts ...grpc.CallOption) (*CreateBomResponse, error)
+	DeleteBom(ctx context.Context, in *DeleteBomRequest, opts ...grpc.CallOption) (*DeleteBomResponse, error)
+	ReplaceBomRows(ctx context.Context, in *ReplaceBomRowsRequest, opts ...grpc.CallOption) (*ReplaceBomRowsResponse, error)
 	AddBomRow(ctx context.Context, in *AddBomRowRequest, opts ...grpc.CallOption) (*AddBomRowResponse, error)
 	UpdateBomRow(ctx context.Context, in *UpdateBomRowRequest, opts ...grpc.CallOption) (*UpdateBomRowResponse, error)
 	DeleteBomRow(ctx context.Context, in *DeleteBomRowRequest, opts ...grpc.CallOption) (*DeleteBomRowResponse, error)
+	ListBomRevisions(ctx context.Context, in *ListBomRevisionsRequest, opts ...grpc.CallOption) (*ListBomRevisionsResponse, error)
+	GetBomRevision(ctx context.Context, in *GetBomRevisionRequest, opts ...grpc.CallOption) (*GetBomRevisionResponse, error)
 }
 
 type bomServiceClient struct {
@@ -45,20 +55,50 @@ func NewBomServiceClient(cc grpc.ClientConnInterface) BomServiceClient {
 	return &bomServiceClient{cc}
 }
 
-func (c *bomServiceClient) GetDefaultBom(ctx context.Context, in *GetDefaultBomRequest, opts ...grpc.CallOption) (*GetDefaultBomResponse, error) {
+func (c *bomServiceClient) GetBom(ctx context.Context, in *GetBomRequest, opts ...grpc.CallOption) (*GetBomResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetDefaultBomResponse)
-	err := c.cc.Invoke(ctx, BomService_GetDefaultBom_FullMethodName, in, out, cOpts...)
+	out := new(GetBomResponse)
+	err := c.cc.Invoke(ctx, BomService_GetBom_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *bomServiceClient) ReplaceDefaultBom(ctx context.Context, in *ReplaceDefaultBomRequest, opts ...grpc.CallOption) (*ReplaceDefaultBomResponse, error) {
+func (c *bomServiceClient) ListBoms(ctx context.Context, in *ListBomsRequest, opts ...grpc.CallOption) (*ListBomsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ReplaceDefaultBomResponse)
-	err := c.cc.Invoke(ctx, BomService_ReplaceDefaultBom_FullMethodName, in, out, cOpts...)
+	out := new(ListBomsResponse)
+	err := c.cc.Invoke(ctx, BomService_ListBoms_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bomServiceClient) CreateBom(ctx context.Context, in *CreateBomRequest, opts ...grpc.CallOption) (*CreateBomResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateBomResponse)
+	err := c.cc.Invoke(ctx, BomService_CreateBom_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bomServiceClient) DeleteBom(ctx context.Context, in *DeleteBomRequest, opts ...grpc.CallOption) (*DeleteBomResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteBomResponse)
+	err := c.cc.Invoke(ctx, BomService_DeleteBom_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bomServiceClient) ReplaceBomRows(ctx context.Context, in *ReplaceBomRowsRequest, opts ...grpc.CallOption) (*ReplaceBomRowsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReplaceBomRowsResponse)
+	err := c.cc.Invoke(ctx, BomService_ReplaceBomRows_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -95,15 +135,40 @@ func (c *bomServiceClient) DeleteBomRow(ctx context.Context, in *DeleteBomRowReq
 	return out, nil
 }
 
+func (c *bomServiceClient) ListBomRevisions(ctx context.Context, in *ListBomRevisionsRequest, opts ...grpc.CallOption) (*ListBomRevisionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListBomRevisionsResponse)
+	err := c.cc.Invoke(ctx, BomService_ListBomRevisions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bomServiceClient) GetBomRevision(ctx context.Context, in *GetBomRevisionRequest, opts ...grpc.CallOption) (*GetBomRevisionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBomRevisionResponse)
+	err := c.cc.Invoke(ctx, BomService_GetBomRevision_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BomServiceServer is the server API for BomService service.
 // All implementations must embed UnimplementedBomServiceServer
 // for forward compatibility.
 type BomServiceServer interface {
-	GetDefaultBom(context.Context, *GetDefaultBomRequest) (*GetDefaultBomResponse, error)
-	ReplaceDefaultBom(context.Context, *ReplaceDefaultBomRequest) (*ReplaceDefaultBomResponse, error)
+	GetBom(context.Context, *GetBomRequest) (*GetBomResponse, error)
+	ListBoms(context.Context, *ListBomsRequest) (*ListBomsResponse, error)
+	CreateBom(context.Context, *CreateBomRequest) (*CreateBomResponse, error)
+	DeleteBom(context.Context, *DeleteBomRequest) (*DeleteBomResponse, error)
+	ReplaceBomRows(context.Context, *ReplaceBomRowsRequest) (*ReplaceBomRowsResponse, error)
 	AddBomRow(context.Context, *AddBomRowRequest) (*AddBomRowResponse, error)
 	UpdateBomRow(context.Context, *UpdateBomRowRequest) (*UpdateBomRowResponse, error)
 	DeleteBomRow(context.Context, *DeleteBomRowRequest) (*DeleteBomRowResponse, error)
+	ListBomRevisions(context.Context, *ListBomRevisionsRequest) (*ListBomRevisionsResponse, error)
+	GetBomRevision(context.Context, *GetBomRevisionRequest) (*GetBomRevisionResponse, error)
 	mustEmbedUnimplementedBomServiceServer()
 }
 
@@ -114,11 +179,20 @@ type BomServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedBomServiceServer struct{}
 
-func (UnimplementedBomServiceServer) GetDefaultBom(context.Context, *GetDefaultBomRequest) (*GetDefaultBomResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetDefaultBom not implemented")
+func (UnimplementedBomServiceServer) GetBom(context.Context, *GetBomRequest) (*GetBomResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBom not implemented")
 }
-func (UnimplementedBomServiceServer) ReplaceDefaultBom(context.Context, *ReplaceDefaultBomRequest) (*ReplaceDefaultBomResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method ReplaceDefaultBom not implemented")
+func (UnimplementedBomServiceServer) ListBoms(context.Context, *ListBomsRequest) (*ListBomsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListBoms not implemented")
+}
+func (UnimplementedBomServiceServer) CreateBom(context.Context, *CreateBomRequest) (*CreateBomResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateBom not implemented")
+}
+func (UnimplementedBomServiceServer) DeleteBom(context.Context, *DeleteBomRequest) (*DeleteBomResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteBom not implemented")
+}
+func (UnimplementedBomServiceServer) ReplaceBomRows(context.Context, *ReplaceBomRowsRequest) (*ReplaceBomRowsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReplaceBomRows not implemented")
 }
 func (UnimplementedBomServiceServer) AddBomRow(context.Context, *AddBomRowRequest) (*AddBomRowResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddBomRow not implemented")
@@ -128,6 +202,12 @@ func (UnimplementedBomServiceServer) UpdateBomRow(context.Context, *UpdateBomRow
 }
 func (UnimplementedBomServiceServer) DeleteBomRow(context.Context, *DeleteBomRowRequest) (*DeleteBomRowResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteBomRow not implemented")
+}
+func (UnimplementedBomServiceServer) ListBomRevisions(context.Context, *ListBomRevisionsRequest) (*ListBomRevisionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListBomRevisions not implemented")
+}
+func (UnimplementedBomServiceServer) GetBomRevision(context.Context, *GetBomRevisionRequest) (*GetBomRevisionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBomRevision not implemented")
 }
 func (UnimplementedBomServiceServer) mustEmbedUnimplementedBomServiceServer() {}
 func (UnimplementedBomServiceServer) testEmbeddedByValue()                    {}
@@ -150,38 +230,92 @@ func RegisterBomServiceServer(s grpc.ServiceRegistrar, srv BomServiceServer) {
 	s.RegisterService(&BomService_ServiceDesc, srv)
 }
 
-func _BomService_GetDefaultBom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDefaultBomRequest)
+func _BomService_GetBom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBomRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BomServiceServer).GetDefaultBom(ctx, in)
+		return srv.(BomServiceServer).GetBom(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: BomService_GetDefaultBom_FullMethodName,
+		FullMethod: BomService_GetBom_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BomServiceServer).GetDefaultBom(ctx, req.(*GetDefaultBomRequest))
+		return srv.(BomServiceServer).GetBom(ctx, req.(*GetBomRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BomService_ReplaceDefaultBom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReplaceDefaultBomRequest)
+func _BomService_ListBoms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListBomsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BomServiceServer).ReplaceDefaultBom(ctx, in)
+		return srv.(BomServiceServer).ListBoms(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: BomService_ReplaceDefaultBom_FullMethodName,
+		FullMethod: BomService_ListBoms_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BomServiceServer).ReplaceDefaultBom(ctx, req.(*ReplaceDefaultBomRequest))
+		return srv.(BomServiceServer).ListBoms(ctx, req.(*ListBomsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BomService_CreateBom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateBomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BomServiceServer).CreateBom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BomService_CreateBom_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BomServiceServer).CreateBom(ctx, req.(*CreateBomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BomService_DeleteBom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BomServiceServer).DeleteBom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BomService_DeleteBom_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BomServiceServer).DeleteBom(ctx, req.(*DeleteBomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BomService_ReplaceBomRows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReplaceBomRowsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BomServiceServer).ReplaceBomRows(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BomService_ReplaceBomRows_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BomServiceServer).ReplaceBomRows(ctx, req.(*ReplaceBomRowsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -240,6 +374,42 @@ func _BomService_DeleteBomRow_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BomService_ListBomRevisions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListBomRevisionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BomServiceServer).ListBomRevisions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BomService_ListBomRevisions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BomServiceServer).ListBomRevisions(ctx, req.(*ListBomRevisionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BomService_GetBomRevision_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBomRevisionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BomServiceServer).GetBomRevision(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BomService_GetBomRevision_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BomServiceServer).GetBomRevision(ctx, req.(*GetBomRevisionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BomService_ServiceDesc is the grpc.ServiceDesc for BomService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -248,12 +418,24 @@ var BomService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*BomServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetDefaultBom",
-			Handler:    _BomService_GetDefaultBom_Handler,
+			MethodName: "GetBom",
+			Handler:    _BomService_GetBom_Handler,
 		},
 		{
-			MethodName: "ReplaceDefaultBom",
-			Handler:    _BomService_ReplaceDefaultBom_Handler,
+			MethodName: "ListBoms",
+			Handler:    _BomService_ListBoms_Handler,
+		},
+		{
+			MethodName: "CreateBom",
+			Handler:    _BomService_CreateBom_Handler,
+		},
+		{
+			MethodName: "DeleteBom",
+			Handler:    _BomService_DeleteBom_Handler,
+		},
+		{
+			MethodName: "ReplaceBomRows",
+			Handler:    _BomService_ReplaceBomRows_Handler,
 		},
 		{
 			MethodName: "AddBomRow",
@@ -266,6 +448,14 @@ var BomService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteBomRow",
 			Handler:    _BomService_DeleteBomRow_Handler,
+		},
+		{
+			MethodName: "ListBomRevisions",
+			Handler:    _BomService_ListBomRevisions_Handler,
+		},
+		{
+			MethodName: "GetBomRevision",
+			Handler:    _BomService_GetBomRevision_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -3,40 +3,72 @@ syntax = "proto3";
 package configuration.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/EPAS05/catalog-service/gen/go/configuration/v1;configurationv1";
 
 service BomService {
-  rpc GetDefaultBom(GetDefaultBomRequest) returns (GetDefaultBomResponse) {
+  rpc GetBom(GetBomRequest) returns (GetBomResponse) {
     option (google.api.http) = {
-      get: "/v1/products/{product_id}/bom"
+      get: "/v1/boms/{id}"
     };
   }
 
-  rpc ReplaceDefaultBom(ReplaceDefaultBomRequest) returns (ReplaceDefaultBomResponse) {
+  rpc ListBoms(ListBomsRequest) returns (ListBomsResponse) {
     option (google.api.http) = {
-      put: "/v1/products/{product_id}/bom"
+      get: "/v1/products/{product_id}/boms"
+    };
+  }
+
+  rpc CreateBom(CreateBomRequest) returns (CreateBomResponse) {
+    option (google.api.http) = {
+      post: "/v1/products/{product_id}/boms"
+      body: "*"
+    };
+  }
+
+  rpc DeleteBom(DeleteBomRequest) returns (DeleteBomResponse) {
+    option (google.api.http) = {
+      delete: "/v1/boms/{id}"
+    };
+  }
+
+  rpc ReplaceBomRows(ReplaceBomRowsRequest) returns (ReplaceBomRowsResponse) {
+    option (google.api.http) = {
+      put: "/v1/boms/{bom_id}/rows"
       body: "*"
     };
   }
 
   rpc AddBomRow(AddBomRowRequest) returns (AddBomRowResponse) {
     option (google.api.http) = {
-      post: "/v1/products/{product_id}/bom/rows"
+      post: "/v1/boms/{bom_id}/rows"
       body: "*"
     };
   }
 
   rpc UpdateBomRow(UpdateBomRowRequest) returns (UpdateBomRowResponse) {
     option (google.api.http) = {
-      patch: "/v1/bom/rows/{id}"
+      patch: "/v1/boms/rows/{id}"
       body: "*"
     };
   }
 
   rpc DeleteBomRow(DeleteBomRowRequest) returns (DeleteBomRowResponse) {
     option (google.api.http) = {
-      delete: "/v1/bom/rows/{id}"
+      delete: "/v1/boms/rows/{id}"
+    };
+  }
+
+  rpc ListBomRevisions(ListBomRevisionsRequest) returns (ListBomRevisionsResponse) {
+    option (google.api.http) = {
+      get: "/v1/boms/{bom_id}/revisions"
+    };
+  }
+
+  rpc GetBomRevision(GetBomRevisionRequest) returns (GetBomRevisionResponse) {
+    option (google.api.http) = {
+      get: "/v1/boms/{bom_id}/revisions/{revision}"
     };
   }
 }
@@ -55,27 +87,49 @@ message BomRow {
   string quantity     = 3;
 }
 
-message GetDefaultBomRequest {
-  string product_id = 1;
-}
-message GetDefaultBomResponse {
-  Bom bom = 1;
-}
-
 message BomRowInput {
   string component_id = 1;
   string quantity     = 2;
 }
-message ReplaceDefaultBomRequest {
-  string product_id      = 1;
+
+message GetBomRequest {
+  string id = 1;
+}
+message GetBomResponse {
+  Bom bom = 1;
+}
+
+message ListBomsRequest {
+  string product_id = 1;
+}
+message ListBomsResponse {
+  repeated Bom boms = 1;
+}
+
+message CreateBomRequest {
+  string product_id = 1;
+  bool   is_default = 2;
+  string name       = 3;
+}
+message CreateBomResponse {
+  Bom bom = 1;
+}
+
+message DeleteBomRequest {
+  string id = 1;
+}
+message DeleteBomResponse {}
+
+message ReplaceBomRowsRequest {
+  string bom_id             = 1;
   repeated BomRowInput rows = 2;
 }
-message ReplaceDefaultBomResponse {
+message ReplaceBomRowsResponse {
   Bom bom = 1;
 }
 
 message AddBomRowRequest {
-  string product_id   = 1;
+  string bom_id       = 1;
   string component_id = 2;
   string quantity     = 3;
 }
@@ -96,3 +150,26 @@ message DeleteBomRowRequest {
   string id = 1;
 }
 message DeleteBomRowResponse {}
+
+message BomRevision {
+  string                     bom_id     = 1;
+  int32                      revision   = 2;
+  google.protobuf.Timestamp changed_at = 3;
+}
+
+message ListBomRevisionsRequest {
+  string bom_id = 1;
+}
+message ListBomRevisionsResponse {
+  repeated BomRevision revisions = 1;
+}
+
+message GetBomRevisionRequest {
+  string bom_id = 1;
+  int32  revision = 2;
+}
+message GetBomRevisionResponse {
+  int32                      revision   = 1;
+  google.protobuf.Timestamp changed_at = 2;
+  repeated BomRow            rows       = 3;
+}

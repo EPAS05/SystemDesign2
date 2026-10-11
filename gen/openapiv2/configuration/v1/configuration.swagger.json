@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/bom/rows/{id}": {
+    "/v1/boms/rows/{id}": {
       "delete": {
         "operationId": "BomService_DeleteBomRow",
         "responses": {
@@ -82,14 +82,213 @@
         ]
       }
     },
-    "/v1/products/{productId}/bom": {
+    "/v1/boms/{bomId}/revisions": {
       "get": {
-        "operationId": "BomService_GetDefaultBom",
+        "operationId": "BomService_ListBomRevisions",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetDefaultBomResponse"
+              "$ref": "#/definitions/v1ListBomRevisionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      }
+    },
+    "/v1/boms/{bomId}/revisions/{revision}": {
+      "get": {
+        "operationId": "BomService_GetBomRevision",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetBomRevisionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "revision",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      }
+    },
+    "/v1/boms/{bomId}/rows": {
+      "post": {
+        "operationId": "BomService_AddBomRow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AddBomRowResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BomServiceAddBomRowBody"
+            }
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      },
+      "put": {
+        "operationId": "BomService_ReplaceBomRows",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReplaceBomRowsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BomServiceReplaceBomRowsBody"
+            }
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      }
+    },
+    "/v1/boms/{id}": {
+      "get": {
+        "operationId": "BomService_GetBom",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetBomResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      },
+      "delete": {
+        "operationId": "BomService_DeleteBom",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteBomResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      }
+    },
+    "/v1/products/{productId}/boms": {
+      "get": {
+        "operationId": "BomService_ListBoms",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListBomsResponse"
             }
           },
           "default": {
@@ -111,51 +310,13 @@
           "BomService"
         ]
       },
-      "put": {
-        "operationId": "BomService_ReplaceDefaultBom",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1ReplaceDefaultBomResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "productId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/BomServiceReplaceDefaultBomBody"
-            }
-          }
-        ],
-        "tags": [
-          "BomService"
-        ]
-      }
-    },
-    "/v1/products/{productId}/bom/rows": {
       "post": {
-        "operationId": "BomService_AddBomRow",
+        "operationId": "BomService_CreateBom",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1AddBomRowResponse"
+              "$ref": "#/definitions/v1CreateBomResponse"
             }
           },
           "default": {
@@ -177,7 +338,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/BomServiceAddBomRowBody"
+              "$ref": "#/definitions/BomServiceCreateBomBody"
             }
           }
         ],
@@ -199,7 +360,18 @@
         }
       }
     },
-    "BomServiceReplaceDefaultBomBody": {
+    "BomServiceCreateBomBody": {
+      "type": "object",
+      "properties": {
+        "isDefault": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "BomServiceReplaceBomRowsBody": {
       "type": "object",
       "properties": {
         "rows": {
@@ -282,6 +454,22 @@
         }
       }
     },
+    "v1BomRevision": {
+      "type": "object",
+      "properties": {
+        "bomId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "changedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "v1BomRow": {
       "type": "object",
       "properties": {
@@ -307,10 +495,7 @@
         }
       }
     },
-    "v1DeleteBomRowResponse": {
-      "type": "object"
-    },
-    "v1GetDefaultBomResponse": {
+    "v1CreateBomResponse": {
       "type": "object",
       "properties": {
         "bom": {
@@ -318,7 +503,65 @@
         }
       }
     },
-    "v1ReplaceDefaultBomResponse": {
+    "v1DeleteBomResponse": {
+      "type": "object"
+    },
+    "v1DeleteBomRowResponse": {
+      "type": "object"
+    },
+    "v1GetBomResponse": {
+      "type": "object",
+      "properties": {
+        "bom": {
+          "$ref": "#/definitions/v1Bom"
+        }
+      }
+    },
+    "v1GetBomRevisionResponse": {
+      "type": "object",
+      "properties": {
+        "revision": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "changedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1BomRow"
+          }
+        }
+      }
+    },
+    "v1ListBomRevisionsResponse": {
+      "type": "object",
+      "properties": {
+        "revisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1BomRevision"
+          }
+        }
+      }
+    },
+    "v1ListBomsResponse": {
+      "type": "object",
+      "properties": {
+        "boms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Bom"
+          }
+        }
+      }
+    },
+    "v1ReplaceBomRowsResponse": {
       "type": "object",
       "properties": {
         "bom": {

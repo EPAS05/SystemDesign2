@@ -35,9 +35,48 @@ var (
 	_ = metadata.Join
 )
 
-func request_BomService_GetDefaultBom_0(ctx context.Context, marshaler runtime.Marshaler, client BomServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_BomService_GetBom_0(ctx context.Context, marshaler runtime.Marshaler, client BomServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq GetDefaultBomRequest
+		protoReq GetBomRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+	protoReq.Id, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.GetBom(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_BomService_GetBom_0(ctx context.Context, marshaler runtime.Marshaler, server BomServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetBomRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+	protoReq.Id, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+	msg, err := server.GetBom(ctx, &protoReq)
+	return msg, metadata, err
+}
+
+func request_BomService_ListBoms_0(ctx context.Context, marshaler runtime.Marshaler, client BomServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ListBomsRequest
 		metadata runtime.ServerMetadata
 		err      error
 	)
@@ -52,13 +91,13 @@ func request_BomService_GetDefaultBom_0(ctx context.Context, marshaler runtime.M
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.GetDefaultBom(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.ListBoms(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_BomService_GetDefaultBom_0(ctx context.Context, marshaler runtime.Marshaler, server BomServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_BomService_ListBoms_0(ctx context.Context, marshaler runtime.Marshaler, server BomServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq GetDefaultBomRequest
+		protoReq ListBomsRequest
 		metadata runtime.ServerMetadata
 		err      error
 	)
@@ -70,13 +109,13 @@ func local_request_BomService_GetDefaultBom_0(ctx context.Context, marshaler run
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "product_id", err)
 	}
-	msg, err := server.GetDefaultBom(ctx, &protoReq)
+	msg, err := server.ListBoms(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-func request_BomService_ReplaceDefaultBom_0(ctx context.Context, marshaler runtime.Marshaler, client BomServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_BomService_CreateBom_0(ctx context.Context, marshaler runtime.Marshaler, client BomServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq ReplaceDefaultBomRequest
+		protoReq CreateBomRequest
 		metadata runtime.ServerMetadata
 		err      error
 	)
@@ -94,13 +133,13 @@ func request_BomService_ReplaceDefaultBom_0(ctx context.Context, marshaler runti
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	msg, err := client.ReplaceDefaultBom(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.CreateBom(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_BomService_ReplaceDefaultBom_0(ctx context.Context, marshaler runtime.Marshaler, server BomServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_BomService_CreateBom_0(ctx context.Context, marshaler runtime.Marshaler, server BomServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq ReplaceDefaultBomRequest
+		protoReq CreateBomRequest
 		metadata runtime.ServerMetadata
 		err      error
 	)
@@ -115,7 +154,91 @@ func local_request_BomService_ReplaceDefaultBom_0(ctx context.Context, marshaler
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "product_id", err)
 	}
-	msg, err := server.ReplaceDefaultBom(ctx, &protoReq)
+	msg, err := server.CreateBom(ctx, &protoReq)
+	return msg, metadata, err
+}
+
+func request_BomService_DeleteBom_0(ctx context.Context, marshaler runtime.Marshaler, client BomServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq DeleteBomRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+	protoReq.Id, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.DeleteBom(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_BomService_DeleteBom_0(ctx context.Context, marshaler runtime.Marshaler, server BomServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq DeleteBomRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+	protoReq.Id, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+	msg, err := server.DeleteBom(ctx, &protoReq)
+	return msg, metadata, err
+}
+
+func request_BomService_ReplaceBomRows_0(ctx context.Context, marshaler runtime.Marshaler, client BomServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ReplaceBomRowsRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	val, ok := pathParams["bom_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "bom_id")
+	}
+	protoReq.BomId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "bom_id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.ReplaceBomRows(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_BomService_ReplaceBomRows_0(ctx context.Context, marshaler runtime.Marshaler, server BomServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ReplaceBomRowsRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	val, ok := pathParams["bom_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "bom_id")
+	}
+	protoReq.BomId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "bom_id", err)
+	}
+	msg, err := server.ReplaceBomRows(ctx, &protoReq)
 	return msg, metadata, err
 }
 
@@ -128,13 +251,13 @@ func request_BomService_AddBomRow_0(ctx context.Context, marshaler runtime.Marsh
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	val, ok := pathParams["product_id"]
+	val, ok := pathParams["bom_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "product_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "bom_id")
 	}
-	protoReq.ProductId, err = runtime.String(val)
+	protoReq.BomId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "product_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "bom_id", err)
 	}
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
@@ -152,13 +275,13 @@ func local_request_BomService_AddBomRow_0(ctx context.Context, marshaler runtime
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	val, ok := pathParams["product_id"]
+	val, ok := pathParams["bom_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "product_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "bom_id")
 	}
-	protoReq.ProductId, err = runtime.String(val)
+	protoReq.BomId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "product_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "bom_id", err)
 	}
 	msg, err := server.AddBomRow(ctx, &protoReq)
 	return msg, metadata, err
@@ -248,51 +371,205 @@ func local_request_BomService_DeleteBomRow_0(ctx context.Context, marshaler runt
 	return msg, metadata, err
 }
 
+func request_BomService_ListBomRevisions_0(ctx context.Context, marshaler runtime.Marshaler, client BomServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ListBomRevisionsRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["bom_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "bom_id")
+	}
+	protoReq.BomId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "bom_id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.ListBomRevisions(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_BomService_ListBomRevisions_0(ctx context.Context, marshaler runtime.Marshaler, server BomServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ListBomRevisionsRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["bom_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "bom_id")
+	}
+	protoReq.BomId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "bom_id", err)
+	}
+	msg, err := server.ListBomRevisions(ctx, &protoReq)
+	return msg, metadata, err
+}
+
+func request_BomService_GetBomRevision_0(ctx context.Context, marshaler runtime.Marshaler, client BomServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetBomRevisionRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["bom_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "bom_id")
+	}
+	protoReq.BomId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "bom_id", err)
+	}
+	val, ok = pathParams["revision"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "revision")
+	}
+	protoReq.Revision, err = runtime.Int32(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "revision", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.GetBomRevision(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_BomService_GetBomRevision_0(ctx context.Context, marshaler runtime.Marshaler, server BomServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetBomRevisionRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["bom_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "bom_id")
+	}
+	protoReq.BomId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "bom_id", err)
+	}
+	val, ok = pathParams["revision"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "revision")
+	}
+	protoReq.Revision, err = runtime.Int32(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "revision", err)
+	}
+	msg, err := server.GetBomRevision(ctx, &protoReq)
+	return msg, metadata, err
+}
+
 // RegisterBomServiceHandlerServer registers the http handlers for service BomService to "mux".
 // UnaryRPC     :call BomServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterBomServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterBomServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server BomServiceServer) error {
-	mux.Handle(http.MethodGet, pattern_BomService_GetDefaultBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_BomService_GetBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/GetDefaultBom", runtime.WithHTTPPathPattern("/v1/products/{product_id}/bom"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/GetBom", runtime.WithHTTPPathPattern("/v1/boms/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_BomService_GetDefaultBom_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_BomService_GetBom_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_BomService_GetDefaultBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_BomService_GetBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodPut, pattern_BomService_ReplaceDefaultBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_BomService_ListBoms_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/ReplaceDefaultBom", runtime.WithHTTPPathPattern("/v1/products/{product_id}/bom"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/ListBoms", runtime.WithHTTPPathPattern("/v1/products/{product_id}/boms"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_BomService_ReplaceDefaultBom_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_BomService_ListBoms_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_BomService_ReplaceDefaultBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_BomService_ListBoms_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodPost, pattern_BomService_CreateBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/CreateBom", runtime.WithHTTPPathPattern("/v1/products/{product_id}/boms"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_BomService_CreateBom_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_CreateBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodDelete, pattern_BomService_DeleteBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/DeleteBom", runtime.WithHTTPPathPattern("/v1/boms/{id}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_BomService_DeleteBom_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_DeleteBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodPut, pattern_BomService_ReplaceBomRows_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/ReplaceBomRows", runtime.WithHTTPPathPattern("/v1/boms/{bom_id}/rows"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_BomService_ReplaceBomRows_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_ReplaceBomRows_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_BomService_AddBomRow_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -300,7 +577,7 @@ func RegisterBomServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/AddBomRow", runtime.WithHTTPPathPattern("/v1/products/{product_id}/bom/rows"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/AddBomRow", runtime.WithHTTPPathPattern("/v1/boms/{bom_id}/rows"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -320,7 +597,7 @@ func RegisterBomServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/UpdateBomRow", runtime.WithHTTPPathPattern("/v1/bom/rows/{id}"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/UpdateBomRow", runtime.WithHTTPPathPattern("/v1/boms/rows/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -340,7 +617,7 @@ func RegisterBomServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/DeleteBomRow", runtime.WithHTTPPathPattern("/v1/bom/rows/{id}"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/DeleteBomRow", runtime.WithHTTPPathPattern("/v1/boms/rows/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -353,6 +630,46 @@ func RegisterBomServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 			return
 		}
 		forward_BomService_DeleteBomRow_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodGet, pattern_BomService_ListBomRevisions_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/ListBomRevisions", runtime.WithHTTPPathPattern("/v1/boms/{bom_id}/revisions"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_BomService_ListBomRevisions_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_ListBomRevisions_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodGet, pattern_BomService_GetBomRevision_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/GetBomRevision", runtime.WithHTTPPathPattern("/v1/boms/{bom_id}/revisions/{revision}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_BomService_GetBomRevision_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_GetBomRevision_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -394,45 +711,96 @@ func RegisterBomServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn 
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "BomServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterBomServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client BomServiceClient) error {
-	mux.Handle(http.MethodGet, pattern_BomService_GetDefaultBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_BomService_GetBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/GetDefaultBom", runtime.WithHTTPPathPattern("/v1/products/{product_id}/bom"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/GetBom", runtime.WithHTTPPathPattern("/v1/boms/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_BomService_GetDefaultBom_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_BomService_GetBom_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_BomService_GetDefaultBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_BomService_GetBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodPut, pattern_BomService_ReplaceDefaultBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_BomService_ListBoms_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/ReplaceDefaultBom", runtime.WithHTTPPathPattern("/v1/products/{product_id}/bom"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/ListBoms", runtime.WithHTTPPathPattern("/v1/products/{product_id}/boms"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_BomService_ReplaceDefaultBom_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_BomService_ListBoms_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_BomService_ReplaceDefaultBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_BomService_ListBoms_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodPost, pattern_BomService_CreateBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/CreateBom", runtime.WithHTTPPathPattern("/v1/products/{product_id}/boms"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_BomService_CreateBom_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_CreateBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodDelete, pattern_BomService_DeleteBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/DeleteBom", runtime.WithHTTPPathPattern("/v1/boms/{id}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_BomService_DeleteBom_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_DeleteBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodPut, pattern_BomService_ReplaceBomRows_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/ReplaceBomRows", runtime.WithHTTPPathPattern("/v1/boms/{bom_id}/rows"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_BomService_ReplaceBomRows_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_ReplaceBomRows_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodPost, pattern_BomService_AddBomRow_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/AddBomRow", runtime.WithHTTPPathPattern("/v1/products/{product_id}/bom/rows"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/AddBomRow", runtime.WithHTTPPathPattern("/v1/boms/{bom_id}/rows"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -449,7 +817,7 @@ func RegisterBomServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/UpdateBomRow", runtime.WithHTTPPathPattern("/v1/bom/rows/{id}"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/UpdateBomRow", runtime.WithHTTPPathPattern("/v1/boms/rows/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -466,7 +834,7 @@ func RegisterBomServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/DeleteBomRow", runtime.WithHTTPPathPattern("/v1/bom/rows/{id}"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/DeleteBomRow", runtime.WithHTTPPathPattern("/v1/boms/rows/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -479,21 +847,65 @@ func RegisterBomServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		}
 		forward_BomService_DeleteBomRow_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodGet, pattern_BomService_ListBomRevisions_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/ListBomRevisions", runtime.WithHTTPPathPattern("/v1/boms/{bom_id}/revisions"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_BomService_ListBomRevisions_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_ListBomRevisions_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodGet, pattern_BomService_GetBomRevision_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/GetBomRevision", runtime.WithHTTPPathPattern("/v1/boms/{bom_id}/revisions/{revision}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_BomService_GetBomRevision_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_GetBomRevision_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	return nil
 }
 
 var (
-	pattern_BomService_GetDefaultBom_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "products", "product_id", "bom"}, ""))
-	pattern_BomService_ReplaceDefaultBom_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "products", "product_id", "bom"}, ""))
-	pattern_BomService_AddBomRow_0         = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 2, 4}, []string{"v1", "products", "product_id", "bom", "rows"}, ""))
-	pattern_BomService_UpdateBomRow_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "bom", "rows", "id"}, ""))
-	pattern_BomService_DeleteBomRow_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "bom", "rows", "id"}, ""))
+	pattern_BomService_GetBom_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "boms", "id"}, ""))
+	pattern_BomService_ListBoms_0         = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "products", "product_id", "boms"}, ""))
+	pattern_BomService_CreateBom_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "products", "product_id", "boms"}, ""))
+	pattern_BomService_DeleteBom_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "boms", "id"}, ""))
+	pattern_BomService_ReplaceBomRows_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "boms", "bom_id", "rows"}, ""))
+	pattern_BomService_AddBomRow_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "boms", "bom_id", "rows"}, ""))
+	pattern_BomService_UpdateBomRow_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "boms", "rows", "id"}, ""))
+	pattern_BomService_DeleteBomRow_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "boms", "rows", "id"}, ""))
+	pattern_BomService_ListBomRevisions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "boms", "bom_id", "revisions"}, ""))
+	pattern_BomService_GetBomRevision_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "boms", "bom_id", "revisions", "revision"}, ""))
 )
 
 var (
-	forward_BomService_GetDefaultBom_0     = runtime.ForwardResponseMessage
-	forward_BomService_ReplaceDefaultBom_0 = runtime.ForwardResponseMessage
-	forward_BomService_AddBomRow_0         = runtime.ForwardResponseMessage
-	forward_BomService_UpdateBomRow_0      = runtime.ForwardResponseMessage
-	forward_BomService_DeleteBomRow_0      = runtime.ForwardResponseMessage
+	forward_BomService_GetBom_0           = runtime.ForwardResponseMessage
+	forward_BomService_ListBoms_0         = runtime.ForwardResponseMessage
+	forward_BomService_CreateBom_0        = runtime.ForwardResponseMessage
+	forward_BomService_DeleteBom_0        = runtime.ForwardResponseMessage
+	forward_BomService_ReplaceBomRows_0   = runtime.ForwardResponseMessage
+	forward_BomService_AddBomRow_0        = runtime.ForwardResponseMessage
+	forward_BomService_UpdateBomRow_0     = runtime.ForwardResponseMessage
+	forward_BomService_DeleteBomRow_0     = runtime.ForwardResponseMessage
+	forward_BomService_ListBomRevisions_0 = runtime.ForwardResponseMessage
+	forward_BomService_GetBomRevision_0   = runtime.ForwardResponseMessage
 )

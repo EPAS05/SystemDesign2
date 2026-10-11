@@ -1,0 +1,461 @@
+====================================================================
+ТЕСТОВЫЙ СЦЕНАРИЙ
+====================================================================
+Шлюз:              http://localhost:8080
+Catalog service:   catalog-service:8081        (gRPC внутри compose)
+Configuration svc: configuration-service:8082  (gRPC внутри compose)
+
+============================================================================
+ПОДГОТОВКА (подставить свои UUID; в set НЕТ пробелов вокруг "=")
+============================================================================
+set BASE=http://localhost:8080
+
+
+============================================================================
+ЧАСТЬ A. CATALOG SERVICE
+============================================================================
+ДВА ОТДЕЛЬНЫХ ДЕРЕВА УЗЛОВ (nodes):
+  1) дерево КОМПОНЕНТОВ:  Root -> Line            (сюда крепятся компоненты)
+  2) дерево ИЗДЕЛИЙ:      Products -> Assemblies  (сюда крепятся изделия)
+Деревья независимы и не пересекаются.
+
+----------------------------------------------------------------------------
+A1. PING (проверка шлюза и обоих сервисов)
+    GET /v1/ping
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/ping"
+
+Ожидаем: 200, {"message":{...catalog...,...configuration...}}.
+
+----------------------------------------------------------------------------
+A2. СОЗДАТЬ КОРНЕВОЙ УЗЕЛ (без parent_id)
+    POST /v1/nodes   { name }   body: "*"
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/nodes" -H "Content-Type: application/json" -d "{\"name\":\"Root\"}"
+
+Ожидаем: 200, Node { "id", "name":"Root", "parentId":"" }.
+
+Скопировать id:
+set NODE_ROOT=
+
+----------------------------------------------------------------------------
+A3. СОЗДАТЬ ДОЧЕРНИЙ УЗЕЛ
+    POST /v1/nodes   { parentId, name }
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/nodes" -H "Content-Type: application/json" -d "{\"parentId\":\"%NODE_ROOT%\",\"name\":\"Line\"}"
+
+Ожидаем: 200, Node со связкой parentId=%NODE_ROOT%.
+set NODE_CHILD=<id из ответа>
+
+----------------------------------------------------------------------------
+A4. СПИСОК ДЕТЕЙ УЗЛА
+    GET /v1/nodes/{parent_id}/children
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/nodes/%NODE_ROOT%/children"
+
+Ожидаем: 200, { "nodes": [ ...один узел Line... ] }
+(если деталей нет — nodes=[]).
+
+----------------------------------------------------------------------------
+A5. ПОЛУЧИТЬ УЗЕЛ ПО id
+    GET /v1/nodes/{id}
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/nodes/%NODE_CHILD%"
+
+Ожидаем: 200, Node { "id", "parentId", "name" }.
+
+----------------------------------------------------------------------------
+A6. ПЕРЕИМЕНОВАТЬ УЗЕЛ
+    PATCH /v1/nodes/{id}   { name }
+----------------------------------------------------------------------------
+curl -s -X PATCH "%BASE%/v1/nodes/%NODE_CHILD%" -H "Content-Type: application/json" -d "{\"name\":\"Cell X\"}"
+
+Ожидаем: 200, Node с новым name. parent_id не меняется (в теле только name).
+
+----------------------------------------------------------------------------
+A7. СОЗДАТЬ КОМПОНЕНТЫ В УЗЛЕ ДЕРЕВА КОМПОНЕНТОВ
+    POST /v1/components   { nodeId, name }
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/components" -H "Content-Type: application/json" -d "{\"nodeId\":\"%NODE_CHILD%\",\"name\":\"Resistor\"}"
+
+curl -s -X POST "%BASE%/v1/components" -H "Content-Type: application/json" -d "{\"nodeId\":\"%NODE_CHILD%\",\"name\":\"Capacitor\"}"
+
+Ожидаем: 200, Component { "id", "nodeId", "name" }.
+set COMP_A=<id первого компонента>
+set COMP_B=<id второго компонента>
+
+-- Переименовать Capacitor -> Condenser (UpdateComponent):
+curl -s -X PATCH "%BASE%/v1/components/%COMP_B%" -H "Content-Type: application/json" -d "{\"name\":\"Condenser\"}"
+
+Ожидаем: 200, Component с новым name.
+
+----------------------------------------------------------------------------
+A8. ПОЛУЧИТЬ КОМПОНЕНТ ПО id
+    GET /v1/components/{id}
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/components/%COMP_A%"
+
+Ожидаем: 200, Component.
+
+----------------------------------------------------------------------------
+A9. СПИСОК КОМПОНЕНТОВ УЗЛА
+    GET /v1/nodes/{node_id}/components
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/nodes/%NODE_CHILD%/components"
+
+Ожидаем: 200, { "components": [ Resistor, Capacitor ] }.
+
+----------------------------------------------------------------------------
+A10. СОЗДАТЬ ОТДЕЛЬНОЕ ДЕРЕВО ДЛЯ ИЗДЕЛИЙ
+     POST /v1/nodes: корень дерева изделий + дочерний узел
+----------------------------------------------------------------------------
+-- Корень отдельного дерева изделий (без parent_id; НЕ в дереве Root/Line):
+curl -s -X POST "%BASE%/v1/nodes" -H "Content-Type: application/json" -d "{\"name\":\"Products\"}"
+
+Ожидаем: 200, Node { "id", "name":"Products", "parentId":"" }.
+set NODE_PRODUCTS=<id из ответа>
+
+-- Дочерний узел дерева изделий:
+curl -s -X POST "%BASE%/v1/nodes" -H "Content-Type: application/json" -d "{\"parentId\":\"%NODE_PRODUCTS%\",\"name\":\"Assemblies\"}"
+
+Ожидаем: 200, Node { "id", "parentId":"%NODE_PRODUCTS%", "name":"Assemblies" }.
+set NODE_ASM=<id из ответа>
+
+-- Проверка отдельного дерева изделий:
+curl -s "%BASE%/v1/nodes/%NODE_PRODUCTS%/children"
+
+Ожидаем: { "nodes": [ Assemblies ] }
+
+ВАЖНО: изделия живут ТОЛЬКО в этом дереве (NODE_ASM), а компоненты —
+в дереве Root/Line (NODE_CHILD). Деревья не пересекаются.
+
+----------------------------------------------------------------------------
+A11. СОЗДАТЬ ИЗДЕЛИЕ В ДЕРЕВЕ ИЗДЕЛИЙ
+     POST /v1/products   { nodeId, name }
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/products" -H "Content-Type: application/json" -d "{\"nodeId\":\"%NODE_ASM%\",\"name\":\"Board 123\"}"
+
+Ожидаем: 200, Product { "id", "nodeId", "name" }.
+set PRODUCT=<id из ответа>
+
+----------------------------------------------------------------------------
+A12. ПОЛУЧИТЬ ИЗДЕЛИЕ ПО id
+     GET /v1/products/{id}
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/products/%PRODUCT%"
+
+Ожидаем: 200, Product.
+
+----------------------------------------------------------------------------
+A13. СПИСОК ИЗДЕЛИЙ УЗЛА ДЕРЕВА ИЗДЕЛИЙ
+     GET /v1/nodes/{node_id}/products
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/nodes/%NODE_ASM%/products"
+
+Ожидаем: 200, { "products": [ Board 123 ] }.
+
+----------------------------------------------------------------------------
+A14. ПЕРЕИМЕНОВАТЬ ИЗДЕЛИЕ
+     PATCH /v1/products/{id}   { name }
+----------------------------------------------------------------------------
+curl -s -X PATCH "%BASE%/v1/products/%PRODUCT%" -H "Content-Type: application/json" -d "{\"name\":\"Board 123 v2\"}"
+
+Ожидаем: 200, Product с новым name.
+
+
+============================================================================
+ЧАСТЬ B. CONFIGURATION SERVICE
+============================================================================
+Изделие и компоненты перешли из A:
+  PRODUCT -> %PRODUCT%, COMP_A -> %COMP_A%, COMP_B -> %COMP_B%
+(это id из БД каталога; в configuration они хранятся как uuid без FK).
+
+----------------------------------------------------------------------------
+B1. СОЗДАТЬ ДЕФОЛТНЫЙ BOM ИЗДЕЛИЯ
+    POST /v1/products/{product_id}/boms   { isDefault: true }
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/products/%PRODUCT%/boms" -H "Content-Type: application/json" -d "{\"isDefault\":true}"
+
+Ожидаем: 200, Bom { "id", "productId":"%PRODUCT%", "isDefault":true, "rows":[] }.
+set BOM_DEFAULT=<id из ответа>
+
+Автосоздания дефолта при отсутствии НЕТ — только явный запрос выше
+(автосоздание позже добавим в шлюзе). Повтор вызова идемпотентен.
+
+----------------------------------------------------------------------------
+B2. ДОБАВИТЬ СТРОКИ (компоненты изделия) В ДЕФОЛТНЫЙ BOM
+    POST /v1/boms/{bom_id}/rows   { componentId, quantity }
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/boms/%BOM_DEFAULT%/rows" -H "Content-Type: application/json" -d "{\"componentId\":\"%COMP_A%\",\"quantity\":\"5\"}"
+
+curl -s -X POST "%BASE%/v1/boms/%BOM_DEFAULT%/rows" -H "Content-Type: application/json" -d "{\"componentId\":\"%COMP_B%\",\"quantity\":\"2.5\"}"
+
+Ожидаем: 200, BomRow { "id", "componentId", "quantity" }.
+set ROW1=<id первой строки>   (COMP_A=5)
+
+----------------------------------------------------------------------------
+B3. ПОЛУЧИТЬ BOM ПО id
+    GET /v1/boms/{id}
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%"
+
+Ожидаем: 200, Bom c 2 строками (COMP_A=5, COMP_B=2.5).
+
+----------------------------------------------------------------------------
+B4. СПИСОК BOM ИЗДЕЛИЯ (default + модификации)
+    GET /v1/products/{product_id}/boms
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/products/%PRODUCT%/boms"
+
+Ожидаем: 200, { "boms":[ ... ] }, первым is_default=true.
+BOM изделия = элемент с isDefault:true.
+
+----------------------------------------------------------------------------
+B5. ОБНОВИТЬ СТРОКУ
+    PATCH /v1/boms/rows/{id}   { componentId, quantity }
+----------------------------------------------------------------------------
+curl -s -X PATCH "%BASE%/v1/boms/rows/%ROW1%" -H "Content-Type: application/json" -d "{\"componentId\":\"%COMP_B%\",\"quantity\":\"7\"}"
+
+Ожидаем: 200, BomRow с новыми componentId/quantity.
+
+----------------------------------------------------------------------------
+B6. ЗАМЕНИТЬ ВСЕ СТРОКИ BOM
+    PUT /v1/boms/{bom_id}/rows   { rows:[{componentId, quantity}] }
+----------------------------------------------------------------------------
+curl -s -X PUT "%BASE%/v1/boms/%BOM_DEFAULT%/rows" -H "Content-Type: application/json" -d "{\"rows\":[{\"componentId\":\"%COMP_A%\",\"quantity\":\"10\"}]}"
+
+Ожидаем: 200, Bom с единственной строкой COMP_A=10.
+ВНИМАНИЕ: старые строки (в т.ч. ROW1) удалены, id строк новые.
+
+----------------------------------------------------------------------------
+B7. СОЗДАТЬ МОДИФИКАЦИЮ (копирует строки дефолта)
+    POST /v1/products/{product_id}/boms   { isDefault:false, name }
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/products/%PRODUCT%/boms" -H "Content-Type: application/json" -d "{\"isDefault\":false,\"name\":\"Mod X\"}"
+
+Ожидаем: 200, Bom isDefault:false, name:"Mod X",
+rows = копия строк дефолта (COMP_A=10).
+set BOM_MOD=<id из ответа>
+
+----------------------------------------------------------------------------
+B8. ПРОСМОТРЕТЬ СОЗДАННУЮ МОДИФИКАЦИЮ ПО id
+    GET /v1/boms/{id}
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/boms/%BOM_MOD%"
+
+Ожидаем: 200, Bom:
+  "id":        %BOM_MOD%
+  "productId": %PRODUCT%
+  "isDefault": false
+  "name":      "Mod X"
+  "rows":      [ COMP_A=10 ]   (копия дефолта на момент создания)
+
+----------------------------------------------------------------------------
+B9. ПРОСМОТРЕТЬ ВСЕ BOM ИЗДЕЛИЯ (default + модификация)
+    GET /v1/products/{product_id}/boms
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/products/%PRODUCT%/boms"
+
+Ожидаем: 200, { "boms": [ ... ] }, 2 элемента — порядок:
+  1) default:  "isDefault": true,  name:"",      rows=[COMP_A=10]
+  2) модификаци: "isDefault": false, name:"Mod X", rows=[COMP_A=10]
+BOM изделия по умолчанию = элемент с isDefault:true.
+
+----------------------------------------------------------------------------
+B10. ДОБАВИТЬ СТРОКУ В МОДИФИКАЦИЮ
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/boms/%BOM_MOD%/rows" -H "Content-Type: application/json" -d "{\"componentId\":\"%COMP_B%\",\"quantity\":\"1\"}"
+
+Ожидаем: 200, строка только в модификации.
+set ROW_MOD=<id из ответа>
+
+Проверить: повторно GET модификации по id — теперь 2 строки
+(копия дефолта COMP_A=10 + добавленная COMP_B=1). Дефолтный BOM не тронут:
+curl -s "%BASE%/v1/boms/%BOM_MOD%"
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%"
+
+
+========----------------------------------------------------------------------------
+B11. СПИСОК РЕВИЗИЙ ДЕФОЛТНОГО BOM (история изменений)
+     GET /v1/boms/{bom_id}/revisions
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%/revisions"
+
+Ожидаем: 200, {"revisions":[ ... ]} — 5 версий в порядке возрастания:
+  rev 1 — создание BOM       (строк нет)
+  rev 2 — B2 добавлен COMP_A=5
+  rev 3 — B2 добавлен COMP_B=2.5
+  rev 4 — B5 строка ROW1 обновлена (COMP_B=7)
+  rev 5 — B6 строки заменены  (COMP_A=10)
+Каждая версия: { "revision", "changedAt" }.
+
+----------------------------------------------------------------------------
+B12. СНИМОК ПЕРВОЙ РЕВИЗИИ (состояние на момент создания)
+     GET /v1/boms/{bom_id}/revisions/{revision}
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%/revisions/1"
+
+Ожидаем: 200, {"revision":1, "changedAt":..., "rows":[]} — BOM создан пустым.
+
+----------------------------------------------------------------------------
+B13. СНИМОК ПРОМЕЖУТОЧНОЙ РЕВИЗИИ (после добавления строк)
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%/revisions/3"
+
+Ожидаем: 200, rows: [ COMP_A=5, COMP_B=2.5 ] — т.е. ДО обновления строк.
+
+----------------------------------------------------------------------------
+B14. СНИМОК ПОСЛЕДНЕЙ РЕВИЗИИ = текущее состояние
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%/revisions/5"
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%"
+
+Ожидаем: обе команды дают один состав: rows: [ COMP_A=10 ].
+(GetBom = живое/текущее состояние; revisions = неизменяемые снимки.)
+
+----------------------------------------------------------------------------
+B15. РЕВИЗИИ МОДИФИКАЦИИ (создание-копия -> добавление строки)
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/boms/%BOM_MOD%/revisions"
+
+Ожидаем: 2 версии:
+  rev 1 — создание модификации (копия базовой: COMP_A=10)
+  rev 2 — B10 добавлен COMP_B=1
+Дефолтный BOM в эти версии не замешан.
+
+----------------------------------------------------------------------------
+B16. РЕВИЗИЯ НЕСУЩЕСТВУЮЩЕЙ ВЕРСИИ -> 404
+----------------------------------------------------------------------------
+curl -s -i "%BASE%/v1/boms/%BOM_DEFAULT%/revisions/99"
+
+Ожидаем: 404.
+
+
+====================================================================
+ЧАСТЬ C. УДАЛЕНИЯ + НЕГАТИВНЫЕ ПРОВЕРКИ
+============================================================================
+
+----------------------------------------------------------------------------
+C1. УДАЛИТЬ СТРОКУ ИЗ МОДИФИКАЦИИ
+    DELETE /v1/boms/rows/{id}
+----------------------------------------------------------------------------
+curl -s -X DELETE "%BASE%/v1/boms/rows/%ROW_MOD%"
+
+Ожидаем: 200, {}.
+
+----------------------------------------------------------------------------
+C2. УДАЛИТЬ МОДИФИКАЦИЮ
+    DELETE /v1/boms/{id}
+----------------------------------------------------------------------------
+curl -s -X DELETE "%BASE%/v1/boms/%BOM_MOD%"
+
+Ожидаем: 200, {}. Строки каскадно удаляются.
+
+----------------------------------------------------------------------------
+C3. УДАЛИТЬ ДЕФОЛТНЫЙ BOM
+----------------------------------------------------------------------------
+curl -s -X DELETE "%BASE%/v1/boms/%BOM_DEFAULT%"
+
+Ожидаем: 200, {}. Далее список изделия пуст:
+curl -s "%BASE%/v1/products/%PRODUCT%/boms"   ->  { "boms": [] }
+
+----------------------------------------------------------------------------
+C4. УДАЛИТЬ КОМПОНЕНТ
+    DELETE /v1/components/{id}
+----------------------------------------------------------------------------
+curl -s -X DELETE "%BASE%/v1/components/%COMP_A%"
+curl -s -X DELETE "%BASE%/v1/components/%COMP_B%"
+
+Ожидаем: 200, {}.
+
+----------------------------------------------------------------------------
+C5. УДАЛИТЬ ИЗДЕЛИЕ
+    DELETE /v1/products/{id}
+----------------------------------------------------------------------------
+curl -s -X DELETE "%BASE%/v1/products/%PRODUCT%"
+
+Ожидаем: 200, {}.
+
+----------------------------------------------------------------------------
+C6. УДАЛИТЬ УЗЛЫ (сначала листья, потом корни)
+    DELETE /v1/nodes/{id}
+----------------------------------------------------------------------------
+-- Дерево изделий (изделие уже удалено в C5):
+curl -s -X DELETE "%BASE%/v1/nodes/%NODE_ASM%"
+curl -s -X DELETE "%BASE%/v1/nodes/%NODE_PRODUCTS%"
+
+-- Дерево компонентов (компоненты уже удалены в C4):
+curl -s -X DELETE "%BASE%/v1/nodes/%NODE_CHILD%"
+curl -s -X DELETE "%BASE%/v1/nodes/%NODE_ROOT%"
+
+Ожидаем: 200, {}. (Дочерний узел удаляется раньше родителя — FK RESTRICT.)
+
+----------------------------------------------------------------------------
+C7. НЕГАТИВНЫЕ ПРОВЕРКИ
+----------------------------------------------------------------------------
+-- ping без проблем, но каждый битый запрос должен вернуть ошибку:
+
+-- create node без name -> 400
+curl -s -i -X POST "%BASE%/v1/nodes" -H "Content-Type: application/json" -d "{\"name\":\"\"}"
+
+-- create component без nodeId -> 400
+curl -s -i -X POST "%BASE%/v1/components" -H "Content-Type: application/json" -d "{\"nodeId\":\"\",\"name\":\"X\"}"
+
+-- create product с несуществующим node -> 404 (node not found)
+curl -s -i -X POST "%BASE%/v1/products" -H "Content-Type: application/json" -d "{\"nodeId\":\"00000000-0000-0000-0000-000000000000\",\"name\":\"X\"}"
+
+-- get несуществующего узла -> 404
+curl -s -i "%BASE%/v1/nodes/00000000-0000-0000-0000-000000000000"
+
+-- get несуществующего BOM -> 404
+curl -s -i "%BASE%/v1/boms/00000000-0000-0000-0000-000000000000"
+
+-- list children без parent -> 400
+curl -s -i "%BASE%/v1/nodes//children"
+
+-- добавление строки с quantity <= 0 -> 400
+curl -s -i -X POST "%BASE%/v1/boms/%BOM_DEFAULT%/rows" -H "Content-Type: application/json" -d "{\"componentId\":\"%COMP_A%\",\"quantity\":\"0\"}"
+
+-- модификация без name -> 400
+curl -s -i -X POST "%BASE%/v1/products/%PRODUCT%/boms" -H "Content-Type: application/json" -d "{\"isDefault\":false}"
+
+-- BOM default для несуществующего изделия всё равно создаётся (нет FK) ->
+   200; изделие с этим id в каталоге отсутствует. Это ожидаемое поведение:
+curl -s -i -X POST "%BASE%/v1/products/00000000-0000-0000-0000-000000000000/boms" -H "Content-Type: application/json" -d "{\"isDefault\":true}"
+
+
+============================================================================
+ПОЛНАЯ КАРТА МЕТОДОВ -> HTTP
+============================================================================
+COMMON
+  Ping                GET    /v1/ping
+CATALOG — NodeService
+  CreateNode          POST   /v1/nodes
+  GetNode             GET    /v1/nodes/{id}
+  ListChildren        GET    /v1/nodes/{parent_id}/children
+  UpdateNode          PATCH  /v1/nodes/{id}
+  DeleteNode          DELETE /v1/nodes/{id}
+CATALOG — ComponentService
+  CreateComponent     POST   /v1/components
+  GetComponent        GET    /v1/components/{id}
+  ListComponents      GET    /v1/nodes/{node_id}/components
+  UpdateComponent     PATCH  /v1/components/{id}
+  DeleteComponent     DELETE /v1/components/{id}
+CATALOG — ProductService
+  CreateProduct       POST   /v1/products
+  GetProduct          GET    /v1/products/{id}
+  ListProducts        GET    /v1/nodes/{node_id}/products
+  UpdateProduct       PATCH  /v1/products/{id}
+  DeleteProduct       DELETE /v1/products/{id}
+CONFIGURATION — BomService
+  GetBom              GET    /v1/boms/{id}
+  ListBoms            GET    /v1/products/{product_id}/boms
+  CreateBom           POST   /v1/products/{product_id}/boms
+  DeleteBom           DELETE /v1/boms/{id}
+  ReplaceBomRows      PUT    /v1/boms/{bom_id}/rows
+  AddBomRow           POST   /v1/boms/{bom_id}/rows
+  UpdateBomRow        PATCH  /v1/boms/rows/{id}
+  DeleteBomRow        DELETE /v1/boms/rows/{id}
+  ListBomRevisions    GET    /v1/boms/{bom_id}/revisions
+  GetBomRevision      GET    /v1/boms/{bom_id}/revisions/{revision}
+====================================================================

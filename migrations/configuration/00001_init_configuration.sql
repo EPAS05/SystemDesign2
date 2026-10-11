@@ -19,6 +19,15 @@ CREATE TABLE bom_rows (
 CREATE INDEX idx_bom_rows_bom       ON bom_rows(bom_id);
 CREATE INDEX idx_bom_rows_component ON bom_rows(component_id);
 
+CREATE TABLE bom_revisions (
+  bom_id     uuid NOT NULL REFERENCES boms(id) ON DELETE CASCADE,
+  revision   int  NOT NULL,
+  rows       jsonb NOT NULL,
+  changed_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (bom_id, revision)
+);
+
 -- +goose Down
+DROP TABLE bom_revisions;
 DROP TABLE bom_rows;
 DROP TABLE boms;

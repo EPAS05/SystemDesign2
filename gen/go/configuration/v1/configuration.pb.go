@@ -10,6 +10,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -158,94 +159,6 @@ func (x *BomRow) GetQuantity() string {
 	return ""
 }
 
-type GetDefaultBomRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetDefaultBomRequest) Reset() {
-	*x = GetDefaultBomRequest{}
-	mi := &file_configuration_v1_configuration_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetDefaultBomRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetDefaultBomRequest) ProtoMessage() {}
-
-func (x *GetDefaultBomRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_configuration_v1_configuration_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetDefaultBomRequest.ProtoReflect.Descriptor instead.
-func (*GetDefaultBomRequest) Descriptor() ([]byte, []int) {
-	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *GetDefaultBomRequest) GetProductId() string {
-	if x != nil {
-		return x.ProductId
-	}
-	return ""
-}
-
-type GetDefaultBomResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Bom           *Bom                   `protobuf:"bytes,1,opt,name=bom,proto3" json:"bom,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetDefaultBomResponse) Reset() {
-	*x = GetDefaultBomResponse{}
-	mi := &file_configuration_v1_configuration_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetDefaultBomResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetDefaultBomResponse) ProtoMessage() {}
-
-func (x *GetDefaultBomResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_configuration_v1_configuration_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetDefaultBomResponse.ProtoReflect.Descriptor instead.
-func (*GetDefaultBomResponse) Descriptor() ([]byte, []int) {
-	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *GetDefaultBomResponse) GetBom() *Bom {
-	if x != nil {
-		return x.Bom
-	}
-	return nil
-}
-
 type BomRowInput struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ComponentId   string                 `protobuf:"bytes,1,opt,name=component_id,json=componentId,proto3" json:"component_id,omitempty"`
@@ -256,7 +169,7 @@ type BomRowInput struct {
 
 func (x *BomRowInput) Reset() {
 	*x = BomRowInput{}
-	mi := &file_configuration_v1_configuration_proto_msgTypes[4]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -268,7 +181,7 @@ func (x *BomRowInput) String() string {
 func (*BomRowInput) ProtoMessage() {}
 
 func (x *BomRowInput) ProtoReflect() protoreflect.Message {
-	mi := &file_configuration_v1_configuration_proto_msgTypes[4]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -281,7 +194,7 @@ func (x *BomRowInput) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BomRowInput.ProtoReflect.Descriptor instead.
 func (*BomRowInput) Descriptor() ([]byte, []int) {
-	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{4}
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *BomRowInput) GetComponentId() string {
@@ -298,29 +211,28 @@ func (x *BomRowInput) GetQuantity() string {
 	return ""
 }
 
-type ReplaceDefaultBomRequest struct {
+type GetBomRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	Rows          []*BomRowInput         `protobuf:"bytes,2,rep,name=rows,proto3" json:"rows,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ReplaceDefaultBomRequest) Reset() {
-	*x = ReplaceDefaultBomRequest{}
-	mi := &file_configuration_v1_configuration_proto_msgTypes[5]
+func (x *GetBomRequest) Reset() {
+	*x = GetBomRequest{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ReplaceDefaultBomRequest) String() string {
+func (x *GetBomRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ReplaceDefaultBomRequest) ProtoMessage() {}
+func (*GetBomRequest) ProtoMessage() {}
 
-func (x *ReplaceDefaultBomRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_configuration_v1_configuration_proto_msgTypes[5]
+func (x *GetBomRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -331,46 +243,127 @@ func (x *ReplaceDefaultBomRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ReplaceDefaultBomRequest.ProtoReflect.Descriptor instead.
-func (*ReplaceDefaultBomRequest) Descriptor() ([]byte, []int) {
-	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{5}
+// Deprecated: Use GetBomRequest.ProtoReflect.Descriptor instead.
+func (*GetBomRequest) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ReplaceDefaultBomRequest) GetProductId() string {
+func (x *GetBomRequest) GetId() string {
 	if x != nil {
-		return x.ProductId
+		return x.Id
 	}
 	return ""
 }
 
-func (x *ReplaceDefaultBomRequest) GetRows() []*BomRowInput {
-	if x != nil {
-		return x.Rows
-	}
-	return nil
-}
-
-type ReplaceDefaultBomResponse struct {
+type GetBomResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Bom           *Bom                   `protobuf:"bytes,1,opt,name=bom,proto3" json:"bom,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ReplaceDefaultBomResponse) Reset() {
-	*x = ReplaceDefaultBomResponse{}
+func (x *GetBomResponse) Reset() {
+	*x = GetBomResponse{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBomResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBomResponse) ProtoMessage() {}
+
+func (x *GetBomResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBomResponse.ProtoReflect.Descriptor instead.
+func (*GetBomResponse) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetBomResponse) GetBom() *Bom {
+	if x != nil {
+		return x.Bom
+	}
+	return nil
+}
+
+type ListBomsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListBomsRequest) Reset() {
+	*x = ListBomsRequest{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListBomsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListBomsRequest) ProtoMessage() {}
+
+func (x *ListBomsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListBomsRequest.ProtoReflect.Descriptor instead.
+func (*ListBomsRequest) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ListBomsRequest) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+type ListBomsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Boms          []*Bom                 `protobuf:"bytes,1,rep,name=boms,proto3" json:"boms,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListBomsResponse) Reset() {
+	*x = ListBomsResponse{}
 	mi := &file_configuration_v1_configuration_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ReplaceDefaultBomResponse) String() string {
+func (x *ListBomsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ReplaceDefaultBomResponse) ProtoMessage() {}
+func (*ListBomsResponse) ProtoMessage() {}
 
-func (x *ReplaceDefaultBomResponse) ProtoReflect() protoreflect.Message {
+func (x *ListBomsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_configuration_v1_configuration_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -382,12 +375,292 @@ func (x *ReplaceDefaultBomResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ReplaceDefaultBomResponse.ProtoReflect.Descriptor instead.
-func (*ReplaceDefaultBomResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListBomsResponse.ProtoReflect.Descriptor instead.
+func (*ListBomsResponse) Descriptor() ([]byte, []int) {
 	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ReplaceDefaultBomResponse) GetBom() *Bom {
+func (x *ListBomsResponse) GetBoms() []*Bom {
+	if x != nil {
+		return x.Boms
+	}
+	return nil
+}
+
+type CreateBomRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	IsDefault     bool                   `protobuf:"varint,2,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateBomRequest) Reset() {
+	*x = CreateBomRequest{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateBomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateBomRequest) ProtoMessage() {}
+
+func (x *CreateBomRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateBomRequest.ProtoReflect.Descriptor instead.
+func (*CreateBomRequest) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CreateBomRequest) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *CreateBomRequest) GetIsDefault() bool {
+	if x != nil {
+		return x.IsDefault
+	}
+	return false
+}
+
+func (x *CreateBomRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type CreateBomResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Bom           *Bom                   `protobuf:"bytes,1,opt,name=bom,proto3" json:"bom,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateBomResponse) Reset() {
+	*x = CreateBomResponse{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateBomResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateBomResponse) ProtoMessage() {}
+
+func (x *CreateBomResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateBomResponse.ProtoReflect.Descriptor instead.
+func (*CreateBomResponse) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *CreateBomResponse) GetBom() *Bom {
+	if x != nil {
+		return x.Bom
+	}
+	return nil
+}
+
+type DeleteBomRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteBomRequest) Reset() {
+	*x = DeleteBomRequest{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteBomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteBomRequest) ProtoMessage() {}
+
+func (x *DeleteBomRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteBomRequest.ProtoReflect.Descriptor instead.
+func (*DeleteBomRequest) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteBomRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type DeleteBomResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteBomResponse) Reset() {
+	*x = DeleteBomResponse{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteBomResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteBomResponse) ProtoMessage() {}
+
+func (x *DeleteBomResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteBomResponse.ProtoReflect.Descriptor instead.
+func (*DeleteBomResponse) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{10}
+}
+
+type ReplaceBomRowsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BomId         string                 `protobuf:"bytes,1,opt,name=bom_id,json=bomId,proto3" json:"bom_id,omitempty"`
+	Rows          []*BomRowInput         `protobuf:"bytes,2,rep,name=rows,proto3" json:"rows,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReplaceBomRowsRequest) Reset() {
+	*x = ReplaceBomRowsRequest{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReplaceBomRowsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReplaceBomRowsRequest) ProtoMessage() {}
+
+func (x *ReplaceBomRowsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReplaceBomRowsRequest.ProtoReflect.Descriptor instead.
+func (*ReplaceBomRowsRequest) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ReplaceBomRowsRequest) GetBomId() string {
+	if x != nil {
+		return x.BomId
+	}
+	return ""
+}
+
+func (x *ReplaceBomRowsRequest) GetRows() []*BomRowInput {
+	if x != nil {
+		return x.Rows
+	}
+	return nil
+}
+
+type ReplaceBomRowsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Bom           *Bom                   `protobuf:"bytes,1,opt,name=bom,proto3" json:"bom,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReplaceBomRowsResponse) Reset() {
+	*x = ReplaceBomRowsResponse{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReplaceBomRowsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReplaceBomRowsResponse) ProtoMessage() {}
+
+func (x *ReplaceBomRowsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReplaceBomRowsResponse.ProtoReflect.Descriptor instead.
+func (*ReplaceBomRowsResponse) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ReplaceBomRowsResponse) GetBom() *Bom {
 	if x != nil {
 		return x.Bom
 	}
@@ -396,7 +669,7 @@ func (x *ReplaceDefaultBomResponse) GetBom() *Bom {
 
 type AddBomRowRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	BomId         string                 `protobuf:"bytes,1,opt,name=bom_id,json=bomId,proto3" json:"bom_id,omitempty"`
 	ComponentId   string                 `protobuf:"bytes,2,opt,name=component_id,json=componentId,proto3" json:"component_id,omitempty"`
 	Quantity      string                 `protobuf:"bytes,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -405,7 +678,7 @@ type AddBomRowRequest struct {
 
 func (x *AddBomRowRequest) Reset() {
 	*x = AddBomRowRequest{}
-	mi := &file_configuration_v1_configuration_proto_msgTypes[7]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -417,7 +690,7 @@ func (x *AddBomRowRequest) String() string {
 func (*AddBomRowRequest) ProtoMessage() {}
 
 func (x *AddBomRowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_configuration_v1_configuration_proto_msgTypes[7]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -430,12 +703,12 @@ func (x *AddBomRowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddBomRowRequest.ProtoReflect.Descriptor instead.
 func (*AddBomRowRequest) Descriptor() ([]byte, []int) {
-	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{7}
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *AddBomRowRequest) GetProductId() string {
+func (x *AddBomRowRequest) GetBomId() string {
 	if x != nil {
-		return x.ProductId
+		return x.BomId
 	}
 	return ""
 }
@@ -463,7 +736,7 @@ type AddBomRowResponse struct {
 
 func (x *AddBomRowResponse) Reset() {
 	*x = AddBomRowResponse{}
-	mi := &file_configuration_v1_configuration_proto_msgTypes[8]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -475,7 +748,7 @@ func (x *AddBomRowResponse) String() string {
 func (*AddBomRowResponse) ProtoMessage() {}
 
 func (x *AddBomRowResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_configuration_v1_configuration_proto_msgTypes[8]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -488,7 +761,7 @@ func (x *AddBomRowResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddBomRowResponse.ProtoReflect.Descriptor instead.
 func (*AddBomRowResponse) Descriptor() ([]byte, []int) {
-	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{8}
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *AddBomRowResponse) GetRow() *BomRow {
@@ -509,7 +782,7 @@ type UpdateBomRowRequest struct {
 
 func (x *UpdateBomRowRequest) Reset() {
 	*x = UpdateBomRowRequest{}
-	mi := &file_configuration_v1_configuration_proto_msgTypes[9]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -521,7 +794,7 @@ func (x *UpdateBomRowRequest) String() string {
 func (*UpdateBomRowRequest) ProtoMessage() {}
 
 func (x *UpdateBomRowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_configuration_v1_configuration_proto_msgTypes[9]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -534,7 +807,7 @@ func (x *UpdateBomRowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBomRowRequest.ProtoReflect.Descriptor instead.
 func (*UpdateBomRowRequest) Descriptor() ([]byte, []int) {
-	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{9}
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *UpdateBomRowRequest) GetId() string {
@@ -567,7 +840,7 @@ type UpdateBomRowResponse struct {
 
 func (x *UpdateBomRowResponse) Reset() {
 	*x = UpdateBomRowResponse{}
-	mi := &file_configuration_v1_configuration_proto_msgTypes[10]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -579,7 +852,7 @@ func (x *UpdateBomRowResponse) String() string {
 func (*UpdateBomRowResponse) ProtoMessage() {}
 
 func (x *UpdateBomRowResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_configuration_v1_configuration_proto_msgTypes[10]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -592,7 +865,7 @@ func (x *UpdateBomRowResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBomRowResponse.ProtoReflect.Descriptor instead.
 func (*UpdateBomRowResponse) Descriptor() ([]byte, []int) {
-	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{10}
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *UpdateBomRowResponse) GetRow() *BomRow {
@@ -611,7 +884,7 @@ type DeleteBomRowRequest struct {
 
 func (x *DeleteBomRowRequest) Reset() {
 	*x = DeleteBomRowRequest{}
-	mi := &file_configuration_v1_configuration_proto_msgTypes[11]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -623,7 +896,7 @@ func (x *DeleteBomRowRequest) String() string {
 func (*DeleteBomRowRequest) ProtoMessage() {}
 
 func (x *DeleteBomRowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_configuration_v1_configuration_proto_msgTypes[11]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -636,7 +909,7 @@ func (x *DeleteBomRowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBomRowRequest.ProtoReflect.Descriptor instead.
 func (*DeleteBomRowRequest) Descriptor() ([]byte, []int) {
-	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{11}
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *DeleteBomRowRequest) GetId() string {
@@ -654,7 +927,7 @@ type DeleteBomRowResponse struct {
 
 func (x *DeleteBomRowResponse) Reset() {
 	*x = DeleteBomRowResponse{}
-	mi := &file_configuration_v1_configuration_proto_msgTypes[12]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -666,7 +939,7 @@ func (x *DeleteBomRowResponse) String() string {
 func (*DeleteBomRowResponse) ProtoMessage() {}
 
 func (x *DeleteBomRowResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_configuration_v1_configuration_proto_msgTypes[12]
+	mi := &file_configuration_v1_configuration_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -679,14 +952,274 @@ func (x *DeleteBomRowResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBomRowResponse.ProtoReflect.Descriptor instead.
 func (*DeleteBomRowResponse) Descriptor() ([]byte, []int) {
-	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{12}
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{18}
+}
+
+type BomRevision struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BomId         string                 `protobuf:"bytes,1,opt,name=bom_id,json=bomId,proto3" json:"bom_id,omitempty"`
+	Revision      int32                  `protobuf:"varint,2,opt,name=revision,proto3" json:"revision,omitempty"`
+	ChangedAt     *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BomRevision) Reset() {
+	*x = BomRevision{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BomRevision) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BomRevision) ProtoMessage() {}
+
+func (x *BomRevision) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BomRevision.ProtoReflect.Descriptor instead.
+func (*BomRevision) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *BomRevision) GetBomId() string {
+	if x != nil {
+		return x.BomId
+	}
+	return ""
+}
+
+func (x *BomRevision) GetRevision() int32 {
+	if x != nil {
+		return x.Revision
+	}
+	return 0
+}
+
+func (x *BomRevision) GetChangedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ChangedAt
+	}
+	return nil
+}
+
+type ListBomRevisionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BomId         string                 `protobuf:"bytes,1,opt,name=bom_id,json=bomId,proto3" json:"bom_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListBomRevisionsRequest) Reset() {
+	*x = ListBomRevisionsRequest{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListBomRevisionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListBomRevisionsRequest) ProtoMessage() {}
+
+func (x *ListBomRevisionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListBomRevisionsRequest.ProtoReflect.Descriptor instead.
+func (*ListBomRevisionsRequest) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ListBomRevisionsRequest) GetBomId() string {
+	if x != nil {
+		return x.BomId
+	}
+	return ""
+}
+
+type ListBomRevisionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Revisions     []*BomRevision         `protobuf:"bytes,1,rep,name=revisions,proto3" json:"revisions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListBomRevisionsResponse) Reset() {
+	*x = ListBomRevisionsResponse{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListBomRevisionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListBomRevisionsResponse) ProtoMessage() {}
+
+func (x *ListBomRevisionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListBomRevisionsResponse.ProtoReflect.Descriptor instead.
+func (*ListBomRevisionsResponse) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ListBomRevisionsResponse) GetRevisions() []*BomRevision {
+	if x != nil {
+		return x.Revisions
+	}
+	return nil
+}
+
+type GetBomRevisionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BomId         string                 `protobuf:"bytes,1,opt,name=bom_id,json=bomId,proto3" json:"bom_id,omitempty"`
+	Revision      int32                  `protobuf:"varint,2,opt,name=revision,proto3" json:"revision,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBomRevisionRequest) Reset() {
+	*x = GetBomRevisionRequest{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBomRevisionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBomRevisionRequest) ProtoMessage() {}
+
+func (x *GetBomRevisionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBomRevisionRequest.ProtoReflect.Descriptor instead.
+func (*GetBomRevisionRequest) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *GetBomRevisionRequest) GetBomId() string {
+	if x != nil {
+		return x.BomId
+	}
+	return ""
+}
+
+func (x *GetBomRevisionRequest) GetRevision() int32 {
+	if x != nil {
+		return x.Revision
+	}
+	return 0
+}
+
+type GetBomRevisionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Revision      int32                  `protobuf:"varint,1,opt,name=revision,proto3" json:"revision,omitempty"`
+	ChangedAt     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=changed_at,json=changedAt,proto3" json:"changed_at,omitempty"`
+	Rows          []*BomRow              `protobuf:"bytes,3,rep,name=rows,proto3" json:"rows,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBomRevisionResponse) Reset() {
+	*x = GetBomRevisionResponse{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBomRevisionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBomRevisionResponse) ProtoMessage() {}
+
+func (x *GetBomRevisionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBomRevisionResponse.ProtoReflect.Descriptor instead.
+func (*GetBomRevisionResponse) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetBomRevisionResponse) GetRevision() int32 {
+	if x != nil {
+		return x.Revision
+	}
+	return 0
+}
+
+func (x *GetBomRevisionResponse) GetChangedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ChangedAt
+	}
+	return nil
+}
+
+func (x *GetBomRevisionResponse) GetRows() []*BomRow {
+	if x != nil {
+		return x.Rows
+	}
+	return nil
 }
 
 var File_configuration_v1_configuration_proto protoreflect.FileDescriptor
 
 const file_configuration_v1_configuration_proto_rawDesc = "" +
 	"\n" +
-	"$configuration/v1/configuration.proto\x12\x10configuration.v1\x1a\x1cgoogle/api/annotations.proto\"\x95\x01\n" +
+	"$configuration/v1/configuration.proto\x12\x10configuration.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x95\x01\n" +
 	"\x03Bom\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -698,24 +1231,37 @@ const file_configuration_v1_configuration_proto_rawDesc = "" +
 	"\x06BomRow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fcomponent_id\x18\x02 \x01(\tR\vcomponentId\x12\x1a\n" +
-	"\bquantity\x18\x03 \x01(\tR\bquantity\"5\n" +
-	"\x14GetDefaultBomRequest\x12\x1d\n" +
-	"\n" +
-	"product_id\x18\x01 \x01(\tR\tproductId\"@\n" +
-	"\x15GetDefaultBomResponse\x12'\n" +
-	"\x03bom\x18\x01 \x01(\v2\x15.configuration.v1.BomR\x03bom\"L\n" +
+	"\bquantity\x18\x03 \x01(\tR\bquantity\"L\n" +
 	"\vBomRowInput\x12!\n" +
 	"\fcomponent_id\x18\x01 \x01(\tR\vcomponentId\x12\x1a\n" +
-	"\bquantity\x18\x02 \x01(\tR\bquantity\"l\n" +
-	"\x18ReplaceDefaultBomRequest\x12\x1d\n" +
+	"\bquantity\x18\x02 \x01(\tR\bquantity\"\x1f\n" +
+	"\rGetBomRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"9\n" +
+	"\x0eGetBomResponse\x12'\n" +
+	"\x03bom\x18\x01 \x01(\v2\x15.configuration.v1.BomR\x03bom\"0\n" +
+	"\x0fListBomsRequest\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\tR\tproductId\x121\n" +
-	"\x04rows\x18\x02 \x03(\v2\x1d.configuration.v1.BomRowInputR\x04rows\"D\n" +
-	"\x19ReplaceDefaultBomResponse\x12'\n" +
-	"\x03bom\x18\x01 \x01(\v2\x15.configuration.v1.BomR\x03bom\"p\n" +
-	"\x10AddBomRowRequest\x12\x1d\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\"=\n" +
+	"\x10ListBomsResponse\x12)\n" +
+	"\x04boms\x18\x01 \x03(\v2\x15.configuration.v1.BomR\x04boms\"d\n" +
+	"\x10CreateBomRequest\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\tR\tproductId\x12!\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\x12\x1d\n" +
+	"\n" +
+	"is_default\x18\x02 \x01(\bR\tisDefault\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\"<\n" +
+	"\x11CreateBomResponse\x12'\n" +
+	"\x03bom\x18\x01 \x01(\v2\x15.configuration.v1.BomR\x03bom\"\"\n" +
+	"\x10DeleteBomRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x13\n" +
+	"\x11DeleteBomResponse\"a\n" +
+	"\x15ReplaceBomRowsRequest\x12\x15\n" +
+	"\x06bom_id\x18\x01 \x01(\tR\x05bomId\x121\n" +
+	"\x04rows\x18\x02 \x03(\v2\x1d.configuration.v1.BomRowInputR\x04rows\"A\n" +
+	"\x16ReplaceBomRowsResponse\x12'\n" +
+	"\x03bom\x18\x01 \x01(\v2\x15.configuration.v1.BomR\x03bom\"h\n" +
+	"\x10AddBomRowRequest\x12\x15\n" +
+	"\x06bom_id\x18\x01 \x01(\tR\x05bomId\x12!\n" +
 	"\fcomponent_id\x18\x02 \x01(\tR\vcomponentId\x12\x1a\n" +
 	"\bquantity\x18\x03 \x01(\tR\bquantity\"?\n" +
 	"\x11AddBomRowResponse\x12*\n" +
@@ -728,14 +1274,36 @@ const file_configuration_v1_configuration_proto_rawDesc = "" +
 	"\x03row\x18\x01 \x01(\v2\x18.configuration.v1.BomRowR\x03row\"%\n" +
 	"\x13DeleteBomRowRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x16\n" +
-	"\x14DeleteBomRowResponse2\xac\x05\n" +
+	"\x14DeleteBomRowResponse\"{\n" +
+	"\vBomRevision\x12\x15\n" +
+	"\x06bom_id\x18\x01 \x01(\tR\x05bomId\x12\x1a\n" +
+	"\brevision\x18\x02 \x01(\x05R\brevision\x129\n" +
 	"\n" +
-	"BomService\x12\x87\x01\n" +
-	"\rGetDefaultBom\x12&.configuration.v1.GetDefaultBomRequest\x1a'.configuration.v1.GetDefaultBomResponse\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/v1/products/{product_id}/bom\x12\x96\x01\n" +
-	"\x11ReplaceDefaultBom\x12*.configuration.v1.ReplaceDefaultBomRequest\x1a+.configuration.v1.ReplaceDefaultBomResponse\"(\x82\xd3\xe4\x93\x02\":\x01*\x1a\x1d/v1/products/{product_id}/bom\x12\x83\x01\n" +
-	"\tAddBomRow\x12\".configuration.v1.AddBomRowRequest\x1a#.configuration.v1.AddBomRowResponse\"-\x82\xd3\xe4\x93\x02':\x01*\"\"/v1/products/{product_id}/bom/rows\x12{\n" +
-	"\fUpdateBomRow\x12%.configuration.v1.UpdateBomRowRequest\x1a&.configuration.v1.UpdateBomRowResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*2\x11/v1/bom/rows/{id}\x12x\n" +
-	"\fDeleteBomRow\x12%.configuration.v1.DeleteBomRowRequest\x1a&.configuration.v1.DeleteBomRowResponse\"\x19\x82\xd3\xe4\x93\x02\x13*\x11/v1/bom/rows/{id}BKZIgithub.com/EPAS05/catalog-service/gen/go/configuration/v1;configurationv1b\x06proto3"
+	"changed_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt\"0\n" +
+	"\x17ListBomRevisionsRequest\x12\x15\n" +
+	"\x06bom_id\x18\x01 \x01(\tR\x05bomId\"W\n" +
+	"\x18ListBomRevisionsResponse\x12;\n" +
+	"\trevisions\x18\x01 \x03(\v2\x1d.configuration.v1.BomRevisionR\trevisions\"J\n" +
+	"\x15GetBomRevisionRequest\x12\x15\n" +
+	"\x06bom_id\x18\x01 \x01(\tR\x05bomId\x12\x1a\n" +
+	"\brevision\x18\x02 \x01(\x05R\brevision\"\x9d\x01\n" +
+	"\x16GetBomRevisionResponse\x12\x1a\n" +
+	"\brevision\x18\x01 \x01(\x05R\brevision\x129\n" +
+	"\n" +
+	"changed_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt\x12,\n" +
+	"\x04rows\x18\x03 \x03(\v2\x18.configuration.v1.BomRowR\x04rows2\xfb\t\n" +
+	"\n" +
+	"BomService\x12b\n" +
+	"\x06GetBom\x12\x1f.configuration.v1.GetBomRequest\x1a .configuration.v1.GetBomResponse\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/v1/boms/{id}\x12y\n" +
+	"\bListBoms\x12!.configuration.v1.ListBomsRequest\x1a\".configuration.v1.ListBomsResponse\"&\x82\xd3\xe4\x93\x02 \x12\x1e/v1/products/{product_id}/boms\x12\x7f\n" +
+	"\tCreateBom\x12\".configuration.v1.CreateBomRequest\x1a#.configuration.v1.CreateBomResponse\")\x82\xd3\xe4\x93\x02#:\x01*\"\x1e/v1/products/{product_id}/boms\x12k\n" +
+	"\tDeleteBom\x12\".configuration.v1.DeleteBomRequest\x1a#.configuration.v1.DeleteBomResponse\"\x15\x82\xd3\xe4\x93\x02\x0f*\r/v1/boms/{id}\x12\x86\x01\n" +
+	"\x0eReplaceBomRows\x12'.configuration.v1.ReplaceBomRowsRequest\x1a(.configuration.v1.ReplaceBomRowsResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\x1a\x16/v1/boms/{bom_id}/rows\x12w\n" +
+	"\tAddBomRow\x12\".configuration.v1.AddBomRowRequest\x1a#.configuration.v1.AddBomRowResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/boms/{bom_id}/rows\x12|\n" +
+	"\fUpdateBomRow\x12%.configuration.v1.UpdateBomRowRequest\x1a&.configuration.v1.UpdateBomRowResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*2\x12/v1/boms/rows/{id}\x12y\n" +
+	"\fDeleteBomRow\x12%.configuration.v1.DeleteBomRowRequest\x1a&.configuration.v1.DeleteBomRowResponse\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/v1/boms/rows/{id}\x12\x8e\x01\n" +
+	"\x10ListBomRevisions\x12).configuration.v1.ListBomRevisionsRequest\x1a*.configuration.v1.ListBomRevisionsResponse\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/v1/boms/{bom_id}/revisions\x12\x93\x01\n" +
+	"\x0eGetBomRevision\x12'.configuration.v1.GetBomRevisionRequest\x1a(.configuration.v1.GetBomRevisionResponse\".\x82\xd3\xe4\x93\x02(\x12&/v1/boms/{bom_id}/revisions/{revision}BKZIgithub.com/EPAS05/catalog-service/gen/go/configuration/v1;configurationv1b\x06proto3"
 
 var (
 	file_configuration_v1_configuration_proto_rawDescOnce sync.Once
@@ -749,44 +1317,72 @@ func file_configuration_v1_configuration_proto_rawDescGZIP() []byte {
 	return file_configuration_v1_configuration_proto_rawDescData
 }
 
-var file_configuration_v1_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_configuration_v1_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_configuration_v1_configuration_proto_goTypes = []any{
-	(*Bom)(nil),                       // 0: configuration.v1.Bom
-	(*BomRow)(nil),                    // 1: configuration.v1.BomRow
-	(*GetDefaultBomRequest)(nil),      // 2: configuration.v1.GetDefaultBomRequest
-	(*GetDefaultBomResponse)(nil),     // 3: configuration.v1.GetDefaultBomResponse
-	(*BomRowInput)(nil),               // 4: configuration.v1.BomRowInput
-	(*ReplaceDefaultBomRequest)(nil),  // 5: configuration.v1.ReplaceDefaultBomRequest
-	(*ReplaceDefaultBomResponse)(nil), // 6: configuration.v1.ReplaceDefaultBomResponse
-	(*AddBomRowRequest)(nil),          // 7: configuration.v1.AddBomRowRequest
-	(*AddBomRowResponse)(nil),         // 8: configuration.v1.AddBomRowResponse
-	(*UpdateBomRowRequest)(nil),       // 9: configuration.v1.UpdateBomRowRequest
-	(*UpdateBomRowResponse)(nil),      // 10: configuration.v1.UpdateBomRowResponse
-	(*DeleteBomRowRequest)(nil),       // 11: configuration.v1.DeleteBomRowRequest
-	(*DeleteBomRowResponse)(nil),      // 12: configuration.v1.DeleteBomRowResponse
+	(*Bom)(nil),                      // 0: configuration.v1.Bom
+	(*BomRow)(nil),                   // 1: configuration.v1.BomRow
+	(*BomRowInput)(nil),              // 2: configuration.v1.BomRowInput
+	(*GetBomRequest)(nil),            // 3: configuration.v1.GetBomRequest
+	(*GetBomResponse)(nil),           // 4: configuration.v1.GetBomResponse
+	(*ListBomsRequest)(nil),          // 5: configuration.v1.ListBomsRequest
+	(*ListBomsResponse)(nil),         // 6: configuration.v1.ListBomsResponse
+	(*CreateBomRequest)(nil),         // 7: configuration.v1.CreateBomRequest
+	(*CreateBomResponse)(nil),        // 8: configuration.v1.CreateBomResponse
+	(*DeleteBomRequest)(nil),         // 9: configuration.v1.DeleteBomRequest
+	(*DeleteBomResponse)(nil),        // 10: configuration.v1.DeleteBomResponse
+	(*ReplaceBomRowsRequest)(nil),    // 11: configuration.v1.ReplaceBomRowsRequest
+	(*ReplaceBomRowsResponse)(nil),   // 12: configuration.v1.ReplaceBomRowsResponse
+	(*AddBomRowRequest)(nil),         // 13: configuration.v1.AddBomRowRequest
+	(*AddBomRowResponse)(nil),        // 14: configuration.v1.AddBomRowResponse
+	(*UpdateBomRowRequest)(nil),      // 15: configuration.v1.UpdateBomRowRequest
+	(*UpdateBomRowResponse)(nil),     // 16: configuration.v1.UpdateBomRowResponse
+	(*DeleteBomRowRequest)(nil),      // 17: configuration.v1.DeleteBomRowRequest
+	(*DeleteBomRowResponse)(nil),     // 18: configuration.v1.DeleteBomRowResponse
+	(*BomRevision)(nil),              // 19: configuration.v1.BomRevision
+	(*ListBomRevisionsRequest)(nil),  // 20: configuration.v1.ListBomRevisionsRequest
+	(*ListBomRevisionsResponse)(nil), // 21: configuration.v1.ListBomRevisionsResponse
+	(*GetBomRevisionRequest)(nil),    // 22: configuration.v1.GetBomRevisionRequest
+	(*GetBomRevisionResponse)(nil),   // 23: configuration.v1.GetBomRevisionResponse
+	(*timestamppb.Timestamp)(nil),    // 24: google.protobuf.Timestamp
 }
 var file_configuration_v1_configuration_proto_depIdxs = []int32{
 	1,  // 0: configuration.v1.Bom.rows:type_name -> configuration.v1.BomRow
-	0,  // 1: configuration.v1.GetDefaultBomResponse.bom:type_name -> configuration.v1.Bom
-	4,  // 2: configuration.v1.ReplaceDefaultBomRequest.rows:type_name -> configuration.v1.BomRowInput
-	0,  // 3: configuration.v1.ReplaceDefaultBomResponse.bom:type_name -> configuration.v1.Bom
-	1,  // 4: configuration.v1.AddBomRowResponse.row:type_name -> configuration.v1.BomRow
-	1,  // 5: configuration.v1.UpdateBomRowResponse.row:type_name -> configuration.v1.BomRow
-	2,  // 6: configuration.v1.BomService.GetDefaultBom:input_type -> configuration.v1.GetDefaultBomRequest
-	5,  // 7: configuration.v1.BomService.ReplaceDefaultBom:input_type -> configuration.v1.ReplaceDefaultBomRequest
-	7,  // 8: configuration.v1.BomService.AddBomRow:input_type -> configuration.v1.AddBomRowRequest
-	9,  // 9: configuration.v1.BomService.UpdateBomRow:input_type -> configuration.v1.UpdateBomRowRequest
-	11, // 10: configuration.v1.BomService.DeleteBomRow:input_type -> configuration.v1.DeleteBomRowRequest
-	3,  // 11: configuration.v1.BomService.GetDefaultBom:output_type -> configuration.v1.GetDefaultBomResponse
-	6,  // 12: configuration.v1.BomService.ReplaceDefaultBom:output_type -> configuration.v1.ReplaceDefaultBomResponse
-	8,  // 13: configuration.v1.BomService.AddBomRow:output_type -> configuration.v1.AddBomRowResponse
-	10, // 14: configuration.v1.BomService.UpdateBomRow:output_type -> configuration.v1.UpdateBomRowResponse
-	12, // 15: configuration.v1.BomService.DeleteBomRow:output_type -> configuration.v1.DeleteBomRowResponse
-	11, // [11:16] is the sub-list for method output_type
-	6,  // [6:11] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	0,  // 1: configuration.v1.GetBomResponse.bom:type_name -> configuration.v1.Bom
+	0,  // 2: configuration.v1.ListBomsResponse.boms:type_name -> configuration.v1.Bom
+	0,  // 3: configuration.v1.CreateBomResponse.bom:type_name -> configuration.v1.Bom
+	2,  // 4: configuration.v1.ReplaceBomRowsRequest.rows:type_name -> configuration.v1.BomRowInput
+	0,  // 5: configuration.v1.ReplaceBomRowsResponse.bom:type_name -> configuration.v1.Bom
+	1,  // 6: configuration.v1.AddBomRowResponse.row:type_name -> configuration.v1.BomRow
+	1,  // 7: configuration.v1.UpdateBomRowResponse.row:type_name -> configuration.v1.BomRow
+	24, // 8: configuration.v1.BomRevision.changed_at:type_name -> google.protobuf.Timestamp
+	19, // 9: configuration.v1.ListBomRevisionsResponse.revisions:type_name -> configuration.v1.BomRevision
+	24, // 10: configuration.v1.GetBomRevisionResponse.changed_at:type_name -> google.protobuf.Timestamp
+	1,  // 11: configuration.v1.GetBomRevisionResponse.rows:type_name -> configuration.v1.BomRow
+	3,  // 12: configuration.v1.BomService.GetBom:input_type -> configuration.v1.GetBomRequest
+	5,  // 13: configuration.v1.BomService.ListBoms:input_type -> configuration.v1.ListBomsRequest
+	7,  // 14: configuration.v1.BomService.CreateBom:input_type -> configuration.v1.CreateBomRequest
+	9,  // 15: configuration.v1.BomService.DeleteBom:input_type -> configuration.v1.DeleteBomRequest
+	11, // 16: configuration.v1.BomService.ReplaceBomRows:input_type -> configuration.v1.ReplaceBomRowsRequest
+	13, // 17: configuration.v1.BomService.AddBomRow:input_type -> configuration.v1.AddBomRowRequest
+	15, // 18: configuration.v1.BomService.UpdateBomRow:input_type -> configuration.v1.UpdateBomRowRequest
+	17, // 19: configuration.v1.BomService.DeleteBomRow:input_type -> configuration.v1.DeleteBomRowRequest
+	20, // 20: configuration.v1.BomService.ListBomRevisions:input_type -> configuration.v1.ListBomRevisionsRequest
+	22, // 21: configuration.v1.BomService.GetBomRevision:input_type -> configuration.v1.GetBomRevisionRequest
+	4,  // 22: configuration.v1.BomService.GetBom:output_type -> configuration.v1.GetBomResponse
+	6,  // 23: configuration.v1.BomService.ListBoms:output_type -> configuration.v1.ListBomsResponse
+	8,  // 24: configuration.v1.BomService.CreateBom:output_type -> configuration.v1.CreateBomResponse
+	10, // 25: configuration.v1.BomService.DeleteBom:output_type -> configuration.v1.DeleteBomResponse
+	12, // 26: configuration.v1.BomService.ReplaceBomRows:output_type -> configuration.v1.ReplaceBomRowsResponse
+	14, // 27: configuration.v1.BomService.AddBomRow:output_type -> configuration.v1.AddBomRowResponse
+	16, // 28: configuration.v1.BomService.UpdateBomRow:output_type -> configuration.v1.UpdateBomRowResponse
+	18, // 29: configuration.v1.BomService.DeleteBomRow:output_type -> configuration.v1.DeleteBomRowResponse
+	21, // 30: configuration.v1.BomService.ListBomRevisions:output_type -> configuration.v1.ListBomRevisionsResponse
+	23, // 31: configuration.v1.BomService.GetBomRevision:output_type -> configuration.v1.GetBomRevisionResponse
+	22, // [22:32] is the sub-list for method output_type
+	12, // [12:22] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_configuration_v1_configuration_proto_init() }
@@ -800,7 +1396,7 @@ func file_configuration_v1_configuration_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_configuration_v1_configuration_proto_rawDesc), len(file_configuration_v1_configuration_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

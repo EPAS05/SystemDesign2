@@ -1,6 +1,9 @@
 package configuration
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 var ErrNotFound = errors.New("not found")
 
@@ -17,4 +20,10 @@ type BomRow struct {
 	BomID       string
 	ComponentID string
 	Quantity    string
+}
+
+type BomRevision struct {
+	BomID     string
+	Revision  int
+	ChangedAt time.Time
 }
