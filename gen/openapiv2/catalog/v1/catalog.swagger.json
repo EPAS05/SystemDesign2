@@ -9,9 +9,6 @@
       "name": "NodeService"
     },
     {
-      "name": "ComponentService"
-    },
-    {
       "name": "ProductService"
     }
   ],
@@ -22,132 +19,6 @@
     "application/json"
   ],
   "paths": {
-    "/v1/components": {
-      "post": {
-        "operationId": "ComponentService_CreateComponent",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1CreateComponentResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1CreateComponentRequest"
-            }
-          }
-        ],
-        "tags": [
-          "ComponentService"
-        ]
-      }
-    },
-    "/v1/components/{id}": {
-      "get": {
-        "operationId": "ComponentService_GetComponent",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1GetComponentResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "ComponentService"
-        ]
-      },
-      "delete": {
-        "operationId": "ComponentService_DeleteComponent",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1DeleteComponentResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "ComponentService"
-        ]
-      },
-      "patch": {
-        "operationId": "ComponentService_UpdateComponent",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1UpdateComponentResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/ComponentServiceUpdateComponentBody"
-            }
-          }
-        ],
-        "tags": [
-          "ComponentService"
-        ]
-      }
-    },
     "/v1/nodes": {
       "post": {
         "operationId": "NodeService_CreateNode",
@@ -271,36 +142,6 @@
         ],
         "tags": [
           "NodeService"
-        ]
-      }
-    },
-    "/v1/nodes/{nodeId}/components": {
-      "get": {
-        "operationId": "ComponentService_ListComponents",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1ListComponentsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "nodeId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "ComponentService"
         ]
       }
     },
@@ -492,14 +333,6 @@
     }
   },
   "definitions": {
-    "ComponentServiceUpdateComponentBody": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
     "NodeServiceUpdateNodeBody": {
       "type": "object",
       "properties": {
@@ -544,39 +377,6 @@
         }
       }
     },
-    "v1Component": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "nodeId": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "v1CreateComponentRequest": {
-      "type": "object",
-      "properties": {
-        "nodeId": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "v1CreateComponentResponse": {
-      "type": "object",
-      "properties": {
-        "component": {
-          "$ref": "#/definitions/v1Component"
-        }
-      }
-    },
     "v1CreateNodeRequest": {
       "type": "object",
       "properties": {
@@ -615,22 +415,11 @@
         }
       }
     },
-    "v1DeleteComponentResponse": {
-      "type": "object"
-    },
     "v1DeleteNodeResponse": {
       "type": "object"
     },
     "v1DeleteProductResponse": {
       "type": "object"
-    },
-    "v1GetComponentResponse": {
-      "type": "object",
-      "properties": {
-        "component": {
-          "$ref": "#/definitions/v1Component"
-        }
-      }
     },
     "v1GetNodeResponse": {
       "type": "object",
@@ -656,18 +445,6 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/v1Node"
-          }
-        }
-      }
-    },
-    "v1ListComponentsResponse": {
-      "type": "object",
-      "properties": {
-        "components": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Component"
           }
         }
       }
@@ -709,14 +486,6 @@
         },
         "name": {
           "type": "string"
-        }
-      }
-    },
-    "v1UpdateComponentResponse": {
-      "type": "object",
-      "properties": {
-        "component": {
-          "$ref": "#/definitions/v1Component"
         }
       }
     },

@@ -18,6 +18,16 @@ func positiveQuantity(q string) bool {
 	return err == nil && f > 0 && !math.IsInf(f, 0)
 }
 
+func cycleArgumentError(err error) error {
+	switch {
+	case errors.Is(err, configuration.ErrSelfReference):
+		return status.Error(codes.InvalidArgument, "product cannot contain itself")
+	case errors.Is(err, configuration.ErrBomCycle):
+		return status.Error(codes.InvalidArgument, "bom would create a cycle")
+	}
+	return nil
+}
+
 type bomService struct {
 	configurationv1.UnimplementedBomServiceServer
 	svc *configuration.Service
@@ -90,17 +100,20 @@ func (s *bomService) ReplaceBomRows(ctx context.Context, req *configurationv1.Re
 	}
 	inputs := make([]configuration.BomRowInput, 0, len(req.Rows))
 	for _, r := range req.Rows {
-		if r.ComponentId == "" || !positiveQuantity(r.Quantity) {
-			return nil, status.Error(codes.InvalidArgument, "each row requires component_id and quantity > 0")
+		if r.ProductId == "" || !positiveQuantity(r.Quantity) {
+			return nil, status.Error(codes.InvalidArgument, "each row requires product_id and quantity > 0")
 		}
 		inputs = append(inputs, configuration.BomRowInput{
-			ComponentID: r.ComponentId,
-			Quantity:    r.Quantity,
+			ProductID: r.ProductId,
+			Quantity:  r.Quantity,
 		})
 	}
 	bom, err := s.svc.ReplaceBomRows(ctx, req.BomId, inputs)
 	if errors.Is(err, configuration.ErrNotFound) {
 		return nil, status.Error(codes.NotFound, "bom not found")
+	}
+	if err := cycleArgumentError(err); err != nil {
+		return nil, err
 	}
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -109,12 +122,15 @@ func (s *bomService) ReplaceBomRows(ctx context.Context, req *configurationv1.Re
 }
 
 func (s *bomService) AddBomRow(ctx context.Context, req *configurationv1.AddBomRowRequest) (*configurationv1.AddBomRowResponse, error) {
-	if req.BomId == "" || req.ComponentId == "" || !positiveQuantity(req.Quantity) {
-		return nil, status.Error(codes.InvalidArgument, "bom_id, component_id and quantity > 0 required")
+	if req.BomId == "" || req.ProductId == "" || !positiveQuantity(req.Quantity) {
+		return nil, status.Error(codes.InvalidArgument, "bom_id, product_id and quantity > 0 required")
 	}
-	row, err := s.svc.AddRow(ctx, req.BomId, req.ComponentId, req.Quantity)
+	row, err := s.svc.AddRow(ctx, req.BomId, req.ProductId, req.Quantity)
 	if errors.Is(err, configuration.ErrNotFound) {
 		return nil, status.Error(codes.NotFound, "bom not found")
+	}
+	if err := cycleArgumentError(err); err != nil {
+		return nil, err
 	}
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -123,12 +139,15 @@ func (s *bomService) AddBomRow(ctx context.Context, req *configurationv1.AddBomR
 }
 
 func (s *bomService) UpdateBomRow(ctx context.Context, req *configurationv1.UpdateBomRowRequest) (*configurationv1.UpdateBomRowResponse, error) {
-	if req.Id == "" || req.ComponentId == "" || !positiveQuantity(req.Quantity) {
-		return nil, status.Error(codes.InvalidArgument, "id, component_id and quantity > 0 required")
+	if req.Id == "" || req.ProductId == "" || !positiveQuantity(req.Quantity) {
+		return nil, status.Error(codes.InvalidArgument, "id, product_id and quantity > 0 required")
 	}
-	row, err := s.svc.UpdateRow(ctx, req.Id, req.ComponentId, req.Quantity)
+	row, err := s.svc.UpdateRow(ctx, req.Id, req.ProductId, req.Quantity)
 	if errors.Is(err, configuration.ErrNotFound) {
 		return nil, status.Error(codes.NotFound, "bom row not found")
+	}
+	if err := cycleArgumentError(err); err != nil {
+		return nil, err
 	}
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -215,8 +234,8 @@ func toBomProto(b *configuration.Bom) *configurationv1.Bom {
 
 func toRowProto(r *configuration.BomRow) *configurationv1.BomRow {
 	return &configurationv1.BomRow{
-		Id:          r.ID,
-		ComponentId: r.ComponentID,
-		Quantity:    r.Quantity,
+		Id:        r.ID,
+		ProductId: r.ProductID,
+		Quantity:  r.Quantity,
 	}
 }

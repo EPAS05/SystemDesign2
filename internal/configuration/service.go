@@ -2,12 +2,18 @@ package configuration
 
 import (
 	"context"
+	"errors"
 	"time"
 )
 
+var (
+	ErrSelfReference = errors.New("product cannot contain itself")
+	ErrBomCycle      = errors.New("bom would create a cycle")
+)
+
 type BomRowInput struct {
-	ComponentID string
-	Quantity    string
+	ProductID string
+	Quantity  string
 }
 
 type Service struct {
@@ -53,15 +59,38 @@ func (s *Service) ReplaceBomRows(ctx context.Context, bomID string, inputs []Bom
 	if bomID == "" {
 		return nil, ErrNotFound
 	}
+	owner, err := s.repo.BomOwnerProduct(ctx, bomID)
+	if err != nil {
+		return nil, err
+	}
+	for _, in := range inputs {
+		if err := s.checkRow(ctx, owner, in.ProductID); err != nil {
+			return nil, err
+		}
+	}
 	return s.repo.ReplaceBomRows(ctx, bomID, inputs)
 }
 
-func (s *Service) AddRow(ctx context.Context, bomID, componentID, quantity string) (*BomRow, error) {
-	return s.repo.AddRow(ctx, bomID, componentID, quantity)
+func (s *Service) AddRow(ctx context.Context, bomID, productID, quantity string) (*BomRow, error) {
+	owner, err := s.repo.BomOwnerProduct(ctx, bomID)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.checkRow(ctx, owner, productID); err != nil {
+		return nil, err
+	}
+	return s.repo.AddRow(ctx, bomID, productID, quantity)
 }
 
-func (s *Service) UpdateRow(ctx context.Context, id, componentID, quantity string) (*BomRow, error) {
-	return s.repo.UpdateRow(ctx, id, componentID, quantity)
+func (s *Service) UpdateRow(ctx context.Context, id, productID, quantity string) (*BomRow, error) {
+	owner, err := s.repo.RowOwnerProduct(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.checkRow(ctx, owner, productID); err != nil {
+		return nil, err
+	}
+	return s.repo.UpdateRow(ctx, id, productID, quantity)
 }
 
 func (s *Service) DeleteRow(ctx context.Context, id string) error {
@@ -80,4 +109,18 @@ func (s *Service) GetBomRevision(ctx context.Context, bomID string, revision int
 		return nil, time.Time{}, ErrNotFound
 	}
 	return s.repo.GetRevision(ctx, bomID, revision)
+}
+
+func (s *Service) checkRow(ctx context.Context, owner, productID string) error {
+	if owner == productID {
+		return ErrSelfReference
+	}
+	reaches, err := s.repo.ProductReaches(ctx, productID, owner)
+	if err != nil {
+		return err
+	}
+	if reaches {
+		return ErrBomCycle
+	}
+	return nil
 }

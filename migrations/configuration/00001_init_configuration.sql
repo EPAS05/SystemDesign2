@@ -10,14 +10,14 @@ CREATE UNIQUE INDEX uniq_default_bom_per_product
   ON boms(product_id) WHERE is_default = true;
 
 CREATE TABLE bom_rows (
-  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  bom_id       uuid NOT NULL REFERENCES boms(id) ON DELETE CASCADE,
-  component_id uuid NOT NULL,
-  quantity     numeric(12,3) NOT NULL CHECK (quantity > 0)
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  bom_id     uuid NOT NULL REFERENCES boms(id) ON DELETE CASCADE,
+  product_id uuid NOT NULL,
+  quantity   numeric(12,3) NOT NULL CHECK (quantity > 0)
 );
 
-CREATE INDEX idx_bom_rows_bom       ON bom_rows(bom_id);
-CREATE INDEX idx_bom_rows_component ON bom_rows(component_id);
+CREATE INDEX idx_bom_rows_bom     ON bom_rows(bom_id);
+CREATE INDEX idx_bom_rows_product ON bom_rows(product_id);
 
 CREATE TABLE bom_revisions (
   bom_id     uuid NOT NULL REFERENCES boms(id) ON DELETE CASCADE,

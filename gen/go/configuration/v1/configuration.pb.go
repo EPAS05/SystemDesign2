@@ -102,7 +102,7 @@ func (x *Bom) GetRows() []*BomRow {
 type BomRow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ComponentId   string                 `protobuf:"bytes,2,opt,name=component_id,json=componentId,proto3" json:"component_id,omitempty"`
+	ProductId     string                 `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Quantity      string                 `protobuf:"bytes,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -145,9 +145,9 @@ func (x *BomRow) GetId() string {
 	return ""
 }
 
-func (x *BomRow) GetComponentId() string {
+func (x *BomRow) GetProductId() string {
 	if x != nil {
-		return x.ComponentId
+		return x.ProductId
 	}
 	return ""
 }
@@ -161,7 +161,7 @@ func (x *BomRow) GetQuantity() string {
 
 type BomRowInput struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ComponentId   string                 `protobuf:"bytes,1,opt,name=component_id,json=componentId,proto3" json:"component_id,omitempty"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Quantity      string                 `protobuf:"bytes,2,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -197,9 +197,9 @@ func (*BomRowInput) Descriptor() ([]byte, []int) {
 	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *BomRowInput) GetComponentId() string {
+func (x *BomRowInput) GetProductId() string {
 	if x != nil {
-		return x.ComponentId
+		return x.ProductId
 	}
 	return ""
 }
@@ -670,7 +670,7 @@ func (x *ReplaceBomRowsResponse) GetBom() *Bom {
 type AddBomRowRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BomId         string                 `protobuf:"bytes,1,opt,name=bom_id,json=bomId,proto3" json:"bom_id,omitempty"`
-	ComponentId   string                 `protobuf:"bytes,2,opt,name=component_id,json=componentId,proto3" json:"component_id,omitempty"`
+	ProductId     string                 `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Quantity      string                 `protobuf:"bytes,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -713,9 +713,9 @@ func (x *AddBomRowRequest) GetBomId() string {
 	return ""
 }
 
-func (x *AddBomRowRequest) GetComponentId() string {
+func (x *AddBomRowRequest) GetProductId() string {
 	if x != nil {
-		return x.ComponentId
+		return x.ProductId
 	}
 	return ""
 }
@@ -774,7 +774,7 @@ func (x *AddBomRowResponse) GetRow() *BomRow {
 type UpdateBomRowRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ComponentId   string                 `protobuf:"bytes,2,opt,name=component_id,json=componentId,proto3" json:"component_id,omitempty"`
+	ProductId     string                 `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Quantity      string                 `protobuf:"bytes,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -817,9 +817,9 @@ func (x *UpdateBomRowRequest) GetId() string {
 	return ""
 }
 
-func (x *UpdateBomRowRequest) GetComponentId() string {
+func (x *UpdateBomRowRequest) GetProductId() string {
 	if x != nil {
-		return x.ComponentId
+		return x.ProductId
 	}
 	return ""
 }
@@ -1227,13 +1227,15 @@ const file_configuration_v1_configuration_proto_rawDesc = "" +
 	"\n" +
 	"is_default\x18\x03 \x01(\bR\tisDefault\x12\x12\n" +
 	"\x04name\x18\x04 \x01(\tR\x04name\x12,\n" +
-	"\x04rows\x18\x05 \x03(\v2\x18.configuration.v1.BomRowR\x04rows\"W\n" +
+	"\x04rows\x18\x05 \x03(\v2\x18.configuration.v1.BomRowR\x04rows\"S\n" +
 	"\x06BomRow\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
-	"\fcomponent_id\x18\x02 \x01(\tR\vcomponentId\x12\x1a\n" +
-	"\bquantity\x18\x03 \x01(\tR\bquantity\"L\n" +
-	"\vBomRowInput\x12!\n" +
-	"\fcomponent_id\x18\x01 \x01(\tR\vcomponentId\x12\x1a\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x02 \x01(\tR\tproductId\x12\x1a\n" +
+	"\bquantity\x18\x03 \x01(\tR\bquantity\"H\n" +
+	"\vBomRowInput\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\x12\x1a\n" +
 	"\bquantity\x18\x02 \x01(\tR\bquantity\"\x1f\n" +
 	"\rGetBomRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"9\n" +
@@ -1259,16 +1261,18 @@ const file_configuration_v1_configuration_proto_rawDesc = "" +
 	"\x06bom_id\x18\x01 \x01(\tR\x05bomId\x121\n" +
 	"\x04rows\x18\x02 \x03(\v2\x1d.configuration.v1.BomRowInputR\x04rows\"A\n" +
 	"\x16ReplaceBomRowsResponse\x12'\n" +
-	"\x03bom\x18\x01 \x01(\v2\x15.configuration.v1.BomR\x03bom\"h\n" +
+	"\x03bom\x18\x01 \x01(\v2\x15.configuration.v1.BomR\x03bom\"d\n" +
 	"\x10AddBomRowRequest\x12\x15\n" +
-	"\x06bom_id\x18\x01 \x01(\tR\x05bomId\x12!\n" +
-	"\fcomponent_id\x18\x02 \x01(\tR\vcomponentId\x12\x1a\n" +
+	"\x06bom_id\x18\x01 \x01(\tR\x05bomId\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x02 \x01(\tR\tproductId\x12\x1a\n" +
 	"\bquantity\x18\x03 \x01(\tR\bquantity\"?\n" +
 	"\x11AddBomRowResponse\x12*\n" +
-	"\x03row\x18\x01 \x01(\v2\x18.configuration.v1.BomRowR\x03row\"d\n" +
+	"\x03row\x18\x01 \x01(\v2\x18.configuration.v1.BomRowR\x03row\"`\n" +
 	"\x13UpdateBomRowRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
-	"\fcomponent_id\x18\x02 \x01(\tR\vcomponentId\x12\x1a\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x02 \x01(\tR\tproductId\x12\x1a\n" +
 	"\bquantity\x18\x03 \x01(\tR\bquantity\"B\n" +
 	"\x14UpdateBomRowResponse\x12*\n" +
 	"\x03row\x18\x01 \x01(\v2\x18.configuration.v1.BomRowR\x03row\"%\n" +

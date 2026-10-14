@@ -44,6 +44,57 @@ func (r *Repo) findBom(ctx context.Context, id string) (*Bom, error) {
 	return b, nil
 }
 
+func (r *Repo) BomOwnerProduct(ctx context.Context, bomID string) (string, error) {
+	const q = `SELECT product_id FROM boms WHERE id = $1`
+	var productID string
+	err := r.pool.QueryRow(ctx, q, bomID).Scan(&productID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", ErrNotFound
+	}
+	if err != nil {
+		return "", err
+	}
+	return productID, nil
+}
+
+func (r *Repo) RowOwnerProduct(ctx context.Context, rowID string) (string, error) {
+	const q = `
+		SELECT b.product_id
+		FROM bom_rows r
+		JOIN boms b ON b.id = r.bom_id
+		WHERE r.id = $1
+	`
+	var productID string
+	err := r.pool.QueryRow(ctx, q, rowID).Scan(&productID)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", ErrNotFound
+	}
+	if err != nil {
+		return "", err
+	}
+	return productID, nil
+}
+
+func (r *Repo) ProductReaches(ctx context.Context, from, to string) (bool, error) {
+	const q = `
+		WITH RECURSIVE reach(pid) AS (
+			SELECT r.product_id
+			FROM bom_rows r
+			JOIN boms b ON b.id = r.bom_id
+			WHERE b.product_id = $1
+			UNION
+			SELECT r2.product_id
+			FROM reach
+			JOIN boms b2 ON b2.product_id = reach.pid
+			JOIN bom_rows r2 ON r2.bom_id = b2.id
+		)
+		SELECT EXISTS (SELECT 1 FROM reach WHERE pid = $2)
+	`
+	var ok bool
+	err := r.pool.QueryRow(ctx, q, from, to).Scan(&ok)
+	return ok, err
+}
+
 func (r *Repo) ListBoms(ctx context.Context, productID string) ([]*Bom, error) {
 	const q = `SELECT id, product_id, is_default, name FROM boms WHERE product_id = $1 ORDER BY is_default DESC, name`
 	rows, err := r.pool.Query(ctx, q, productID)
@@ -74,7 +125,7 @@ func (r *Repo) ListBoms(ctx context.Context, productID string) ([]*Bom, error) {
 }
 
 func (r *Repo) listRows(ctx context.Context, bomID string) ([]*BomRow, error) {
-	const q = `SELECT id, bom_id, component_id, quantity FROM bom_rows WHERE bom_id = $1 ORDER BY id`
+	const q = `SELECT id, bom_id, product_id, quantity FROM bom_rows WHERE bom_id = $1 ORDER BY id`
 	rows, err := r.pool.Query(ctx, q, bomID)
 	if err != nil {
 		return nil, err
@@ -84,7 +135,7 @@ func (r *Repo) listRows(ctx context.Context, bomID string) ([]*BomRow, error) {
 	var out []*BomRow
 	for rows.Next() {
 		row := &BomRow{}
-		if err := rows.Scan(&row.ID, &row.BomID, &row.ComponentID, &row.Quantity); err != nil {
+		if err := rows.Scan(&row.ID, &row.BomID, &row.ProductID, &row.Quantity); err != nil {
 			return nil, err
 		}
 		out = append(out, row)
@@ -93,12 +144,12 @@ func (r *Repo) listRows(ctx context.Context, bomID string) ([]*BomRow, error) {
 }
 
 type bomRowSnapshot struct {
-	ComponentID string `json:"component_id"`
-	Quantity    string `json:"quantity"`
+	ProductID string `json:"product_id"`
+	Quantity  string `json:"quantity"`
 }
 
 func snapshotRowsJSON(ctx context.Context, tx pgx.Tx, bomID string) ([]byte, error) {
-	const q = `SELECT component_id, quantity FROM bom_rows WHERE bom_id = $1 ORDER BY id`
+	const q = `SELECT product_id, quantity FROM bom_rows WHERE bom_id = $1 ORDER BY id`
 	rows, err := tx.Query(ctx, q, bomID)
 	if err != nil {
 		return nil, err
@@ -108,7 +159,7 @@ func snapshotRowsJSON(ctx context.Context, tx pgx.Tx, bomID string) ([]byte, err
 	var out []bomRowSnapshot
 	for rows.Next() {
 		var s bomRowSnapshot
-		if err := rows.Scan(&s.ComponentID, &s.Quantity); err != nil {
+		if err := rows.Scan(&s.ProductID, &s.Quantity); err != nil {
 			return nil, err
 		}
 		out = append(out, s)
@@ -166,10 +217,10 @@ func (r *Repo) CreateBom(ctx context.Context, productID, name string, isDefault 
 		return nil, err
 	}
 
-	const insRow = `INSERT INTO bom_rows (bom_id, component_id, quantity) VALUES ($1, $2, $3)`
+	const insRow = `INSERT INTO bom_rows (bom_id, product_id, quantity) VALUES ($1, $2, $3)`
 	copyRows := func() error {
 		for _, row := range defaultBom.Rows {
-			if _, err := tx.Exec(ctx, insRow, b.ID, row.ComponentID, row.Quantity); err != nil {
+			if _, err := tx.Exec(ctx, insRow, b.ID, row.ProductID, row.Quantity); err != nil {
 				return err
 			}
 		}
@@ -260,9 +311,9 @@ func (r *Repo) ReplaceBomRows(ctx context.Context, bomID string, inputs []BomRow
 		if _, err := tx.Exec(ctx, `DELETE FROM bom_rows WHERE bom_id = $1`, bomID); err != nil {
 			return err
 		}
-		const ins = `INSERT INTO bom_rows (bom_id, component_id, quantity) VALUES ($1, $2, $3)`
+		const ins = `INSERT INTO bom_rows (bom_id, product_id, quantity) VALUES ($1, $2, $3)`
 		for _, in := range inputs {
-			if _, err := tx.Exec(ctx, ins, bomID, in.ComponentID, in.Quantity); err != nil {
+			if _, err := tx.Exec(ctx, ins, bomID, in.ProductID, in.Quantity); err != nil {
 				return err
 			}
 		}
@@ -279,7 +330,7 @@ func (r *Repo) ReplaceBomRows(ctx context.Context, bomID string, inputs []BomRow
 	return r.GetBom(ctx, bomID)
 }
 
-func (r *Repo) AddRow(ctx context.Context, bomID, componentID, quantity string) (*BomRow, error) {
+func (r *Repo) AddRow(ctx context.Context, bomID, productID, quantity string) (*BomRow, error) {
 	if _, err := r.findBom(ctx, bomID); err != nil {
 		return nil, err
 	}
@@ -293,11 +344,11 @@ func (r *Repo) AddRow(ctx context.Context, bomID, componentID, quantity string) 
 	row := &BomRow{}
 	apply := func() error {
 		const q = `
-			INSERT INTO bom_rows (bom_id, component_id, quantity)
+			INSERT INTO bom_rows (bom_id, product_id, quantity)
 			VALUES ($1, $2, $3)
-			RETURNING id, bom_id, component_id, quantity
+			RETURNING id, bom_id, product_id, quantity
 		`
-		return tx.QueryRow(ctx, q, bomID, componentID, quantity).Scan(&row.ID, &row.BomID, &row.ComponentID, &row.Quantity)
+		return tx.QueryRow(ctx, q, bomID, productID, quantity).Scan(&row.ID, &row.BomID, &row.ProductID, &row.Quantity)
 	}
 	if err := r.withRevision(ctx, tx, bomID, apply); err != nil {
 		return nil, err
@@ -310,7 +361,7 @@ func (r *Repo) AddRow(ctx context.Context, bomID, componentID, quantity string) 
 	return row, nil
 }
 
-func (r *Repo) UpdateRow(ctx context.Context, id, componentID, quantity string) (*BomRow, error) {
+func (r *Repo) UpdateRow(ctx context.Context, id, productID, quantity string) (*BomRow, error) {
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -329,11 +380,11 @@ func (r *Repo) UpdateRow(ctx context.Context, id, componentID, quantity string) 
 	row := &BomRow{}
 	apply := func() error {
 		const q = `
-			UPDATE bom_rows SET component_id = $2, quantity = $3
+			UPDATE bom_rows SET product_id = $2, quantity = $3
 			WHERE id = $1
-			RETURNING id, bom_id, component_id, quantity
+			RETURNING id, bom_id, product_id, quantity
 		`
-		return tx.QueryRow(ctx, q, id, componentID, quantity).Scan(&row.ID, &row.BomID, &row.ComponentID, &row.Quantity)
+		return tx.QueryRow(ctx, q, id, productID, quantity).Scan(&row.ID, &row.BomID, &row.ProductID, &row.Quantity)
 	}
 	if err := r.withRevision(ctx, tx, bomID, apply); err != nil {
 		return nil, err
@@ -416,7 +467,7 @@ func (r *Repo) GetRevision(ctx context.Context, bomID string, revision int) ([]*
 	}
 	out := make([]*BomRow, 0, len(snaps))
 	for _, s := range snaps {
-		out = append(out, &BomRow{ComponentID: s.ComponentID, Quantity: s.Quantity})
+		out = append(out, &BomRow{ProductID: s.ProductID, Quantity: s.Quantity})
 	}
 	return out, changedAt, nil
 }

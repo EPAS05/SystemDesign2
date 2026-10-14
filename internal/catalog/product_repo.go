@@ -22,7 +22,7 @@ func (r *Repo) CreateProduct(ctx context.Context, nodeID, name string) (*Product
 }
 
 func (r *Repo) GetProduct(ctx context.Context, id string) (*Product, error) {
-	const q = `SELECT id, node_id, name FROM products WHERE id = $1`
+	const q = `SELECT id, node_id, name FROM products WHERE id = $1 AND archived_at IS NULL`
 	p := &Product{}
 	err := r.pool.QueryRow(ctx, q, id).Scan(&p.ID, &p.NodeID, &p.Name)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -38,7 +38,7 @@ func (r *Repo) ListProductsByNode(ctx context.Context, nodeID string) ([]*Produc
 	const q = `
 		SELECT id, node_id, name
 		FROM products
-		WHERE node_id = $1
+		WHERE node_id = $1 AND archived_at IS NULL
 		ORDER BY name
 	`
 	rows, err := r.pool.Query(ctx, q, nodeID)
@@ -60,7 +60,8 @@ func (r *Repo) ListProductsByNode(ctx context.Context, nodeID string) ([]*Produc
 
 func (r *Repo) UpdateProduct(ctx context.Context, id, name string) (*Product, error) {
 	const q = `
-		UPDATE products SET name = $2 WHERE id = $1
+		UPDATE products SET name = $2
+		WHERE id = $1 AND archived_at IS NULL
 		RETURNING id, node_id, name
 	`
 	p := &Product{}
@@ -75,7 +76,7 @@ func (r *Repo) UpdateProduct(ctx context.Context, id, name string) (*Product, er
 }
 
 func (r *Repo) DeleteProduct(ctx context.Context, id string) error {
-	const q = `DELETE FROM products WHERE id = $1`
+	const q = `UPDATE products SET archived_at = now() WHERE id = $1 AND archived_at IS NULL`
 	tag, err := r.pool.Exec(ctx, q, id)
 	if err != nil {
 		return err

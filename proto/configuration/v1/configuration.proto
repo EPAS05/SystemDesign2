@@ -82,14 +82,14 @@ message Bom {
 }
 
 message BomRow {
-  string id           = 1;
-  string component_id = 2;
-  string quantity     = 3;
+  string id         = 1;
+  string product_id = 2;
+  string quantity   = 3;
 }
 
 message BomRowInput {
-  string component_id = 1;
-  string quantity     = 2;
+  string product_id = 1;
+  string quantity   = 2;
 }
 
 message GetBomRequest {
@@ -129,18 +129,18 @@ message ReplaceBomRowsResponse {
 }
 
 message AddBomRowRequest {
-  string bom_id       = 1;
-  string component_id = 2;
-  string quantity     = 3;
+  string bom_id     = 1;
+  string product_id = 2;
+  string quantity   = 3;
 }
 message AddBomRowResponse {
   BomRow row = 1;
 }
 
 message UpdateBomRowRequest {
-  string id           = 1;
-  string component_id = 2;
-  string quantity     = 3;
+  string id         = 1;
+  string product_id = 2;
+  string quantity   = 3;
 }
 message UpdateBomRowResponse {
   BomRow row = 1;

@@ -16,10 +16,10 @@ type Bom struct {
 }
 
 type BomRow struct {
-	ID          string
-	BomID       string
-	ComponentID string
-	Quantity    string
+	ID        string
+	BomID     string
+	ProductID string
+	Quantity  string
 }
 
 type BomRevision struct {

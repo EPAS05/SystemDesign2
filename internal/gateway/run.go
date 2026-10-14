@@ -62,9 +62,6 @@ func Run(httpPort, catalogAddr, configAddr string) {
 	if err := catalogv1.RegisterProductServiceHandler(ctx, mux, catalogConn); err != nil {
 		log.Fatalf("register product handler: %v", err)
 	}
-	if err := catalogv1.RegisterComponentServiceHandler(ctx, mux, catalogConn); err != nil {
-		log.Fatalf("register component handler: %v", err)
-	}
 
 	configConn, err := grpc.NewClient(configAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

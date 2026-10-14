@@ -352,7 +352,7 @@
     "BomServiceAddBomRowBody": {
       "type": "object",
       "properties": {
-        "componentId": {
+        "productId": {
           "type": "string"
         },
         "quantity": {
@@ -386,7 +386,7 @@
     "BomServiceUpdateBomRowBody": {
       "type": "object",
       "properties": {
-        "componentId": {
+        "productId": {
           "type": "string"
         },
         "quantity": {
@@ -476,7 +476,7 @@
         "id": {
           "type": "string"
         },
-        "componentId": {
+        "productId": {
           "type": "string"
         },
         "quantity": {
@@ -487,7 +487,7 @@
     "v1BomRowInput": {
       "type": "object",
       "properties": {
-        "componentId": {
+        "productId": {
           "type": "string"
         },
         "quantity": {
