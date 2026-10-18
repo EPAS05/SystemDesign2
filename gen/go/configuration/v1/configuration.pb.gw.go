@@ -465,6 +465,45 @@ func local_request_BomService_GetBomRevision_0(ctx context.Context, marshaler ru
 	return msg, metadata, err
 }
 
+func request_BomService_ExpandBom_0(ctx context.Context, marshaler runtime.Marshaler, client BomServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ExpandBomRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["bom_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "bom_id")
+	}
+	protoReq.BomId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "bom_id", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.ExpandBom(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_BomService_ExpandBom_0(ctx context.Context, marshaler runtime.Marshaler, server BomServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ExpandBomRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["bom_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "bom_id")
+	}
+	protoReq.BomId, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "bom_id", err)
+	}
+	msg, err := server.ExpandBom(ctx, &protoReq)
+	return msg, metadata, err
+}
+
 // RegisterBomServiceHandlerServer registers the http handlers for service BomService to "mux".
 // UnaryRPC     :call BomServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -670,6 +709,26 @@ func RegisterBomServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 			return
 		}
 		forward_BomService_GetBomRevision_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodGet, pattern_BomService_ExpandBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/configuration.v1.BomService/ExpandBom", runtime.WithHTTPPathPattern("/v1/boms/{bom_id}/expand"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_BomService_ExpandBom_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_ExpandBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -881,6 +940,23 @@ func RegisterBomServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		}
 		forward_BomService_GetBomRevision_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodGet, pattern_BomService_ExpandBom_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/configuration.v1.BomService/ExpandBom", runtime.WithHTTPPathPattern("/v1/boms/{bom_id}/expand"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_BomService_ExpandBom_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_BomService_ExpandBom_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	return nil
 }
 
@@ -895,6 +971,7 @@ var (
 	pattern_BomService_DeleteBomRow_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "boms", "rows", "id"}, ""))
 	pattern_BomService_ListBomRevisions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "boms", "bom_id", "revisions"}, ""))
 	pattern_BomService_GetBomRevision_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "boms", "bom_id", "revisions", "revision"}, ""))
+	pattern_BomService_ExpandBom_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "boms", "bom_id", "expand"}, ""))
 )
 
 var (
@@ -908,4 +985,5 @@ var (
 	forward_BomService_DeleteBomRow_0     = runtime.ForwardResponseMessage
 	forward_BomService_ListBomRevisions_0 = runtime.ForwardResponseMessage
 	forward_BomService_GetBomRevision_0   = runtime.ForwardResponseMessage
+	forward_BomService_ExpandBom_0        = runtime.ForwardResponseMessage
 )

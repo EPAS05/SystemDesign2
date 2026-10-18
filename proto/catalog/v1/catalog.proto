@@ -26,6 +26,12 @@ service NodeService {
         };
     }
 
+    rpc ListRootNodes(ListRootNodesRequest) returns (ListRootNodesResponse) {
+        option (google.api.http) = {
+            get: "/v1/nodes"
+        };
+    }
+
     rpc UpdateNode(UpdateNodeRequest) returns (UpdateNodeResponse) {
         option (google.api.http) = {
             patch: "/v1/nodes/{id}"
@@ -65,6 +71,11 @@ message ListChildrenRequest {
     string parent_id = 1;
 }
 message ListChildrenResponse {
+    repeated Node nodes = 1;
+}
+
+message ListRootNodesRequest {}
+message ListRootNodesResponse {
     repeated Node nodes = 1;
 }
 

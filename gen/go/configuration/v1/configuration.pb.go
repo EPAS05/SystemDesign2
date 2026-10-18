@@ -1215,6 +1215,94 @@ func (x *GetBomRevisionResponse) GetRows() []*BomRow {
 	return nil
 }
 
+type ExpandBomRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BomId         string                 `protobuf:"bytes,1,opt,name=bom_id,json=bomId,proto3" json:"bom_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExpandBomRequest) Reset() {
+	*x = ExpandBomRequest{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExpandBomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExpandBomRequest) ProtoMessage() {}
+
+func (x *ExpandBomRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExpandBomRequest.ProtoReflect.Descriptor instead.
+func (*ExpandBomRequest) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ExpandBomRequest) GetBomId() string {
+	if x != nil {
+		return x.BomId
+	}
+	return ""
+}
+
+type ExpandBomResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Rows          []*BomRow              `protobuf:"bytes,1,rep,name=rows,proto3" json:"rows,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExpandBomResponse) Reset() {
+	*x = ExpandBomResponse{}
+	mi := &file_configuration_v1_configuration_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExpandBomResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExpandBomResponse) ProtoMessage() {}
+
+func (x *ExpandBomResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_configuration_v1_configuration_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExpandBomResponse.ProtoReflect.Descriptor instead.
+func (*ExpandBomResponse) Descriptor() ([]byte, []int) {
+	return file_configuration_v1_configuration_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ExpandBomResponse) GetRows() []*BomRow {
+	if x != nil {
+		return x.Rows
+	}
+	return nil
+}
+
 var File_configuration_v1_configuration_proto protoreflect.FileDescriptor
 
 const file_configuration_v1_configuration_proto_rawDesc = "" +
@@ -1295,7 +1383,12 @@ const file_configuration_v1_configuration_proto_rawDesc = "" +
 	"\brevision\x18\x01 \x01(\x05R\brevision\x129\n" +
 	"\n" +
 	"changed_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tchangedAt\x12,\n" +
-	"\x04rows\x18\x03 \x03(\v2\x18.configuration.v1.BomRowR\x04rows2\xfb\t\n" +
+	"\x04rows\x18\x03 \x03(\v2\x18.configuration.v1.BomRowR\x04rows\")\n" +
+	"\x10ExpandBomRequest\x12\x15\n" +
+	"\x06bom_id\x18\x01 \x01(\tR\x05bomId\"A\n" +
+	"\x11ExpandBomResponse\x12,\n" +
+	"\x04rows\x18\x01 \x03(\v2\x18.configuration.v1.BomRowR\x04rows2\xf3\n" +
+	"\n" +
 	"\n" +
 	"BomService\x12b\n" +
 	"\x06GetBom\x12\x1f.configuration.v1.GetBomRequest\x1a .configuration.v1.GetBomResponse\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/v1/boms/{id}\x12y\n" +
@@ -1307,7 +1400,8 @@ const file_configuration_v1_configuration_proto_rawDesc = "" +
 	"\fUpdateBomRow\x12%.configuration.v1.UpdateBomRowRequest\x1a&.configuration.v1.UpdateBomRowResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*2\x12/v1/boms/rows/{id}\x12y\n" +
 	"\fDeleteBomRow\x12%.configuration.v1.DeleteBomRowRequest\x1a&.configuration.v1.DeleteBomRowResponse\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/v1/boms/rows/{id}\x12\x8e\x01\n" +
 	"\x10ListBomRevisions\x12).configuration.v1.ListBomRevisionsRequest\x1a*.configuration.v1.ListBomRevisionsResponse\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/v1/boms/{bom_id}/revisions\x12\x93\x01\n" +
-	"\x0eGetBomRevision\x12'.configuration.v1.GetBomRevisionRequest\x1a(.configuration.v1.GetBomRevisionResponse\".\x82\xd3\xe4\x93\x02(\x12&/v1/boms/{bom_id}/revisions/{revision}BKZIgithub.com/EPAS05/catalog-service/gen/go/configuration/v1;configurationv1b\x06proto3"
+	"\x0eGetBomRevision\x12'.configuration.v1.GetBomRevisionRequest\x1a(.configuration.v1.GetBomRevisionResponse\".\x82\xd3\xe4\x93\x02(\x12&/v1/boms/{bom_id}/revisions/{revision}\x12v\n" +
+	"\tExpandBom\x12\".configuration.v1.ExpandBomRequest\x1a#.configuration.v1.ExpandBomResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/v1/boms/{bom_id}/expandBKZIgithub.com/EPAS05/catalog-service/gen/go/configuration/v1;configurationv1b\x06proto3"
 
 var (
 	file_configuration_v1_configuration_proto_rawDescOnce sync.Once
@@ -1321,7 +1415,7 @@ func file_configuration_v1_configuration_proto_rawDescGZIP() []byte {
 	return file_configuration_v1_configuration_proto_rawDescData
 }
 
-var file_configuration_v1_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_configuration_v1_configuration_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_configuration_v1_configuration_proto_goTypes = []any{
 	(*Bom)(nil),                      // 0: configuration.v1.Bom
 	(*BomRow)(nil),                   // 1: configuration.v1.BomRow
@@ -1347,7 +1441,9 @@ var file_configuration_v1_configuration_proto_goTypes = []any{
 	(*ListBomRevisionsResponse)(nil), // 21: configuration.v1.ListBomRevisionsResponse
 	(*GetBomRevisionRequest)(nil),    // 22: configuration.v1.GetBomRevisionRequest
 	(*GetBomRevisionResponse)(nil),   // 23: configuration.v1.GetBomRevisionResponse
-	(*timestamppb.Timestamp)(nil),    // 24: google.protobuf.Timestamp
+	(*ExpandBomRequest)(nil),         // 24: configuration.v1.ExpandBomRequest
+	(*ExpandBomResponse)(nil),        // 25: configuration.v1.ExpandBomResponse
+	(*timestamppb.Timestamp)(nil),    // 26: google.protobuf.Timestamp
 }
 var file_configuration_v1_configuration_proto_depIdxs = []int32{
 	1,  // 0: configuration.v1.Bom.rows:type_name -> configuration.v1.BomRow
@@ -1358,35 +1454,38 @@ var file_configuration_v1_configuration_proto_depIdxs = []int32{
 	0,  // 5: configuration.v1.ReplaceBomRowsResponse.bom:type_name -> configuration.v1.Bom
 	1,  // 6: configuration.v1.AddBomRowResponse.row:type_name -> configuration.v1.BomRow
 	1,  // 7: configuration.v1.UpdateBomRowResponse.row:type_name -> configuration.v1.BomRow
-	24, // 8: configuration.v1.BomRevision.changed_at:type_name -> google.protobuf.Timestamp
+	26, // 8: configuration.v1.BomRevision.changed_at:type_name -> google.protobuf.Timestamp
 	19, // 9: configuration.v1.ListBomRevisionsResponse.revisions:type_name -> configuration.v1.BomRevision
-	24, // 10: configuration.v1.GetBomRevisionResponse.changed_at:type_name -> google.protobuf.Timestamp
+	26, // 10: configuration.v1.GetBomRevisionResponse.changed_at:type_name -> google.protobuf.Timestamp
 	1,  // 11: configuration.v1.GetBomRevisionResponse.rows:type_name -> configuration.v1.BomRow
-	3,  // 12: configuration.v1.BomService.GetBom:input_type -> configuration.v1.GetBomRequest
-	5,  // 13: configuration.v1.BomService.ListBoms:input_type -> configuration.v1.ListBomsRequest
-	7,  // 14: configuration.v1.BomService.CreateBom:input_type -> configuration.v1.CreateBomRequest
-	9,  // 15: configuration.v1.BomService.DeleteBom:input_type -> configuration.v1.DeleteBomRequest
-	11, // 16: configuration.v1.BomService.ReplaceBomRows:input_type -> configuration.v1.ReplaceBomRowsRequest
-	13, // 17: configuration.v1.BomService.AddBomRow:input_type -> configuration.v1.AddBomRowRequest
-	15, // 18: configuration.v1.BomService.UpdateBomRow:input_type -> configuration.v1.UpdateBomRowRequest
-	17, // 19: configuration.v1.BomService.DeleteBomRow:input_type -> configuration.v1.DeleteBomRowRequest
-	20, // 20: configuration.v1.BomService.ListBomRevisions:input_type -> configuration.v1.ListBomRevisionsRequest
-	22, // 21: configuration.v1.BomService.GetBomRevision:input_type -> configuration.v1.GetBomRevisionRequest
-	4,  // 22: configuration.v1.BomService.GetBom:output_type -> configuration.v1.GetBomResponse
-	6,  // 23: configuration.v1.BomService.ListBoms:output_type -> configuration.v1.ListBomsResponse
-	8,  // 24: configuration.v1.BomService.CreateBom:output_type -> configuration.v1.CreateBomResponse
-	10, // 25: configuration.v1.BomService.DeleteBom:output_type -> configuration.v1.DeleteBomResponse
-	12, // 26: configuration.v1.BomService.ReplaceBomRows:output_type -> configuration.v1.ReplaceBomRowsResponse
-	14, // 27: configuration.v1.BomService.AddBomRow:output_type -> configuration.v1.AddBomRowResponse
-	16, // 28: configuration.v1.BomService.UpdateBomRow:output_type -> configuration.v1.UpdateBomRowResponse
-	18, // 29: configuration.v1.BomService.DeleteBomRow:output_type -> configuration.v1.DeleteBomRowResponse
-	21, // 30: configuration.v1.BomService.ListBomRevisions:output_type -> configuration.v1.ListBomRevisionsResponse
-	23, // 31: configuration.v1.BomService.GetBomRevision:output_type -> configuration.v1.GetBomRevisionResponse
-	22, // [22:32] is the sub-list for method output_type
-	12, // [12:22] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	1,  // 12: configuration.v1.ExpandBomResponse.rows:type_name -> configuration.v1.BomRow
+	3,  // 13: configuration.v1.BomService.GetBom:input_type -> configuration.v1.GetBomRequest
+	5,  // 14: configuration.v1.BomService.ListBoms:input_type -> configuration.v1.ListBomsRequest
+	7,  // 15: configuration.v1.BomService.CreateBom:input_type -> configuration.v1.CreateBomRequest
+	9,  // 16: configuration.v1.BomService.DeleteBom:input_type -> configuration.v1.DeleteBomRequest
+	11, // 17: configuration.v1.BomService.ReplaceBomRows:input_type -> configuration.v1.ReplaceBomRowsRequest
+	13, // 18: configuration.v1.BomService.AddBomRow:input_type -> configuration.v1.AddBomRowRequest
+	15, // 19: configuration.v1.BomService.UpdateBomRow:input_type -> configuration.v1.UpdateBomRowRequest
+	17, // 20: configuration.v1.BomService.DeleteBomRow:input_type -> configuration.v1.DeleteBomRowRequest
+	20, // 21: configuration.v1.BomService.ListBomRevisions:input_type -> configuration.v1.ListBomRevisionsRequest
+	22, // 22: configuration.v1.BomService.GetBomRevision:input_type -> configuration.v1.GetBomRevisionRequest
+	24, // 23: configuration.v1.BomService.ExpandBom:input_type -> configuration.v1.ExpandBomRequest
+	4,  // 24: configuration.v1.BomService.GetBom:output_type -> configuration.v1.GetBomResponse
+	6,  // 25: configuration.v1.BomService.ListBoms:output_type -> configuration.v1.ListBomsResponse
+	8,  // 26: configuration.v1.BomService.CreateBom:output_type -> configuration.v1.CreateBomResponse
+	10, // 27: configuration.v1.BomService.DeleteBom:output_type -> configuration.v1.DeleteBomResponse
+	12, // 28: configuration.v1.BomService.ReplaceBomRows:output_type -> configuration.v1.ReplaceBomRowsResponse
+	14, // 29: configuration.v1.BomService.AddBomRow:output_type -> configuration.v1.AddBomRowResponse
+	16, // 30: configuration.v1.BomService.UpdateBomRow:output_type -> configuration.v1.UpdateBomRowResponse
+	18, // 31: configuration.v1.BomService.DeleteBomRow:output_type -> configuration.v1.DeleteBomRowResponse
+	21, // 32: configuration.v1.BomService.ListBomRevisions:output_type -> configuration.v1.ListBomRevisionsResponse
+	23, // 33: configuration.v1.BomService.GetBomRevision:output_type -> configuration.v1.GetBomRevisionResponse
+	25, // 34: configuration.v1.BomService.ExpandBom:output_type -> configuration.v1.ExpandBomResponse
+	24, // [24:35] is the sub-list for method output_type
+	13, // [13:24] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_configuration_v1_configuration_proto_init() }
@@ -1400,7 +1499,7 @@ func file_configuration_v1_configuration_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_configuration_v1_configuration_proto_rawDesc), len(file_configuration_v1_configuration_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   24,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -82,6 +82,36 @@
         ]
       }
     },
+    "/v1/boms/{bomId}/expand": {
+      "get": {
+        "operationId": "BomService_ExpandBom",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ExpandBomResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      }
+    },
     "/v1/boms/{bomId}/revisions": {
       "get": {
         "operationId": "BomService_ListBomRevisions",
@@ -401,7 +431,7 @@
           "type": "string"
         }
       },
-      "additionalProperties": {}
+      "additionalProperties": true
     },
     "rpcStatus": {
       "type": "object",
@@ -508,6 +538,18 @@
     },
     "v1DeleteBomRowResponse": {
       "type": "object"
+    },
+    "v1ExpandBomResponse": {
+      "type": "object",
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1BomRow"
+          }
+        }
+      }
     },
     "v1GetBomResponse": {
       "type": "object",

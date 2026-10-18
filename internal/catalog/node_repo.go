@@ -62,6 +62,25 @@ func (r *Repo) ListChildren(ctx context.Context, parentID string) ([]*Node, erro
 	return nodes, rows.Err()
 }
 
+func (r *Repo) ListRoots(ctx context.Context) ([]*Node, error) {
+	const q = `SELECT id, parent_id, name FROM nodes WHERE parent_id IS NULL ORDER BY name`
+	rows, err := r.pool.Query(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var nodes []*Node
+	for rows.Next() {
+		n := &Node{}
+		if err := rows.Scan(&n.ID, &n.ParentID, &n.Name); err != nil {
+			return nil, err
+		}
+		nodes = append(nodes, n)
+	}
+	return nodes, rows.Err()
+}
+
 func (r *Repo) Update(ctx context.Context, id, name string) (*Node, error) {
 	const q = `
 		UPDATE nodes SET name = $2 WHERE id = $1

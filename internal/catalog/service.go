@@ -22,6 +22,10 @@ func (s *Service) ListChildren(ctx context.Context, parentID string) ([]*Node, e
 	return s.repo.ListChildren(ctx, parentID)
 }
 
+func (s *Service) ListRootNodes(ctx context.Context) ([]*Node, error) {
+	return s.repo.ListRoots(ctx)
+}
+
 func (s *Service) UpdateNode(ctx context.Context, id, name string) (*Node, error) {
 	return s.repo.Update(ctx, id, name)
 }

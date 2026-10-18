@@ -471,3 +471,46 @@ func (r *Repo) GetRevision(ctx context.Context, bomID string, revision int) ([]*
 	}
 	return out, changedAt, nil
 }
+
+func (r *Repo) ExpandBom(ctx context.Context, bomID string) ([]*BomRow, error) {
+	if _, err := r.findBom(ctx, bomID); err != nil {
+		return nil, err
+	}
+
+	const q = `
+		WITH RECURSIVE components(product_id, quantity, depth) AS (
+			SELECT r.product_id, r.quantity::numeric, 1
+			FROM bom_rows r
+			WHERE r.bom_id = $1
+			UNION ALL
+			SELECT r2.product_id, c.quantity * r2.quantity, c.depth + 1
+			FROM components c
+			JOIN boms b ON b.product_id = c.product_id AND b.is_default = true
+			JOIN bom_rows r2 ON r2.bom_id = b.id
+			WHERE c.depth < 100
+		)
+		SELECT c.product_id, SUM(c.quantity)::numeric(12,3)
+		FROM components c
+		WHERE NOT EXISTS (
+			SELECT 1 FROM boms b2
+			WHERE b2.product_id = c.product_id AND b2.is_default = true
+		)
+		GROUP BY c.product_id
+		ORDER BY c.product_id
+	`
+	rows, err := r.pool.Query(ctx, q, bomID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := []*BomRow{}
+	for rows.Next() {
+		row := &BomRow{}
+		if err := rows.Scan(&row.ProductID, &row.Quantity); err != nil {
+			return nil, err
+		}
+		out = append(out, row)
+	}
+	return out, rows.Err()
+}

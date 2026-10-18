@@ -216,6 +216,24 @@ func (s *bomService) GetBomRevision(ctx context.Context, req *configurationv1.Ge
 	}, nil
 }
 
+func (s *bomService) ExpandBom(ctx context.Context, req *configurationv1.ExpandBomRequest) (*configurationv1.ExpandBomResponse, error) {
+	if req.BomId == "" {
+		return nil, status.Error(codes.InvalidArgument, "bom_id is required")
+	}
+	rows, err := s.svc.ExpandBom(ctx, req.BomId)
+	if errors.Is(err, configuration.ErrNotFound) {
+		return nil, status.Error(codes.NotFound, "bom not found")
+	}
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	out := make([]*configurationv1.BomRow, 0, len(rows))
+	for _, r := range rows {
+		out = append(out, toRowProto(r))
+	}
+	return &configurationv1.ExpandBomResponse{Rows: out}, nil
+}
+
 func toBomProto(b *configuration.Bom) *configurationv1.Bom {
 	out := &configurationv1.Bom{
 		Id:        b.ID,

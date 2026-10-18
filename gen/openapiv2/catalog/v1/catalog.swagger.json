@@ -20,6 +20,26 @@
   ],
   "paths": {
     "/v1/nodes": {
+      "get": {
+        "operationId": "NodeService_ListRootNodes",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListRootNodesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "NodeService"
+        ]
+      },
       "post": {
         "operationId": "NodeService_CreateNode",
         "responses": {
@@ -356,7 +376,7 @@
           "type": "string"
         }
       },
-      "additionalProperties": {}
+      "additionalProperties": true
     },
     "rpcStatus": {
       "type": "object",
@@ -457,6 +477,18 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/v1Product"
+          }
+        }
+      }
+    },
+    "v1ListRootNodesResponse": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Node"
           }
         }
       }

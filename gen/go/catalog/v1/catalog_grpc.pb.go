@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	NodeService_CreateNode_FullMethodName   = "/catalog.v1.NodeService/CreateNode"
-	NodeService_GetNode_FullMethodName      = "/catalog.v1.NodeService/GetNode"
-	NodeService_ListChildren_FullMethodName = "/catalog.v1.NodeService/ListChildren"
-	NodeService_UpdateNode_FullMethodName   = "/catalog.v1.NodeService/UpdateNode"
-	NodeService_DeleteNode_FullMethodName   = "/catalog.v1.NodeService/DeleteNode"
+	NodeService_CreateNode_FullMethodName    = "/catalog.v1.NodeService/CreateNode"
+	NodeService_GetNode_FullMethodName       = "/catalog.v1.NodeService/GetNode"
+	NodeService_ListChildren_FullMethodName  = "/catalog.v1.NodeService/ListChildren"
+	NodeService_ListRootNodes_FullMethodName = "/catalog.v1.NodeService/ListRootNodes"
+	NodeService_UpdateNode_FullMethodName    = "/catalog.v1.NodeService/UpdateNode"
+	NodeService_DeleteNode_FullMethodName    = "/catalog.v1.NodeService/DeleteNode"
 )
 
 // NodeServiceClient is the client API for NodeService service.
@@ -33,6 +34,7 @@ type NodeServiceClient interface {
 	CreateNode(ctx context.Context, in *CreateNodeRequest, opts ...grpc.CallOption) (*CreateNodeResponse, error)
 	GetNode(ctx context.Context, in *GetNodeRequest, opts ...grpc.CallOption) (*GetNodeResponse, error)
 	ListChildren(ctx context.Context, in *ListChildrenRequest, opts ...grpc.CallOption) (*ListChildrenResponse, error)
+	ListRootNodes(ctx context.Context, in *ListRootNodesRequest, opts ...grpc.CallOption) (*ListRootNodesResponse, error)
 	UpdateNode(ctx context.Context, in *UpdateNodeRequest, opts ...grpc.CallOption) (*UpdateNodeResponse, error)
 	DeleteNode(ctx context.Context, in *DeleteNodeRequest, opts ...grpc.CallOption) (*DeleteNodeResponse, error)
 }
@@ -75,6 +77,16 @@ func (c *nodeServiceClient) ListChildren(ctx context.Context, in *ListChildrenRe
 	return out, nil
 }
 
+func (c *nodeServiceClient) ListRootNodes(ctx context.Context, in *ListRootNodesRequest, opts ...grpc.CallOption) (*ListRootNodesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRootNodesResponse)
+	err := c.cc.Invoke(ctx, NodeService_ListRootNodes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *nodeServiceClient) UpdateNode(ctx context.Context, in *UpdateNodeRequest, opts ...grpc.CallOption) (*UpdateNodeResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateNodeResponse)
@@ -102,6 +114,7 @@ type NodeServiceServer interface {
 	CreateNode(context.Context, *CreateNodeRequest) (*CreateNodeResponse, error)
 	GetNode(context.Context, *GetNodeRequest) (*GetNodeResponse, error)
 	ListChildren(context.Context, *ListChildrenRequest) (*ListChildrenResponse, error)
+	ListRootNodes(context.Context, *ListRootNodesRequest) (*ListRootNodesResponse, error)
 	UpdateNode(context.Context, *UpdateNodeRequest) (*UpdateNodeResponse, error)
 	DeleteNode(context.Context, *DeleteNodeRequest) (*DeleteNodeResponse, error)
 	mustEmbedUnimplementedNodeServiceServer()
@@ -122,6 +135,9 @@ func (UnimplementedNodeServiceServer) GetNode(context.Context, *GetNodeRequest) 
 }
 func (UnimplementedNodeServiceServer) ListChildren(context.Context, *ListChildrenRequest) (*ListChildrenResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListChildren not implemented")
+}
+func (UnimplementedNodeServiceServer) ListRootNodes(context.Context, *ListRootNodesRequest) (*ListRootNodesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListRootNodes not implemented")
 }
 func (UnimplementedNodeServiceServer) UpdateNode(context.Context, *UpdateNodeRequest) (*UpdateNodeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateNode not implemented")
@@ -204,6 +220,24 @@ func _NodeService_ListChildren_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NodeService_ListRootNodes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRootNodesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeServiceServer).ListRootNodes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NodeService_ListRootNodes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeServiceServer).ListRootNodes(ctx, req.(*ListRootNodesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _NodeService_UpdateNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateNodeRequest)
 	if err := dec(in); err != nil {
@@ -258,6 +292,10 @@ var NodeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListChildren",
 			Handler:    _NodeService_ListChildren_Handler,
+		},
+		{
+			MethodName: "ListRootNodes",
+			Handler:    _NodeService_ListRootNodes_Handler,
 		},
 		{
 			MethodName: "UpdateNode",

@@ -111,6 +111,13 @@ func (s *Service) GetBomRevision(ctx context.Context, bomID string, revision int
 	return s.repo.GetRevision(ctx, bomID, revision)
 }
 
+func (s *Service) ExpandBom(ctx context.Context, bomID string) ([]*BomRow, error) {
+	if bomID == "" {
+		return nil, ErrNotFound
+	}
+	return s.repo.ExpandBom(ctx, bomID)
+}
+
 func (s *Service) checkRow(ctx context.Context, owner, productID string) error {
 	if owner == productID {
 		return ErrSelfReference

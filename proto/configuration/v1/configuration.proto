@@ -71,6 +71,12 @@ service BomService {
       get: "/v1/boms/{bom_id}/revisions/{revision}"
     };
   }
+
+  rpc ExpandBom(ExpandBomRequest) returns (ExpandBomResponse) {
+    option (google.api.http) = {
+      get: "/v1/boms/{bom_id}/expand"
+    };
+  }
 }
 
 message Bom {
@@ -172,4 +178,11 @@ message GetBomRevisionResponse {
   int32                      revision   = 1;
   google.protobuf.Timestamp changed_at = 2;
   repeated BomRow            rows       = 3;
+}
+
+message ExpandBomRequest {
+  string bom_id = 1;
+}
+message ExpandBomResponse {
+  repeated BomRow rows = 1;
 }

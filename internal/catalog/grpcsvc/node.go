@@ -63,6 +63,18 @@ func (s *nodeService) ListChildren(ctx context.Context, req *catalogv1.ListChild
 	return &catalogv1.ListChildrenResponse{Nodes: out}, nil
 }
 
+func (s *nodeService) ListRootNodes(ctx context.Context, req *catalogv1.ListRootNodesRequest) (*catalogv1.ListRootNodesResponse, error) {
+	nodes, err := s.svc.ListRootNodes(ctx)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	out := make([]*catalogv1.Node, 0, len(nodes))
+	for _, n := range nodes {
+		out = append(out, toProto(n))
+	}
+	return &catalogv1.ListRootNodesResponse{Nodes: out}, nil
+}
+
 func (s *nodeService) UpdateNode(ctx context.Context, req *catalogv1.UpdateNodeRequest) (*catalogv1.UpdateNodeResponse, error) {
 	if req.Id == "" {
 		return nil, status.Error(codes.InvalidArgument, "id is required")

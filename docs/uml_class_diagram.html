@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UML: Class Model — Nodes / Products / BOMs</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a2332;
+      --text: #e7ecf3;
+      --muted: #8b9bb4;
+      --accent: #5b9fd4;
+      --border: #2d3a4f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin: 0 0 8px;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      overflow: auto;
+    }
+    .mermaid svg {
+      max-width: 100%;
+      max-height: 70vh;
+      width: auto;
+      height: auto;
+    }
+    .notes {
+      margin-top: 16px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .notes ul { margin: 8px 0 0; padding-left: 1.2em; }
+    .notes li { margin-bottom: 4px; }
+    code {
+      background: #0d1117;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Модель классов (Class Diagram)</h1>
+  <section>
+    <div class="mermaid">
+classDiagram
+    direction TB
+
+    class Node {
+        +UUID id
+        +UUID parentId
+        +String name
+        --
+        +children: List~Node~
+        +products: List~Product~
+        +CreateNode(parentID: UUID, name: String) Node
+        +GetNode(id: UUID) Node
+        +ListChildren(parentID: UUID) List~Node~
+        +UpdateNode(id: UUID, name: String) Node
+        +DeleteNode(id: UUID)
+    }
+
+    class Product {
+        +UUID id
+        +UUID nodeId
+        +String name
+        +ProductType type
+        +DateTime archivedAt
+        --
+        +node: Node
+        +boms: List~Bom~
+        +CreateProduct(nodeID: UUID, name: String, type: ProductType) Product
+        +GetProduct(id: UUID) Product
+        +ListProductsByNode(nodeID: UUID) List~Product~
+        +ListProductsByType(type: ProductType) List~Product~
+        +UpdateProduct(id: UUID, name: String) Product
+        +DeleteProduct(id: UUID)
+        +isArchived() boolean
+    }
+
+    class Bom {
+        +UUID id
+        +UUID productId
+        +Boolean isDefault
+        +String name
+        --
+        +product: Product
+        +rows: List~BomRow~
+        +revisions: List~BomRevision~
+        +GetBom(id: UUID) Bom
+        +ListBoms(productID: UUID) List~Bom~
+        +CreateBom(productID: UUID, name: String, isDefault: Boolean) Bom
+        +SetDefaultBom(id: UUID) Bom
+        +DeleteBom(id: UUID)
+        +CalculateConsumption(productID: UUID, resourceClass: ProductType) List~BomRow~
+    }
+
+    class BomRow {
+        +UUID id
+        +UUID bomId
+        +UUID productId
+        +Decimal quantity
+        --
+        +bom: Bom
+        +component: Product
+        +ReplaceBomRows(bomID: UUID, rows: List~BomRow~) Bom
+        +AddRow(bomID: UUID, productID: UUID, quantity: Decimal) BomRow
+        +UpdateRow(id: UUID, productID: UUID, quantity: Decimal) BomRow
+        +DeleteRow(id: UUID)
+    }
+
+    class BomRevision {
+        +UUID bomId
+        +Integer revision
+        +Json rows
+        +DateTime changedAt
+        --
+        +bom: Bom
+        +ListBomRevisions(bomID: UUID) List~BomRevision~
+        +GetBomRevision(bomID: UUID, revision: Int) List~BomRow~
+    }
+
+    Node "0..1" --> "0..*" Node : родитель / наследник
+    Node "1" *-- "0..*" Product : содержит
+    Product "1" --> "0..*" Bom : имеет BOM
+    Bom "1" *-- "0..*" BomRow : состоит из
+    Product "1" --> "0..*" BomRow : используется как компонент
+    Bom "1" *-- "0..*" BomRevision : история ревизий
+    </div>
+  </section>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      class: { useMaxWidth: true },
+      securityLevel: 'loose'
+    });
+  </script>
+</body>
+</html>

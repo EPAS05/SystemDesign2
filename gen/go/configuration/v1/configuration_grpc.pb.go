@@ -29,6 +29,7 @@ const (
 	BomService_DeleteBomRow_FullMethodName     = "/configuration.v1.BomService/DeleteBomRow"
 	BomService_ListBomRevisions_FullMethodName = "/configuration.v1.BomService/ListBomRevisions"
 	BomService_GetBomRevision_FullMethodName   = "/configuration.v1.BomService/GetBomRevision"
+	BomService_ExpandBom_FullMethodName        = "/configuration.v1.BomService/ExpandBom"
 )
 
 // BomServiceClient is the client API for BomService service.
@@ -45,6 +46,7 @@ type BomServiceClient interface {
 	DeleteBomRow(ctx context.Context, in *DeleteBomRowRequest, opts ...grpc.CallOption) (*DeleteBomRowResponse, error)
 	ListBomRevisions(ctx context.Context, in *ListBomRevisionsRequest, opts ...grpc.CallOption) (*ListBomRevisionsResponse, error)
 	GetBomRevision(ctx context.Context, in *GetBomRevisionRequest, opts ...grpc.CallOption) (*GetBomRevisionResponse, error)
+	ExpandBom(ctx context.Context, in *ExpandBomRequest, opts ...grpc.CallOption) (*ExpandBomResponse, error)
 }
 
 type bomServiceClient struct {
@@ -155,6 +157,16 @@ func (c *bomServiceClient) GetBomRevision(ctx context.Context, in *GetBomRevisio
 	return out, nil
 }
 
+func (c *bomServiceClient) ExpandBom(ctx context.Context, in *ExpandBomRequest, opts ...grpc.CallOption) (*ExpandBomResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ExpandBomResponse)
+	err := c.cc.Invoke(ctx, BomService_ExpandBom_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BomServiceServer is the server API for BomService service.
 // All implementations must embed UnimplementedBomServiceServer
 // for forward compatibility.
@@ -169,6 +181,7 @@ type BomServiceServer interface {
 	DeleteBomRow(context.Context, *DeleteBomRowRequest) (*DeleteBomRowResponse, error)
 	ListBomRevisions(context.Context, *ListBomRevisionsRequest) (*ListBomRevisionsResponse, error)
 	GetBomRevision(context.Context, *GetBomRevisionRequest) (*GetBomRevisionResponse, error)
+	ExpandBom(context.Context, *ExpandBomRequest) (*ExpandBomResponse, error)
 	mustEmbedUnimplementedBomServiceServer()
 }
 
@@ -208,6 +221,9 @@ func (UnimplementedBomServiceServer) ListBomRevisions(context.Context, *ListBomR
 }
 func (UnimplementedBomServiceServer) GetBomRevision(context.Context, *GetBomRevisionRequest) (*GetBomRevisionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBomRevision not implemented")
+}
+func (UnimplementedBomServiceServer) ExpandBom(context.Context, *ExpandBomRequest) (*ExpandBomResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ExpandBom not implemented")
 }
 func (UnimplementedBomServiceServer) mustEmbedUnimplementedBomServiceServer() {}
 func (UnimplementedBomServiceServer) testEmbeddedByValue()                    {}
@@ -410,6 +426,24 @@ func _BomService_GetBomRevision_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BomService_ExpandBom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExpandBomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BomServiceServer).ExpandBom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BomService_ExpandBom_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BomServiceServer).ExpandBom(ctx, req.(*ExpandBomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BomService_ServiceDesc is the grpc.ServiceDesc for BomService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -456,6 +490,10 @@ var BomService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBomRevision",
 			Handler:    _BomService_GetBomRevision_Handler,
+		},
+		{
+			MethodName: "ExpandBom",
+			Handler:    _BomService_ExpandBom_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
