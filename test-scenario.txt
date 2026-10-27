@@ -484,6 +484,135 @@ curl -s -i -X POST "%BASE%/v1/products/00000000-0000-0000-0000-000000000000/boms
 
 
 ============================================================================
+ЧАСТЬ D. МАРШРУТНАЯ ТЕХНОЛОГИЯ
+============================================================================
+Выполнять после части B и до части C: используются живые PRODUCT, PROD_A,
+PROD_B, BOM_DEFAULT. Все количества — в штуках, без единиц измерения.
+
+----------------------------------------------------------------------------
+D1. СПРАВОЧНИКИ
+    POST /v1/operation-classes, /v1/equipment, /v1/tools
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/operation-classes" -H "Content-Type: application/json" -d "{\"code\":\"CUT\",\"name\":\"Резка\",\"hourlyRate\":\"500\"}"
+curl -s -X POST "%BASE%/v1/operation-classes" -H "Content-Type: application/json" -d "{\"code\":\"WELD\",\"name\":\"Сварка\",\"hourlyRate\":\"800\"}"
+curl -s -X POST "%BASE%/v1/operation-classes" -H "Content-Type: application/json" -d "{\"code\":\"ASSY\",\"name\":\"Сборка\",\"hourlyRate\":\"600\"}"
+
+set OP_CUT=<id CUT>
+set OP_WELD=<id WELD>
+set OP_ASSY=<id ASSY>
+
+curl -s -X POST "%BASE%/v1/equipment" -H "Content-Type: application/json" -d "{\"code\":\"PRESS\",\"name\":\"Пресс\"}"
+curl -s -X POST "%BASE%/v1/tools" -H "Content-Type: application/json" -d "{\"code\":\"DIE\",\"name\":\"Штамп\"}"
+
+set EQ_PRESS=<id Пресс>
+set TOOL_DIE=<id Штамп>
+
+Ожидаем: 200, объекты с id/code/name/hourlyRate.
+Повторный код -> 409; удаление используемого справочника -> 412.
+
+----------------------------------------------------------------------------
+D2. МАРШРУТНЫЕ СТРОКИ ДЕФОЛТНОГО BOM
+    POST /v1/boms/{bom_id}/route/rows   { seq, operationClassId, ... }
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/boms/%BOM_DEFAULT%/route/rows" -H "Content-Type: application/json" -d "{\"seq\":10,\"operationClassId\":\"%OP_CUT%\",\"equipmentId\":\"%EQ_PRESS%\",\"toolId\":\"%TOOL_DIE%\",\"productId\":\"%PROD_A%\",\"quantity\":\"10\",\"laborNorm\":\"0.2\"}"
+curl -s -X POST "%BASE%/v1/boms/%BOM_DEFAULT%/route/rows" -H "Content-Type: application/json" -d "{\"seq\":20,\"operationClassId\":\"%OP_WELD%\",\"productId\":\"%PROD_B%\",\"quantity\":\"2\",\"laborNorm\":\"0.5\"}"
+
+Ожидаем: 200, RouteRow с operationClassName/equipmentName/toolName,
+isBase=true, inherited=false.
+set ROUTE1=<id строки seq=10>
+set ROUTE2=<id строки seq=20>
+
+----------------------------------------------------------------------------
+D3. СПИСОК ЭФФЕКТИВНЫХ СТРОК МАРШРУТА
+    GET /v1/boms/{bom_id}/route/rows
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%/route/rows"
+
+Ожидаем: 2 строки, отсортированы по seq, имена справочников заполнены.
+
+----------------------------------------------------------------------------
+D4. ВЛОЖЕННЫЙ МАРШРУТ КОМПОНЕНТА
+    POST /v1/products/{product_id}/boms
+    POST /v1/boms/{bom_id}/route/rows
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/products/%PROD_A%/boms" -H "Content-Type: application/json" -d "{\"isDefault\":true}"
+set BOM_A=<id из ответа>
+
+curl -s -X POST "%BASE%/v1/boms/%BOM_A%/route/rows" -H "Content-Type: application/json" -d "{\"seq\":10,\"operationClassId\":\"%OP_CUT%\",\"productId\":\"%PROD_B%\",\"quantity\":\"3\",\"laborNorm\":\"0.1\"}"
+
+Ожидаем: 200. Теперь PROD_A имеет свой маршрут, поэтому в цене
+BOM_DEFAULT он раскрывается, а не считается материалом.
+
+----------------------------------------------------------------------------
+D5. МОДИФИКАЦИЯ: НАСЛЕДОВАНИЕ, ПЕРЕКРЫТИЕ, ИСКЛЮЧЕНИЕ
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/products/%PRODUCT%/boms" -H "Content-Type: application/json" -d "{\"isDefault\":false,\"name\":\"Mod Route\"}"
+set BOM_MOD_ROUTE=<id из ответа>
+
+curl -s "%BASE%/v1/boms/%BOM_MOD_ROUTE%/route/rows"
+Ожидаем: 2 унаследованные строки (inherited=true).
+
+-- Своя строка seq=15:
+curl -s -X POST "%BASE%/v1/boms/%BOM_MOD_ROUTE%/route/rows" -H "Content-Type: application/json" -d "{\"seq\":15,\"operationClassId\":\"%OP_ASSY%\",\"productId\":\"%PROD_A%\",\"quantity\":\"1\",\"laborNorm\":\"0.3\"}"
+
+-- Перекрыть унаследованную строку seq=10:
+curl -s -X PATCH "%BASE%/v1/boms/%BOM_MOD_ROUTE%/route/rows/%ROUTE1%" -H "Content-Type: application/json" -d "{\"seq\":10,\"operationClassId\":\"%OP_CUT%\",\"productId\":\"%PROD_A%\",\"quantity\":\"10\",\"laborNorm\":\"0.4\"}"
+
+-- Исключить унаследованную строку seq=20:
+curl -s -X PATCH "%BASE%/v1/boms/%BOM_MOD_ROUTE%/route/rows/%ROUTE2%" -H "Content-Type: application/json" -d "{\"seq\":20,\"operationClassId\":\"%OP_WELD%\",\"productId\":\"%PROD_B%\",\"quantity\":\"0\",\"laborNorm\":\"0\",\"isExcluded\":true}"
+
+Ожидаем: в GET маршрута модификации 2 строки (seq=10 inherited=false,
+seq=15 inherited=false); seq=20 отсутствует. Дефолтный BOM не изменён.
+
+----------------------------------------------------------------------------
+D6. РУЧНАЯ ЦЕНА BOM БЕЗ МАРШРУТА
+    PATCH /v1/boms/{id}/price   { price, priceManual }
+----------------------------------------------------------------------------
+curl -s -X POST "%BASE%/v1/products/%PROD_B%/boms" -H "Content-Type: application/json" -d "{\"isDefault\":true}"
+set BOM_B=<id из ответа>
+
+curl -s -X PATCH "%BASE%/v1/boms/%BOM_B%/price" -H "Content-Type: application/json" -d "{\"price\":\"42.50\",\"priceManual\":true}"
+
+Ожидаем: 200, price=42.50, priceManual=true.
+После пересчёта BOM_DEFAULT:
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%"
+Ожидаем: price=2360, priceManual=false.
+
+-- Ручная цена на BOM с маршрутными строками запрещена:
+curl -s -i -X PATCH "%BASE%/v1/boms/%BOM_DEFAULT%/price" -H "Content-Type: application/json" -d "{\"price\":\"1\",\"priceManual\":true}"
+Ожидаем: 412.
+
+----------------------------------------------------------------------------
+D7. ИЗМЕНЕНИЕ СТАВКИ ОПЕРАЦИИ ПЕРЕСЧИТЫВАЕТ ЦЕНЫ
+    PATCH /v1/operation-classes/{id}
+----------------------------------------------------------------------------
+curl -s -X PATCH "%BASE%/v1/operation-classes/%OP_CUT%" -H "Content-Type: application/json" -d "{\"code\":\"CUT\",\"name\":\"Резка\",\"hourlyRate\":\"600\"}"
+
+Ожидаем: 200. BOM_DEFAULT price увеличивается на 1.2 * 100 = 120 (было 2360,
+стало 2480). Проверить GET /v1/boms/%BOM_DEFAULT%.
+
+----------------------------------------------------------------------------
+D8. ЦИКЛ ЧЕРЕЗ МАРШРУТ -> 412
+----------------------------------------------------------------------------
+-- BOM_A (PROD_A) уже содержит PROD_B. Добавляем в него PRODUCT без ссылки:
+-- получится PRODUCT -> PROD_A -> PRODUCT.
+curl -s -i -X POST "%BASE%/v1/boms/%BOM_A%/route/rows" -H "Content-Type: application/json" -d "{\"seq\":20,\"operationClassId\":\"%OP_WELD%\",\"productId\":\"%PRODUCT%\",\"quantity\":\"1\",\"laborNorm\":\"0\"}"
+
+Ожидаем: 412, route contains a cycle; строка не добавлена.
+
+----------------------------------------------------------------------------
+D9. РЕВИЗИИ СОДЕРЖАТ СНИМОК МАРШРУТА
+    GET /v1/boms/{bom_id}/revisions/{revision}
+----------------------------------------------------------------------------
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%/revisions"
+-- взять последнюю ревизию:
+curl -s "%BASE%/v1/boms/%BOM_DEFAULT%/revisions/<номер>"
+
+Ожидаем: route_rows с seq=10 и seq=20, имена операций/оборудования/инструмента,
+inherited=false. Изменение маршрута создаёт новую ревизию BOM.
+
+
+============================================================================
 ПОЛНАЯ КАРТА МЕТОДОВ -> HTTP
 ============================================================================
 COMMON
@@ -511,4 +640,30 @@ CONFIGURATION — BomService
   DeleteBomRow        DELETE /v1/boms/rows/{id}
   ListBomRevisions    GET    /v1/boms/{bom_id}/revisions
   GetBomRevision      GET    /v1/boms/{bom_id}/revisions/{revision}
+  ExpandBom           GET    /v1/boms/{bom_id}/expand
+  UpdateBomPrice      PATCH  /v1/boms/{id}/price
+CONFIGURATION — OperationClassService
+  ListOperationClasses  GET    /v1/operation-classes
+  GetOperationClass     GET    /v1/operation-classes/{id}
+  CreateOperationClass  POST   /v1/operation-classes
+  UpdateOperationClass  PATCH  /v1/operation-classes/{id}
+  DeleteOperationClass  DELETE /v1/operation-classes/{id}
+CONFIGURATION — EquipmentService
+  ListEquipment        GET    /v1/equipment
+  GetEquipment         GET    /v1/equipment/{id}
+  CreateEquipment      POST   /v1/equipment
+  UpdateEquipment      PATCH  /v1/equipment/{id}
+  DeleteEquipment      DELETE /v1/equipment/{id}
+CONFIGURATION — ToolService
+  ListTools            GET    /v1/tools
+  GetTool              GET    /v1/tools/{id}
+  CreateTool           POST   /v1/tools
+  UpdateTool           PATCH  /v1/tools/{id}
+  DeleteTool           DELETE /v1/tools/{id}
+CONFIGURATION — RouteService
+  ListRouteRows       GET    /v1/boms/{bom_id}/route/rows
+  AddRouteRow         POST   /v1/boms/{bom_id}/route/rows
+  UpdateRouteRow      PATCH  /v1/boms/{bom_id}/route/rows/{row_id}
+  DeleteRouteRow      DELETE /v1/boms/{bom_id}/route/rows/{row_id}
+  ReplaceRouteRows    PUT    /v1/boms/{bom_id}/route/rows
 ====================================================================

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UML: Class Model — Nodes / Products / BOMs</title>
+  <title>UML: Диаграмма классов — Узлы / Изделия / BOM</title>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
   <style>
     :root {
@@ -49,13 +49,6 @@
       width: auto;
       height: auto;
     }
-    .notes {
-      margin-top: 16px;
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-    .notes ul { margin: 8px 0 0; padding-left: 1.2em; }
-    .notes li { margin-bottom: 4px; }
     code {
       background: #0d1117;
       padding: 1px 6px;
@@ -65,92 +58,169 @@
   </style>
 </head>
 <body>
-  <h1>Модель классов (Class Diagram)</h1>
+  <h1>Диаграмма классов</h1>
   <section>
     <div class="mermaid">
 classDiagram
     direction TB
 
-    class Node {
+    class Узел {
         +UUID id
-        +UUID parentId
-        +String name
+        +UUID? parentId
+        +String название
         --
-        +children: List~Node~
-        +products: List~Product~
-        +CreateNode(parentID: UUID, name: String) Node
-        +GetNode(id: UUID) Node
-        +ListChildren(parentID: UUID) List~Node~
-        +UpdateNode(id: UUID, name: String) Node
-        +DeleteNode(id: UUID)
+        +дети: List~Узел~
+        +изделия: List~Изделие~
+        +СоздатьУзел(parentID: UUID, название: String) Узел
+        +ПолучитьУзел(id: UUID) Узел
+        +СписокДетей(parentID: UUID) List~Узел~
+        +СписокКорневыхУзлов() List~Узел~
+        +ПереименоватьУзел(id: UUID, название: String) Узел
+        +УдалитьУзел(id: UUID)
     }
 
-    class Product {
+    class Изделие {
         +UUID id
         +UUID nodeId
-        +String name
-        +ProductType type
-        +DateTime archivedAt
+        +String название
+        +DateTime? archivedAt
         --
-        +node: Node
-        +boms: List~Bom~
-        +CreateProduct(nodeID: UUID, name: String, type: ProductType) Product
-        +GetProduct(id: UUID) Product
-        +ListProductsByNode(nodeID: UUID) List~Product~
-        +ListProductsByType(type: ProductType) List~Product~
-        +UpdateProduct(id: UUID, name: String) Product
-        +DeleteProduct(id: UUID)
-        +isArchived() boolean
+        +узел: Узел
+        +спецификации: List~Спецификация~
+        +СоздатьИзделие(nodeID: UUID, название: String) Изделие
+        +ПолучитьИзделие(id: UUID) Изделие
+        +СписокИзделийПоУзлу(nodeID: UUID) List~Изделие~
+        +ПереименоватьИзделие(id: UUID, название: String) Изделие
+        +УдалитьИзделие(id: UUID)
     }
 
-    class Bom {
+    class Спецификация {
         +UUID id
         +UUID productId
         +Boolean isDefault
-        +String name
+        +String? название
+        +Decimal цена
+        +Boolean ценаВручную
         --
-        +product: Product
-        +rows: List~BomRow~
-        +revisions: List~BomRevision~
-        +GetBom(id: UUID) Bom
-        +ListBoms(productID: UUID) List~Bom~
-        +CreateBom(productID: UUID, name: String, isDefault: Boolean) Bom
-        +SetDefaultBom(id: UUID) Bom
-        +DeleteBom(id: UUID)
-        +CalculateConsumption(productID: UUID, resourceClass: ProductType) List~BomRow~
+        +изделие: Изделие
+        +строки: List~СтрокаСпецификации~
+        +маршрут: List~СтрокаМаршрута~
+        +ревизии: List~РевизияСпецификации~
+        +ПолучитьСпецификацию(id: UUID) Спецификация
+        +СписокСпецификаций(productID: UUID) List~Спецификация~
+        +СоздатьСпецификацию(productID: UUID, название: String, isDefault: Boolean) Спецификация
+        +УдалитьСпецификацию(id: UUID)
+        +Развернуть(bomID: UUID) List~СтрокаСпецификации~
+        +УстановитьЦену(id: UUID, цена: Decimal, вручную: Boolean) Спецификация
     }
 
-    class BomRow {
+    class СтрокаСпецификации {
         +UUID id
         +UUID bomId
         +UUID productId
-        +Decimal quantity
+        +Decimal количество
+        +Boolean isBase
+        +Boolean isExcluded
+        +UUID? referenceBomId
+        +Integer? referenceRevision
         --
-        +bom: Bom
-        +component: Product
-        +ReplaceBomRows(bomID: UUID, rows: List~BomRow~) Bom
-        +AddRow(bomID: UUID, productID: UUID, quantity: Decimal) BomRow
-        +UpdateRow(id: UUID, productID: UUID, quantity: Decimal) BomRow
-        +DeleteRow(id: UUID)
+        +спецификация: Спецификация
+        +компонент: Изделие
+        +ЗаменитьВсеСтроки(bomID: UUID, строки: List~СтрокаСпецификации~) Спецификация
+        +ДобавитьСтроку(bomID: UUID, productID: UUID, количество: Decimal, isBase: Boolean, isExcluded: Boolean, referenceBomID: UUID?, referenceRevision: Int?) СтрокаСпецификации
+        +ОбновитьСтроку(id: UUID, productID: UUID, количество: Decimal, isBase: Boolean, isExcluded: Boolean, referenceBomID: UUID?, referenceRevision: Int?) СтрокаСпецификации
+        +УдалитьСтроку(id: UUID)
     }
 
-    class BomRevision {
+    class СтрокаМаршрута {
+        +UUID id
         +UUID bomId
-        +Integer revision
-        +Json rows
-        +DateTime changedAt
+        +Integer seq
+        +UUID operationClassId
+        +UUID? equipmentId
+        +UUID? toolId
+        +UUID productId
+        +Decimal количество
+        +Decimal нормаТруда
+        +Boolean isBase
+        +Boolean isExcluded
+        +UUID? referenceBomId
+        +Integer? referenceRevision
         --
-        +bom: Bom
-        +ListBomRevisions(bomID: UUID) List~BomRevision~
-        +GetBomRevision(bomID: UUID, revision: Int) List~BomRow~
+        +спецификация: Спецификация
+        +классОперации: КлассОперации
+        +оборудование: Оборудование
+        +инструмент: Инструмент
+        +компонент: Изделие
+        +СписокСтрок(bomID: UUID) List~СтрокаМаршрута~
+        +ДобавитьСтроку(bomID: UUID, строка: СтрокаМаршрута) СтрокаМаршрута
+        +ОбновитьСтроку(bomID: UUID, rowID: UUID, строка: СтрокаМаршрута) СтрокаМаршрута
+        +УдалитьСтроку(bomID: UUID, rowID: UUID)
+        +ЗаменитьСтроки(bomID: UUID, строки: List~СтрокаМаршрута~) List~СтрокаМаршрута~
     }
 
-    Node "0..1" --> "0..*" Node : родитель / наследник
-    Node "1" *-- "0..*" Product : содержит
-    Product "1" --> "0..*" Bom : имеет BOM
-    Bom "1" *-- "0..*" BomRow : состоит из
-    Product "1" --> "0..*" BomRow : используется как компонент
-    Bom "1" *-- "0..*" BomRevision : история ревизий
+    class КлассОперации {
+        +UUID id
+        +String код
+        +String название
+        +Decimal ставкаВЧас
+        --
+        +СписокКлассовОпераций() List~КлассОперации~
+        +ПолучитьКлассОперации(id: UUID) КлассОперации
+        +СоздатьКлассОперации(код: String, название: String, ставкаВЧас: Decimal) КлассОперации
+        +ОбновитьКлассОперации(id: UUID, код: String, название: String, ставкаВЧас: Decimal) КлассОперации
+        +УдалитьКлассОперации(id: UUID)
+    }
+
+    class Оборудование {
+        +UUID id
+        +String код
+        +String название
+        --
+        +СписокОборудования() List~Оборудование~
+        +ПолучитьОборудование(id: UUID) Оборудование
+        +СоздатьОборудование(код: String, название: String) Оборудование
+        +ОбновитьОборудование(id: UUID, код: String, название: String) Оборудование
+        +УдалитьОборудование(id: UUID)
+    }
+
+    class Инструмент {
+        +UUID id
+        +String код
+        +String название
+        --
+        +СписокИнструментов() List~Инструмент~
+        +ПолучитьИнструмент(id: UUID) Инструмент
+        +СоздатьИнструмент(код: String, название: String) Инструмент
+        +ОбновитьИнструмент(id: UUID, код: String, название: String) Инструмент
+        +УдалитьИнструмент(id: UUID)
+    }
+
+    class РевизияСпецификации {
+        +UUID bomId
+        +Integer ревизия
+        +Json строки
+        +Json маршрут
+        +DateTime измененоВ
+        --
+        +спецификация: Спецификация
+        +СписокРевизий(bomID: UUID) List~РевизияСпецификации~
+        +ПолучитьРевизию(bomID: UUID, ревизия: Int) (строки, маршрут, измененоВ)
+    }
+
+    Узел "0..1" --> "0..*" Узел : родитель / потомок
+    Узел "1" *-- "0..*" Изделие : содержит
+    Изделие "1" --> "0..*" Спецификация : имеет спецификацию
+    Спецификация "1" *-- "0..*" СтрокаСпецификации : состоит из
+    Изделие "1" --> "0..*" СтрокаСпецификации : используется как компонент
+    Спецификация "1" *-- "0..*" СтрокаМаршрута : маршрут
+    Изделие "1" --> "0..*" СтрокаМаршрута : компонент маршрута
+    СтрокаМаршрута "0..*" --> "1" КлассОперации : используют
+    СтрокаМаршрута "0..*" --> "0..1" Оборудование : использует
+    СтрокаМаршрута "0..*" --> "0..1" Инструмент : использует
+    Спецификация "1" *-- "0..*" РевизияСпецификации : история ревизий
+    СтрокаСпецификации "0..*" --> "0..1" РевизияСпецификации : ссылается на ревизию
+    СтрокаМаршрута "0..*" --> "0..1" РевизияСпецификации : ссылается на ревизию
     </div>
   </section>
   <script>

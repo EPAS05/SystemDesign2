@@ -30,6 +30,7 @@ const (
 	BomService_ListBomRevisions_FullMethodName = "/configuration.v1.BomService/ListBomRevisions"
 	BomService_GetBomRevision_FullMethodName   = "/configuration.v1.BomService/GetBomRevision"
 	BomService_ExpandBom_FullMethodName        = "/configuration.v1.BomService/ExpandBom"
+	BomService_UpdateBomPrice_FullMethodName   = "/configuration.v1.BomService/UpdateBomPrice"
 )
 
 // BomServiceClient is the client API for BomService service.
@@ -47,6 +48,7 @@ type BomServiceClient interface {
 	ListBomRevisions(ctx context.Context, in *ListBomRevisionsRequest, opts ...grpc.CallOption) (*ListBomRevisionsResponse, error)
 	GetBomRevision(ctx context.Context, in *GetBomRevisionRequest, opts ...grpc.CallOption) (*GetBomRevisionResponse, error)
 	ExpandBom(ctx context.Context, in *ExpandBomRequest, opts ...grpc.CallOption) (*ExpandBomResponse, error)
+	UpdateBomPrice(ctx context.Context, in *UpdateBomPriceRequest, opts ...grpc.CallOption) (*UpdateBomPriceResponse, error)
 }
 
 type bomServiceClient struct {
@@ -167,6 +169,16 @@ func (c *bomServiceClient) ExpandBom(ctx context.Context, in *ExpandBomRequest, 
 	return out, nil
 }
 
+func (c *bomServiceClient) UpdateBomPrice(ctx context.Context, in *UpdateBomPriceRequest, opts ...grpc.CallOption) (*UpdateBomPriceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateBomPriceResponse)
+	err := c.cc.Invoke(ctx, BomService_UpdateBomPrice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BomServiceServer is the server API for BomService service.
 // All implementations must embed UnimplementedBomServiceServer
 // for forward compatibility.
@@ -182,6 +194,7 @@ type BomServiceServer interface {
 	ListBomRevisions(context.Context, *ListBomRevisionsRequest) (*ListBomRevisionsResponse, error)
 	GetBomRevision(context.Context, *GetBomRevisionRequest) (*GetBomRevisionResponse, error)
 	ExpandBom(context.Context, *ExpandBomRequest) (*ExpandBomResponse, error)
+	UpdateBomPrice(context.Context, *UpdateBomPriceRequest) (*UpdateBomPriceResponse, error)
 	mustEmbedUnimplementedBomServiceServer()
 }
 
@@ -224,6 +237,9 @@ func (UnimplementedBomServiceServer) GetBomRevision(context.Context, *GetBomRevi
 }
 func (UnimplementedBomServiceServer) ExpandBom(context.Context, *ExpandBomRequest) (*ExpandBomResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ExpandBom not implemented")
+}
+func (UnimplementedBomServiceServer) UpdateBomPrice(context.Context, *UpdateBomPriceRequest) (*UpdateBomPriceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateBomPrice not implemented")
 }
 func (UnimplementedBomServiceServer) mustEmbedUnimplementedBomServiceServer() {}
 func (UnimplementedBomServiceServer) testEmbeddedByValue()                    {}
@@ -444,6 +460,24 @@ func _BomService_ExpandBom_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BomService_UpdateBomPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBomPriceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BomServiceServer).UpdateBomPrice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BomService_UpdateBomPrice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BomServiceServer).UpdateBomPrice(ctx, req.(*UpdateBomPriceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BomService_ServiceDesc is the grpc.ServiceDesc for BomService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -494,6 +528,1026 @@ var BomService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExpandBom",
 			Handler:    _BomService_ExpandBom_Handler,
+		},
+		{
+			MethodName: "UpdateBomPrice",
+			Handler:    _BomService_UpdateBomPrice_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "configuration/v1/configuration.proto",
+}
+
+const (
+	OperationClassService_ListOperationClasses_FullMethodName = "/configuration.v1.OperationClassService/ListOperationClasses"
+	OperationClassService_GetOperationClass_FullMethodName    = "/configuration.v1.OperationClassService/GetOperationClass"
+	OperationClassService_CreateOperationClass_FullMethodName = "/configuration.v1.OperationClassService/CreateOperationClass"
+	OperationClassService_UpdateOperationClass_FullMethodName = "/configuration.v1.OperationClassService/UpdateOperationClass"
+	OperationClassService_DeleteOperationClass_FullMethodName = "/configuration.v1.OperationClassService/DeleteOperationClass"
+)
+
+// OperationClassServiceClient is the client API for OperationClassService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OperationClassServiceClient interface {
+	ListOperationClasses(ctx context.Context, in *ListOperationClassesRequest, opts ...grpc.CallOption) (*ListOperationClassesResponse, error)
+	GetOperationClass(ctx context.Context, in *GetOperationClassRequest, opts ...grpc.CallOption) (*GetOperationClassResponse, error)
+	CreateOperationClass(ctx context.Context, in *CreateOperationClassRequest, opts ...grpc.CallOption) (*CreateOperationClassResponse, error)
+	UpdateOperationClass(ctx context.Context, in *UpdateOperationClassRequest, opts ...grpc.CallOption) (*UpdateOperationClassResponse, error)
+	DeleteOperationClass(ctx context.Context, in *DeleteOperationClassRequest, opts ...grpc.CallOption) (*DeleteOperationClassResponse, error)
+}
+
+type operationClassServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOperationClassServiceClient(cc grpc.ClientConnInterface) OperationClassServiceClient {
+	return &operationClassServiceClient{cc}
+}
+
+func (c *operationClassServiceClient) ListOperationClasses(ctx context.Context, in *ListOperationClassesRequest, opts ...grpc.CallOption) (*ListOperationClassesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOperationClassesResponse)
+	err := c.cc.Invoke(ctx, OperationClassService_ListOperationClasses_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *operationClassServiceClient) GetOperationClass(ctx context.Context, in *GetOperationClassRequest, opts ...grpc.CallOption) (*GetOperationClassResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOperationClassResponse)
+	err := c.cc.Invoke(ctx, OperationClassService_GetOperationClass_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *operationClassServiceClient) CreateOperationClass(ctx context.Context, in *CreateOperationClassRequest, opts ...grpc.CallOption) (*CreateOperationClassResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateOperationClassResponse)
+	err := c.cc.Invoke(ctx, OperationClassService_CreateOperationClass_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *operationClassServiceClient) UpdateOperationClass(ctx context.Context, in *UpdateOperationClassRequest, opts ...grpc.CallOption) (*UpdateOperationClassResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateOperationClassResponse)
+	err := c.cc.Invoke(ctx, OperationClassService_UpdateOperationClass_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *operationClassServiceClient) DeleteOperationClass(ctx context.Context, in *DeleteOperationClassRequest, opts ...grpc.CallOption) (*DeleteOperationClassResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteOperationClassResponse)
+	err := c.cc.Invoke(ctx, OperationClassService_DeleteOperationClass_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OperationClassServiceServer is the server API for OperationClassService service.
+// All implementations must embed UnimplementedOperationClassServiceServer
+// for forward compatibility.
+type OperationClassServiceServer interface {
+	ListOperationClasses(context.Context, *ListOperationClassesRequest) (*ListOperationClassesResponse, error)
+	GetOperationClass(context.Context, *GetOperationClassRequest) (*GetOperationClassResponse, error)
+	CreateOperationClass(context.Context, *CreateOperationClassRequest) (*CreateOperationClassResponse, error)
+	UpdateOperationClass(context.Context, *UpdateOperationClassRequest) (*UpdateOperationClassResponse, error)
+	DeleteOperationClass(context.Context, *DeleteOperationClassRequest) (*DeleteOperationClassResponse, error)
+	mustEmbedUnimplementedOperationClassServiceServer()
+}
+
+// UnimplementedOperationClassServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOperationClassServiceServer struct{}
+
+func (UnimplementedOperationClassServiceServer) ListOperationClasses(context.Context, *ListOperationClassesRequest) (*ListOperationClassesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListOperationClasses not implemented")
+}
+func (UnimplementedOperationClassServiceServer) GetOperationClass(context.Context, *GetOperationClassRequest) (*GetOperationClassResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOperationClass not implemented")
+}
+func (UnimplementedOperationClassServiceServer) CreateOperationClass(context.Context, *CreateOperationClassRequest) (*CreateOperationClassResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateOperationClass not implemented")
+}
+func (UnimplementedOperationClassServiceServer) UpdateOperationClass(context.Context, *UpdateOperationClassRequest) (*UpdateOperationClassResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateOperationClass not implemented")
+}
+func (UnimplementedOperationClassServiceServer) DeleteOperationClass(context.Context, *DeleteOperationClassRequest) (*DeleteOperationClassResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteOperationClass not implemented")
+}
+func (UnimplementedOperationClassServiceServer) mustEmbedUnimplementedOperationClassServiceServer() {}
+func (UnimplementedOperationClassServiceServer) testEmbeddedByValue()                               {}
+
+// UnsafeOperationClassServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OperationClassServiceServer will
+// result in compilation errors.
+type UnsafeOperationClassServiceServer interface {
+	mustEmbedUnimplementedOperationClassServiceServer()
+}
+
+func RegisterOperationClassServiceServer(s grpc.ServiceRegistrar, srv OperationClassServiceServer) {
+	// If the following call panics, it indicates UnimplementedOperationClassServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OperationClassService_ServiceDesc, srv)
+}
+
+func _OperationClassService_ListOperationClasses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOperationClassesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OperationClassServiceServer).ListOperationClasses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OperationClassService_ListOperationClasses_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OperationClassServiceServer).ListOperationClasses(ctx, req.(*ListOperationClassesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OperationClassService_GetOperationClass_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOperationClassRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OperationClassServiceServer).GetOperationClass(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OperationClassService_GetOperationClass_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OperationClassServiceServer).GetOperationClass(ctx, req.(*GetOperationClassRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OperationClassService_CreateOperationClass_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOperationClassRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OperationClassServiceServer).CreateOperationClass(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OperationClassService_CreateOperationClass_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OperationClassServiceServer).CreateOperationClass(ctx, req.(*CreateOperationClassRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OperationClassService_UpdateOperationClass_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOperationClassRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OperationClassServiceServer).UpdateOperationClass(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OperationClassService_UpdateOperationClass_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OperationClassServiceServer).UpdateOperationClass(ctx, req.(*UpdateOperationClassRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OperationClassService_DeleteOperationClass_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteOperationClassRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OperationClassServiceServer).DeleteOperationClass(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OperationClassService_DeleteOperationClass_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OperationClassServiceServer).DeleteOperationClass(ctx, req.(*DeleteOperationClassRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OperationClassService_ServiceDesc is the grpc.ServiceDesc for OperationClassService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OperationClassService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "configuration.v1.OperationClassService",
+	HandlerType: (*OperationClassServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListOperationClasses",
+			Handler:    _OperationClassService_ListOperationClasses_Handler,
+		},
+		{
+			MethodName: "GetOperationClass",
+			Handler:    _OperationClassService_GetOperationClass_Handler,
+		},
+		{
+			MethodName: "CreateOperationClass",
+			Handler:    _OperationClassService_CreateOperationClass_Handler,
+		},
+		{
+			MethodName: "UpdateOperationClass",
+			Handler:    _OperationClassService_UpdateOperationClass_Handler,
+		},
+		{
+			MethodName: "DeleteOperationClass",
+			Handler:    _OperationClassService_DeleteOperationClass_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "configuration/v1/configuration.proto",
+}
+
+const (
+	EquipmentService_ListEquipment_FullMethodName   = "/configuration.v1.EquipmentService/ListEquipment"
+	EquipmentService_GetEquipment_FullMethodName    = "/configuration.v1.EquipmentService/GetEquipment"
+	EquipmentService_CreateEquipment_FullMethodName = "/configuration.v1.EquipmentService/CreateEquipment"
+	EquipmentService_UpdateEquipment_FullMethodName = "/configuration.v1.EquipmentService/UpdateEquipment"
+	EquipmentService_DeleteEquipment_FullMethodName = "/configuration.v1.EquipmentService/DeleteEquipment"
+)
+
+// EquipmentServiceClient is the client API for EquipmentService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type EquipmentServiceClient interface {
+	ListEquipment(ctx context.Context, in *ListEquipmentRequest, opts ...grpc.CallOption) (*ListEquipmentResponse, error)
+	GetEquipment(ctx context.Context, in *GetEquipmentRequest, opts ...grpc.CallOption) (*GetEquipmentResponse, error)
+	CreateEquipment(ctx context.Context, in *CreateEquipmentRequest, opts ...grpc.CallOption) (*CreateEquipmentResponse, error)
+	UpdateEquipment(ctx context.Context, in *UpdateEquipmentRequest, opts ...grpc.CallOption) (*UpdateEquipmentResponse, error)
+	DeleteEquipment(ctx context.Context, in *DeleteEquipmentRequest, opts ...grpc.CallOption) (*DeleteEquipmentResponse, error)
+}
+
+type equipmentServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewEquipmentServiceClient(cc grpc.ClientConnInterface) EquipmentServiceClient {
+	return &equipmentServiceClient{cc}
+}
+
+func (c *equipmentServiceClient) ListEquipment(ctx context.Context, in *ListEquipmentRequest, opts ...grpc.CallOption) (*ListEquipmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListEquipmentResponse)
+	err := c.cc.Invoke(ctx, EquipmentService_ListEquipment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *equipmentServiceClient) GetEquipment(ctx context.Context, in *GetEquipmentRequest, opts ...grpc.CallOption) (*GetEquipmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetEquipmentResponse)
+	err := c.cc.Invoke(ctx, EquipmentService_GetEquipment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *equipmentServiceClient) CreateEquipment(ctx context.Context, in *CreateEquipmentRequest, opts ...grpc.CallOption) (*CreateEquipmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateEquipmentResponse)
+	err := c.cc.Invoke(ctx, EquipmentService_CreateEquipment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *equipmentServiceClient) UpdateEquipment(ctx context.Context, in *UpdateEquipmentRequest, opts ...grpc.CallOption) (*UpdateEquipmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateEquipmentResponse)
+	err := c.cc.Invoke(ctx, EquipmentService_UpdateEquipment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *equipmentServiceClient) DeleteEquipment(ctx context.Context, in *DeleteEquipmentRequest, opts ...grpc.CallOption) (*DeleteEquipmentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteEquipmentResponse)
+	err := c.cc.Invoke(ctx, EquipmentService_DeleteEquipment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// EquipmentServiceServer is the server API for EquipmentService service.
+// All implementations must embed UnimplementedEquipmentServiceServer
+// for forward compatibility.
+type EquipmentServiceServer interface {
+	ListEquipment(context.Context, *ListEquipmentRequest) (*ListEquipmentResponse, error)
+	GetEquipment(context.Context, *GetEquipmentRequest) (*GetEquipmentResponse, error)
+	CreateEquipment(context.Context, *CreateEquipmentRequest) (*CreateEquipmentResponse, error)
+	UpdateEquipment(context.Context, *UpdateEquipmentRequest) (*UpdateEquipmentResponse, error)
+	DeleteEquipment(context.Context, *DeleteEquipmentRequest) (*DeleteEquipmentResponse, error)
+	mustEmbedUnimplementedEquipmentServiceServer()
+}
+
+// UnimplementedEquipmentServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedEquipmentServiceServer struct{}
+
+func (UnimplementedEquipmentServiceServer) ListEquipment(context.Context, *ListEquipmentRequest) (*ListEquipmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListEquipment not implemented")
+}
+func (UnimplementedEquipmentServiceServer) GetEquipment(context.Context, *GetEquipmentRequest) (*GetEquipmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetEquipment not implemented")
+}
+func (UnimplementedEquipmentServiceServer) CreateEquipment(context.Context, *CreateEquipmentRequest) (*CreateEquipmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateEquipment not implemented")
+}
+func (UnimplementedEquipmentServiceServer) UpdateEquipment(context.Context, *UpdateEquipmentRequest) (*UpdateEquipmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateEquipment not implemented")
+}
+func (UnimplementedEquipmentServiceServer) DeleteEquipment(context.Context, *DeleteEquipmentRequest) (*DeleteEquipmentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteEquipment not implemented")
+}
+func (UnimplementedEquipmentServiceServer) mustEmbedUnimplementedEquipmentServiceServer() {}
+func (UnimplementedEquipmentServiceServer) testEmbeddedByValue()                          {}
+
+// UnsafeEquipmentServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to EquipmentServiceServer will
+// result in compilation errors.
+type UnsafeEquipmentServiceServer interface {
+	mustEmbedUnimplementedEquipmentServiceServer()
+}
+
+func RegisterEquipmentServiceServer(s grpc.ServiceRegistrar, srv EquipmentServiceServer) {
+	// If the following call panics, it indicates UnimplementedEquipmentServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&EquipmentService_ServiceDesc, srv)
+}
+
+func _EquipmentService_ListEquipment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEquipmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EquipmentServiceServer).ListEquipment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EquipmentService_ListEquipment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EquipmentServiceServer).ListEquipment(ctx, req.(*ListEquipmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EquipmentService_GetEquipment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEquipmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EquipmentServiceServer).GetEquipment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EquipmentService_GetEquipment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EquipmentServiceServer).GetEquipment(ctx, req.(*GetEquipmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EquipmentService_CreateEquipment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateEquipmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EquipmentServiceServer).CreateEquipment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EquipmentService_CreateEquipment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EquipmentServiceServer).CreateEquipment(ctx, req.(*CreateEquipmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EquipmentService_UpdateEquipment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateEquipmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EquipmentServiceServer).UpdateEquipment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EquipmentService_UpdateEquipment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EquipmentServiceServer).UpdateEquipment(ctx, req.(*UpdateEquipmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EquipmentService_DeleteEquipment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteEquipmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EquipmentServiceServer).DeleteEquipment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EquipmentService_DeleteEquipment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EquipmentServiceServer).DeleteEquipment(ctx, req.(*DeleteEquipmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// EquipmentService_ServiceDesc is the grpc.ServiceDesc for EquipmentService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var EquipmentService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "configuration.v1.EquipmentService",
+	HandlerType: (*EquipmentServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListEquipment",
+			Handler:    _EquipmentService_ListEquipment_Handler,
+		},
+		{
+			MethodName: "GetEquipment",
+			Handler:    _EquipmentService_GetEquipment_Handler,
+		},
+		{
+			MethodName: "CreateEquipment",
+			Handler:    _EquipmentService_CreateEquipment_Handler,
+		},
+		{
+			MethodName: "UpdateEquipment",
+			Handler:    _EquipmentService_UpdateEquipment_Handler,
+		},
+		{
+			MethodName: "DeleteEquipment",
+			Handler:    _EquipmentService_DeleteEquipment_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "configuration/v1/configuration.proto",
+}
+
+const (
+	ToolService_ListTools_FullMethodName  = "/configuration.v1.ToolService/ListTools"
+	ToolService_GetTool_FullMethodName    = "/configuration.v1.ToolService/GetTool"
+	ToolService_CreateTool_FullMethodName = "/configuration.v1.ToolService/CreateTool"
+	ToolService_UpdateTool_FullMethodName = "/configuration.v1.ToolService/UpdateTool"
+	ToolService_DeleteTool_FullMethodName = "/configuration.v1.ToolService/DeleteTool"
+)
+
+// ToolServiceClient is the client API for ToolService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ToolServiceClient interface {
+	ListTools(ctx context.Context, in *ListToolsRequest, opts ...grpc.CallOption) (*ListToolsResponse, error)
+	GetTool(ctx context.Context, in *GetToolRequest, opts ...grpc.CallOption) (*GetToolResponse, error)
+	CreateTool(ctx context.Context, in *CreateToolRequest, opts ...grpc.CallOption) (*CreateToolResponse, error)
+	UpdateTool(ctx context.Context, in *UpdateToolRequest, opts ...grpc.CallOption) (*UpdateToolResponse, error)
+	DeleteTool(ctx context.Context, in *DeleteToolRequest, opts ...grpc.CallOption) (*DeleteToolResponse, error)
+}
+
+type toolServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewToolServiceClient(cc grpc.ClientConnInterface) ToolServiceClient {
+	return &toolServiceClient{cc}
+}
+
+func (c *toolServiceClient) ListTools(ctx context.Context, in *ListToolsRequest, opts ...grpc.CallOption) (*ListToolsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListToolsResponse)
+	err := c.cc.Invoke(ctx, ToolService_ListTools_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *toolServiceClient) GetTool(ctx context.Context, in *GetToolRequest, opts ...grpc.CallOption) (*GetToolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetToolResponse)
+	err := c.cc.Invoke(ctx, ToolService_GetTool_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *toolServiceClient) CreateTool(ctx context.Context, in *CreateToolRequest, opts ...grpc.CallOption) (*CreateToolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateToolResponse)
+	err := c.cc.Invoke(ctx, ToolService_CreateTool_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *toolServiceClient) UpdateTool(ctx context.Context, in *UpdateToolRequest, opts ...grpc.CallOption) (*UpdateToolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateToolResponse)
+	err := c.cc.Invoke(ctx, ToolService_UpdateTool_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *toolServiceClient) DeleteTool(ctx context.Context, in *DeleteToolRequest, opts ...grpc.CallOption) (*DeleteToolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteToolResponse)
+	err := c.cc.Invoke(ctx, ToolService_DeleteTool_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ToolServiceServer is the server API for ToolService service.
+// All implementations must embed UnimplementedToolServiceServer
+// for forward compatibility.
+type ToolServiceServer interface {
+	ListTools(context.Context, *ListToolsRequest) (*ListToolsResponse, error)
+	GetTool(context.Context, *GetToolRequest) (*GetToolResponse, error)
+	CreateTool(context.Context, *CreateToolRequest) (*CreateToolResponse, error)
+	UpdateTool(context.Context, *UpdateToolRequest) (*UpdateToolResponse, error)
+	DeleteTool(context.Context, *DeleteToolRequest) (*DeleteToolResponse, error)
+	mustEmbedUnimplementedToolServiceServer()
+}
+
+// UnimplementedToolServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedToolServiceServer struct{}
+
+func (UnimplementedToolServiceServer) ListTools(context.Context, *ListToolsRequest) (*ListToolsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTools not implemented")
+}
+func (UnimplementedToolServiceServer) GetTool(context.Context, *GetToolRequest) (*GetToolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTool not implemented")
+}
+func (UnimplementedToolServiceServer) CreateTool(context.Context, *CreateToolRequest) (*CreateToolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTool not implemented")
+}
+func (UnimplementedToolServiceServer) UpdateTool(context.Context, *UpdateToolRequest) (*UpdateToolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateTool not implemented")
+}
+func (UnimplementedToolServiceServer) DeleteTool(context.Context, *DeleteToolRequest) (*DeleteToolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteTool not implemented")
+}
+func (UnimplementedToolServiceServer) mustEmbedUnimplementedToolServiceServer() {}
+func (UnimplementedToolServiceServer) testEmbeddedByValue()                     {}
+
+// UnsafeToolServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ToolServiceServer will
+// result in compilation errors.
+type UnsafeToolServiceServer interface {
+	mustEmbedUnimplementedToolServiceServer()
+}
+
+func RegisterToolServiceServer(s grpc.ServiceRegistrar, srv ToolServiceServer) {
+	// If the following call panics, it indicates UnimplementedToolServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&ToolService_ServiceDesc, srv)
+}
+
+func _ToolService_ListTools_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListToolsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ToolServiceServer).ListTools(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ToolService_ListTools_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ToolServiceServer).ListTools(ctx, req.(*ListToolsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ToolService_GetTool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetToolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ToolServiceServer).GetTool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ToolService_GetTool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ToolServiceServer).GetTool(ctx, req.(*GetToolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ToolService_CreateTool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateToolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ToolServiceServer).CreateTool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ToolService_CreateTool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ToolServiceServer).CreateTool(ctx, req.(*CreateToolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ToolService_UpdateTool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateToolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ToolServiceServer).UpdateTool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ToolService_UpdateTool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ToolServiceServer).UpdateTool(ctx, req.(*UpdateToolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ToolService_DeleteTool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteToolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ToolServiceServer).DeleteTool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ToolService_DeleteTool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ToolServiceServer).DeleteTool(ctx, req.(*DeleteToolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ToolService_ServiceDesc is the grpc.ServiceDesc for ToolService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ToolService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "configuration.v1.ToolService",
+	HandlerType: (*ToolServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListTools",
+			Handler:    _ToolService_ListTools_Handler,
+		},
+		{
+			MethodName: "GetTool",
+			Handler:    _ToolService_GetTool_Handler,
+		},
+		{
+			MethodName: "CreateTool",
+			Handler:    _ToolService_CreateTool_Handler,
+		},
+		{
+			MethodName: "UpdateTool",
+			Handler:    _ToolService_UpdateTool_Handler,
+		},
+		{
+			MethodName: "DeleteTool",
+			Handler:    _ToolService_DeleteTool_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "configuration/v1/configuration.proto",
+}
+
+const (
+	RouteService_ListRouteRows_FullMethodName    = "/configuration.v1.RouteService/ListRouteRows"
+	RouteService_AddRouteRow_FullMethodName      = "/configuration.v1.RouteService/AddRouteRow"
+	RouteService_UpdateRouteRow_FullMethodName   = "/configuration.v1.RouteService/UpdateRouteRow"
+	RouteService_DeleteRouteRow_FullMethodName   = "/configuration.v1.RouteService/DeleteRouteRow"
+	RouteService_ReplaceRouteRows_FullMethodName = "/configuration.v1.RouteService/ReplaceRouteRows"
+)
+
+// RouteServiceClient is the client API for RouteService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type RouteServiceClient interface {
+	ListRouteRows(ctx context.Context, in *ListRouteRowsRequest, opts ...grpc.CallOption) (*ListRouteRowsResponse, error)
+	AddRouteRow(ctx context.Context, in *AddRouteRowRequest, opts ...grpc.CallOption) (*AddRouteRowResponse, error)
+	UpdateRouteRow(ctx context.Context, in *UpdateRouteRowRequest, opts ...grpc.CallOption) (*UpdateRouteRowResponse, error)
+	DeleteRouteRow(ctx context.Context, in *DeleteRouteRowRequest, opts ...grpc.CallOption) (*DeleteRouteRowResponse, error)
+	ReplaceRouteRows(ctx context.Context, in *ReplaceRouteRowsRequest, opts ...grpc.CallOption) (*ReplaceRouteRowsResponse, error)
+}
+
+type routeServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewRouteServiceClient(cc grpc.ClientConnInterface) RouteServiceClient {
+	return &routeServiceClient{cc}
+}
+
+func (c *routeServiceClient) ListRouteRows(ctx context.Context, in *ListRouteRowsRequest, opts ...grpc.CallOption) (*ListRouteRowsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRouteRowsResponse)
+	err := c.cc.Invoke(ctx, RouteService_ListRouteRows_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routeServiceClient) AddRouteRow(ctx context.Context, in *AddRouteRowRequest, opts ...grpc.CallOption) (*AddRouteRowResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddRouteRowResponse)
+	err := c.cc.Invoke(ctx, RouteService_AddRouteRow_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routeServiceClient) UpdateRouteRow(ctx context.Context, in *UpdateRouteRowRequest, opts ...grpc.CallOption) (*UpdateRouteRowResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateRouteRowResponse)
+	err := c.cc.Invoke(ctx, RouteService_UpdateRouteRow_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routeServiceClient) DeleteRouteRow(ctx context.Context, in *DeleteRouteRowRequest, opts ...grpc.CallOption) (*DeleteRouteRowResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteRouteRowResponse)
+	err := c.cc.Invoke(ctx, RouteService_DeleteRouteRow_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *routeServiceClient) ReplaceRouteRows(ctx context.Context, in *ReplaceRouteRowsRequest, opts ...grpc.CallOption) (*ReplaceRouteRowsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReplaceRouteRowsResponse)
+	err := c.cc.Invoke(ctx, RouteService_ReplaceRouteRows_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// RouteServiceServer is the server API for RouteService service.
+// All implementations must embed UnimplementedRouteServiceServer
+// for forward compatibility.
+type RouteServiceServer interface {
+	ListRouteRows(context.Context, *ListRouteRowsRequest) (*ListRouteRowsResponse, error)
+	AddRouteRow(context.Context, *AddRouteRowRequest) (*AddRouteRowResponse, error)
+	UpdateRouteRow(context.Context, *UpdateRouteRowRequest) (*UpdateRouteRowResponse, error)
+	DeleteRouteRow(context.Context, *DeleteRouteRowRequest) (*DeleteRouteRowResponse, error)
+	ReplaceRouteRows(context.Context, *ReplaceRouteRowsRequest) (*ReplaceRouteRowsResponse, error)
+	mustEmbedUnimplementedRouteServiceServer()
+}
+
+// UnimplementedRouteServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedRouteServiceServer struct{}
+
+func (UnimplementedRouteServiceServer) ListRouteRows(context.Context, *ListRouteRowsRequest) (*ListRouteRowsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListRouteRows not implemented")
+}
+func (UnimplementedRouteServiceServer) AddRouteRow(context.Context, *AddRouteRowRequest) (*AddRouteRowResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddRouteRow not implemented")
+}
+func (UnimplementedRouteServiceServer) UpdateRouteRow(context.Context, *UpdateRouteRowRequest) (*UpdateRouteRowResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateRouteRow not implemented")
+}
+func (UnimplementedRouteServiceServer) DeleteRouteRow(context.Context, *DeleteRouteRowRequest) (*DeleteRouteRowResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteRouteRow not implemented")
+}
+func (UnimplementedRouteServiceServer) ReplaceRouteRows(context.Context, *ReplaceRouteRowsRequest) (*ReplaceRouteRowsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReplaceRouteRows not implemented")
+}
+func (UnimplementedRouteServiceServer) mustEmbedUnimplementedRouteServiceServer() {}
+func (UnimplementedRouteServiceServer) testEmbeddedByValue()                      {}
+
+// UnsafeRouteServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to RouteServiceServer will
+// result in compilation errors.
+type UnsafeRouteServiceServer interface {
+	mustEmbedUnimplementedRouteServiceServer()
+}
+
+func RegisterRouteServiceServer(s grpc.ServiceRegistrar, srv RouteServiceServer) {
+	// If the following call panics, it indicates UnimplementedRouteServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&RouteService_ServiceDesc, srv)
+}
+
+func _RouteService_ListRouteRows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRouteRowsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouteServiceServer).ListRouteRows(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RouteService_ListRouteRows_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouteServiceServer).ListRouteRows(ctx, req.(*ListRouteRowsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RouteService_AddRouteRow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddRouteRowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouteServiceServer).AddRouteRow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RouteService_AddRouteRow_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouteServiceServer).AddRouteRow(ctx, req.(*AddRouteRowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RouteService_UpdateRouteRow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRouteRowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouteServiceServer).UpdateRouteRow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RouteService_UpdateRouteRow_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouteServiceServer).UpdateRouteRow(ctx, req.(*UpdateRouteRowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RouteService_DeleteRouteRow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRouteRowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouteServiceServer).DeleteRouteRow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RouteService_DeleteRouteRow_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouteServiceServer).DeleteRouteRow(ctx, req.(*DeleteRouteRowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RouteService_ReplaceRouteRows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReplaceRouteRowsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RouteServiceServer).ReplaceRouteRows(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RouteService_ReplaceRouteRows_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RouteServiceServer).ReplaceRouteRows(ctx, req.(*ReplaceRouteRowsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// RouteService_ServiceDesc is the grpc.ServiceDesc for RouteService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var RouteService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "configuration.v1.RouteService",
+	HandlerType: (*RouteServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListRouteRows",
+			Handler:    _RouteService_ListRouteRows_Handler,
+		},
+		{
+			MethodName: "AddRouteRow",
+			Handler:    _RouteService_AddRouteRow_Handler,
+		},
+		{
+			MethodName: "UpdateRouteRow",
+			Handler:    _RouteService_UpdateRouteRow_Handler,
+		},
+		{
+			MethodName: "DeleteRouteRow",
+			Handler:    _RouteService_DeleteRouteRow_Handler,
+		},
+		{
+			MethodName: "ReplaceRouteRows",
+			Handler:    _RouteService_ReplaceRouteRows_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UML: ERD — Nodes / Products / BOMs</title>
+  <title>UML: ERD — Узлы / Изделия / BOM / Маршруты</title>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
   <style>
     :root {
@@ -49,13 +49,6 @@
       width: auto;
       height: auto;
     }
-    .notes {
-      margin-top: 16px;
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-    .notes ul { margin: 8px 0 0; padding-left: 1.2em; }
-    .notes li { margin-bottom: 4px; }
     code {
       background: #0d1117;
       padding: 1px 6px;
@@ -65,49 +58,99 @@
   </style>
 </head>
 <body>
-  <h1>ERD (Entity-Relationship Diagram)</h1>
+  <h1>ERD (Диаграмма «сущность-связь») — BOM и маршрутная технология</h1>
   <section>
     <div class="mermaid">
 erDiagram
-    NODES |o--o{ NODES : родитель
-    NODES ||--o{ PRODUCTS : содержит
-    PRODUCTS ||..o{ BOMS : имеет
-    BOMS ||--o{ BOM_ROWS : содержит
-    PRODUCTS ||..o{ BOM_ROWS : используется
-    BOMS ||--o{ BOM_REVISIONS : история
+    УЗЛЫ |o--o{ УЗЛЫ : родитель
+    УЗЛЫ ||--o{ ИЗДЕЛИЯ : содержит
+    ИЗДЕЛИЯ ||..o{ СПЕЦИФИКАЦИИ : имеет
+    СПЕЦИФИКАЦИИ ||--o{ СТРОКИ_СПЕЦИФИКАЦИИ : содержит
+    ИЗДЕЛИЯ ||..o{ СТРОКИ_СПЕЦИФИКАЦИИ : компонент
+    СПЕЦИФИКАЦИИ ||--o{ РЕВИЗИИ_СПЕЦИФИКАЦИЙ : история_ревизий
+    СТРОКИ_СПЕЦИФИКАЦИИ |o..o{ РЕВИЗИИ_СПЕЦИФИКАЦИЙ : ссылается_на_ревизию
+    СПЕЦИФИКАЦИИ ||--o{ СТРОКИ_МАРШРУТА : маршрут
+    ИЗДЕЛИЯ ||..o{ СТРОКИ_МАРШРУТА : компонент_маршрута
+    КЛАССЫ_ОПЕРАЦИЙ ||--o{ СТРОКИ_МАРШРУТА : используется
+    ОБОРУДОВАНИЕ |o..o{ СТРОКИ_МАРШРУТА : используется
+    ИНСТРУМЕНТЫ |o..o{ СТРОКИ_МАРШРУТА : используется
+    СТРОКИ_МАРШРУТА |o..o{ РЕВИЗИИ_СПЕЦИФИКАЦИЙ : ссылается_на_ревизию
 
-    NODES {
+    УЗЛЫ {
         uuid id PK
         uuid parent_id FK
-        text name
+        text название
     }
 
-    PRODUCTS {
+    ИЗДЕЛИЯ {
         uuid id PK
         uuid node_id FK
-        text name
+        text название
         timestamptz archived_at
     }
 
-    BOMS {
+    СПЕЦИФИКАЦИИ {
         uuid id PK
         uuid product_id
         boolean is_default
-        text name
+        text название
+        numeric price
+        boolean price_manual
     }
 
-    BOM_ROWS {
+    СТРОКИ_СПЕЦИФИКАЦИИ {
         uuid id PK
         uuid bom_id FK
         uuid product_id
         numeric quantity
+        boolean is_base
+        boolean is_excluded
+        uuid reference_bom_id FK
+        int reference_revision
     }
 
-    BOM_REVISIONS {
+    РЕВИЗИИ_СПЕЦИФИКАЦИЙ {
         uuid bom_id PK,FK
         int revision PK
+        uuid product_id
         jsonb rows
+        jsonb routes
         timestamptz changed_at
+    }
+
+    КЛАССЫ_ОПЕРАЦИЙ {
+        uuid id PK
+        text code UK
+        text name
+        numeric hourly_rate
+    }
+
+    ОБОРУДОВАНИЕ {
+        uuid id PK
+        text code UK
+        text name
+    }
+
+    ИНСТРУМЕНТЫ {
+        uuid id PK
+        text code UK
+        text name
+    }
+
+    СТРОКИ_МАРШРУТА {
+        uuid id PK
+        uuid bom_id FK
+        int seq UK
+        uuid operation_class_id FK
+        uuid equipment_id FK
+        uuid tool_id FK
+        uuid product_id
+        numeric quantity
+        numeric labor_norm
+        boolean is_base
+        boolean is_excluded
+        uuid reference_bom_id FK
+        int reference_revision
     }
     </div>
   </section>

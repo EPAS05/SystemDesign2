@@ -46,6 +46,10 @@ func Run(port, fallbackPort, dbURL string) {
 	srv := grpc.NewServer()
 	commonv1.RegisterHealthCheckServiceServer(srv, healthService{})
 	configurationv1.RegisterBomServiceServer(srv, NewBomService(svc))
+	configurationv1.RegisterOperationClassServiceServer(srv, NewOperationClassService(svc))
+	configurationv1.RegisterEquipmentServiceServer(srv, NewEquipmentService(svc))
+	configurationv1.RegisterToolServiceServer(srv, NewToolService(svc))
+	configurationv1.RegisterRouteServiceServer(srv, NewRouteService(svc))
 
 	reflection.Register(srv)
 

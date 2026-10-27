@@ -77,6 +77,150 @@ service BomService {
       get: "/v1/boms/{bom_id}/expand"
     };
   }
+
+  rpc UpdateBomPrice(UpdateBomPriceRequest) returns (UpdateBomPriceResponse) {
+    option (google.api.http) = {
+      patch: "/v1/boms/{id}/price"
+      body: "*"
+    };
+  }
+}
+
+service OperationClassService {
+  rpc ListOperationClasses(ListOperationClassesRequest) returns (ListOperationClassesResponse) {
+    option (google.api.http) = {
+      get: "/v1/operation-classes"
+    };
+  }
+
+  rpc GetOperationClass(GetOperationClassRequest) returns (GetOperationClassResponse) {
+    option (google.api.http) = {
+      get: "/v1/operation-classes/{id}"
+    };
+  }
+
+  rpc CreateOperationClass(CreateOperationClassRequest) returns (CreateOperationClassResponse) {
+    option (google.api.http) = {
+      post: "/v1/operation-classes"
+      body: "*"
+    };
+  }
+
+  rpc UpdateOperationClass(UpdateOperationClassRequest) returns (UpdateOperationClassResponse) {
+    option (google.api.http) = {
+      patch: "/v1/operation-classes/{id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteOperationClass(DeleteOperationClassRequest) returns (DeleteOperationClassResponse) {
+    option (google.api.http) = {
+      delete: "/v1/operation-classes/{id}"
+    };
+  }
+}
+
+service EquipmentService {
+  rpc ListEquipment(ListEquipmentRequest) returns (ListEquipmentResponse) {
+    option (google.api.http) = {
+      get: "/v1/equipment"
+    };
+  }
+
+  rpc GetEquipment(GetEquipmentRequest) returns (GetEquipmentResponse) {
+    option (google.api.http) = {
+      get: "/v1/equipment/{id}"
+    };
+  }
+
+  rpc CreateEquipment(CreateEquipmentRequest) returns (CreateEquipmentResponse) {
+    option (google.api.http) = {
+      post: "/v1/equipment"
+      body: "*"
+    };
+  }
+
+  rpc UpdateEquipment(UpdateEquipmentRequest) returns (UpdateEquipmentResponse) {
+    option (google.api.http) = {
+      patch: "/v1/equipment/{id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteEquipment(DeleteEquipmentRequest) returns (DeleteEquipmentResponse) {
+    option (google.api.http) = {
+      delete: "/v1/equipment/{id}"
+    };
+  }
+}
+
+service ToolService {
+  rpc ListTools(ListToolsRequest) returns (ListToolsResponse) {
+    option (google.api.http) = {
+      get: "/v1/tools"
+    };
+  }
+
+  rpc GetTool(GetToolRequest) returns (GetToolResponse) {
+    option (google.api.http) = {
+      get: "/v1/tools/{id}"
+    };
+  }
+
+  rpc CreateTool(CreateToolRequest) returns (CreateToolResponse) {
+    option (google.api.http) = {
+      post: "/v1/tools"
+      body: "*"
+    };
+  }
+
+  rpc UpdateTool(UpdateToolRequest) returns (UpdateToolResponse) {
+    option (google.api.http) = {
+      patch: "/v1/tools/{id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteTool(DeleteToolRequest) returns (DeleteToolResponse) {
+    option (google.api.http) = {
+      delete: "/v1/tools/{id}"
+    };
+  }
+}
+
+service RouteService {
+  rpc ListRouteRows(ListRouteRowsRequest) returns (ListRouteRowsResponse) {
+    option (google.api.http) = {
+      get: "/v1/boms/{bom_id}/route/rows"
+    };
+  }
+
+  rpc AddRouteRow(AddRouteRowRequest) returns (AddRouteRowResponse) {
+    option (google.api.http) = {
+      post: "/v1/boms/{bom_id}/route/rows"
+      body: "row"
+    };
+  }
+
+  rpc UpdateRouteRow(UpdateRouteRowRequest) returns (UpdateRouteRowResponse) {
+    option (google.api.http) = {
+      patch: "/v1/boms/{bom_id}/route/rows/{row_id}"
+      body: "row"
+    };
+  }
+
+  rpc DeleteRouteRow(DeleteRouteRowRequest) returns (DeleteRouteRowResponse) {
+    option (google.api.http) = {
+      delete: "/v1/boms/{bom_id}/route/rows/{row_id}"
+    };
+  }
+
+  rpc ReplaceRouteRows(ReplaceRouteRowsRequest) returns (ReplaceRouteRowsResponse) {
+    option (google.api.http) = {
+      put: "/v1/boms/{bom_id}/route/rows"
+      body: "*"
+    };
+  }
 }
 
 message Bom {
@@ -85,17 +229,27 @@ message Bom {
   bool   is_default    = 3;
   string name          = 4;
   repeated BomRow rows = 5;
+  string price         = 6;
+  bool   price_manual  = 7;
 }
 
 message BomRow {
-  string id         = 1;
-  string product_id = 2;
-  string quantity   = 3;
+  string id                 = 1;
+  string product_id         = 2;
+  string quantity           = 3;
+  bool   is_base            = 4;
+  string reference_bom_id   = 5;
+  int32  reference_revision = 6;
+  bool   is_excluded        = 7;
 }
 
 message BomRowInput {
-  string product_id = 1;
-  string quantity   = 2;
+  string product_id         = 1;
+  string quantity           = 2;
+  optional bool is_base     = 3;
+  string reference_bom_id   = 4;
+  int32  reference_revision = 5;
+  bool   is_excluded        = 6;
 }
 
 message GetBomRequest {
@@ -135,18 +289,26 @@ message ReplaceBomRowsResponse {
 }
 
 message AddBomRowRequest {
-  string bom_id     = 1;
-  string product_id = 2;
-  string quantity   = 3;
+  string bom_id              = 1;
+  string product_id          = 2;
+  string quantity            = 3;
+  optional bool is_base      = 4;
+  bool   is_excluded         = 5;
+  string reference_bom_id    = 6;
+  int32  reference_revision  = 7;
 }
 message AddBomRowResponse {
   BomRow row = 1;
 }
 
 message UpdateBomRowRequest {
-  string id         = 1;
-  string product_id = 2;
-  string quantity   = 3;
+  string id                  = 1;
+  string product_id          = 2;
+  string quantity            = 3;
+  optional bool is_base      = 4;
+  bool   is_excluded         = 5;
+  string reference_bom_id    = 6;
+  int32  reference_revision  = 7;
 }
 message UpdateBomRowResponse {
   BomRow row = 1;
@@ -178,6 +340,16 @@ message GetBomRevisionResponse {
   int32                      revision   = 1;
   google.protobuf.Timestamp changed_at = 2;
   repeated BomRow            rows       = 3;
+  repeated RouteRow          route_rows = 4;
+}
+
+message UpdateBomPriceRequest {
+  string id           = 1;
+  string price        = 2;
+  bool   price_manual = 3;
+}
+message UpdateBomPriceResponse {
+  Bom bom = 1;
 }
 
 message ExpandBomRequest {
@@ -185,4 +357,199 @@ message ExpandBomRequest {
 }
 message ExpandBomResponse {
   repeated BomRow rows = 1;
+}
+
+message OperationClass {
+  string id          = 1;
+  string code        = 2;
+  string name        = 3;
+  string hourly_rate = 4;
+}
+
+message ListOperationClassesRequest {}
+message ListOperationClassesResponse {
+  repeated OperationClass operation_classes = 1;
+}
+
+message GetOperationClassRequest {
+  string id = 1;
+}
+message GetOperationClassResponse {
+  OperationClass operation_class = 1;
+}
+
+message CreateOperationClassRequest {
+  string code        = 1;
+  string name        = 2;
+  string hourly_rate = 3;
+}
+message CreateOperationClassResponse {
+  OperationClass operation_class = 1;
+}
+
+message UpdateOperationClassRequest {
+  string id          = 1;
+  string code        = 2;
+  string name        = 3;
+  string hourly_rate = 4;
+}
+message UpdateOperationClassResponse {
+  OperationClass operation_class = 1;
+}
+
+message DeleteOperationClassRequest {
+  string id = 1;
+}
+message DeleteOperationClassResponse {}
+
+message Equipment {
+  string id   = 1;
+  string code = 2;
+  string name = 3;
+}
+
+message ListEquipmentRequest {}
+message ListEquipmentResponse {
+  repeated Equipment equipment = 1;
+}
+
+message GetEquipmentRequest {
+  string id = 1;
+}
+message GetEquipmentResponse {
+  Equipment equipment = 1;
+}
+
+message CreateEquipmentRequest {
+  string code = 1;
+  string name = 2;
+}
+message CreateEquipmentResponse {
+  Equipment equipment = 1;
+}
+
+message UpdateEquipmentRequest {
+  string id   = 1;
+  string code = 2;
+  string name = 3;
+}
+message UpdateEquipmentResponse {
+  Equipment equipment = 1;
+}
+
+message DeleteEquipmentRequest {
+  string id = 1;
+}
+message DeleteEquipmentResponse {}
+
+message Tool {
+  string id   = 1;
+  string code = 2;
+  string name = 3;
+}
+
+message ListToolsRequest {}
+message ListToolsResponse {
+  repeated Tool tools = 1;
+}
+
+message GetToolRequest {
+  string id = 1;
+}
+message GetToolResponse {
+  Tool tool = 1;
+}
+
+message CreateToolRequest {
+  string code = 1;
+  string name = 2;
+}
+message CreateToolResponse {
+  Tool tool = 1;
+}
+
+message UpdateToolRequest {
+  string id   = 1;
+  string code = 2;
+  string name = 3;
+}
+message UpdateToolResponse {
+  Tool tool = 1;
+}
+
+message DeleteToolRequest {
+  string id = 1;
+}
+message DeleteToolResponse {}
+
+message RouteRow {
+  string id                 = 1;
+  string bom_id             = 2;
+  int32  seq                = 3;
+  string operation_class_id   = 4;
+  string operation_class_name = 5;
+  string equipment_id         = 6;
+  string equipment_name       = 7;
+  string tool_id              = 8;
+  string tool_name            = 9;
+  string product_id           = 10;
+  string quantity             = 11;
+  string labor_norm           = 12;
+  bool   is_base              = 13;
+  bool   is_excluded          = 14;
+  string reference_bom_id     = 15;
+  int32  reference_revision   = 16;
+  bool   inherited            = 17;
+  string source_bom_id        = 18;
+}
+
+message RouteRowInput {
+  int32  seq                 = 1;
+  string operation_class_id  = 2;
+  string equipment_id        = 3;
+  string tool_id             = 4;
+  string product_id          = 5;
+  string quantity            = 6;
+  string labor_norm          = 7;
+  bool   is_excluded         = 8;
+  string reference_bom_id    = 9;
+  int32  reference_revision  = 10;
+}
+
+message ListRouteRowsRequest {
+  string bom_id = 1;
+}
+message ListRouteRowsResponse {
+  repeated RouteRow rows = 1;
+}
+
+message AddRouteRowRequest {
+  string bom_id             = 1;
+  RouteRowInput row         = 2;
+}
+message AddRouteRowResponse {
+  RouteRow row = 1;
+}
+
+message UpdateRouteRowRequest {
+  string bom_id     = 1;
+  string row_id     = 2;
+  RouteRowInput row = 3;
+}
+message UpdateRouteRowResponse {
+  RouteRow row = 1;
+}
+
+message DeleteRouteRowRequest {
+  string bom_id = 1;
+  string row_id = 2;
+}
+message DeleteRouteRowResponse {}
+
+message ReplaceRouteRowsRequest {
+  string bom_id             = 1;
+  repeated RouteRowInput rows = 2;
+}
+message ReplaceRouteRowsResponse {
+  repeated RouteRow rows = 1;
 }

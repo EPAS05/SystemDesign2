@@ -7,6 +7,18 @@
   "tags": [
     {
       "name": "BomService"
+    },
+    {
+      "name": "OperationClassService"
+    },
+    {
+      "name": "EquipmentService"
+    },
+    {
+      "name": "ToolService"
+    },
+    {
+      "name": "RouteService"
     }
   ],
   "consumes": [
@@ -179,6 +191,186 @@
         ]
       }
     },
+    "/v1/boms/{bomId}/route/rows": {
+      "get": {
+        "operationId": "RouteService_ListRouteRows",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListRouteRowsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RouteService"
+        ]
+      },
+      "post": {
+        "operationId": "RouteService_AddRouteRow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1AddRouteRowResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "row",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RouteRowInput"
+            }
+          }
+        ],
+        "tags": [
+          "RouteService"
+        ]
+      },
+      "put": {
+        "operationId": "RouteService_ReplaceRouteRows",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReplaceRouteRowsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RouteServiceReplaceRouteRowsBody"
+            }
+          }
+        ],
+        "tags": [
+          "RouteService"
+        ]
+      }
+    },
+    "/v1/boms/{bomId}/route/rows/{rowId}": {
+      "delete": {
+        "operationId": "RouteService_DeleteRouteRow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteRouteRowResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rowId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RouteService"
+        ]
+      },
+      "patch": {
+        "operationId": "RouteService_UpdateRouteRow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateRouteRowResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "bomId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rowId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "row",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RouteRowInput"
+            }
+          }
+        ],
+        "tags": [
+          "RouteService"
+        ]
+      }
+    },
     "/v1/boms/{bomId}/rows": {
       "post": {
         "operationId": "BomService_AddBomRow",
@@ -311,6 +503,336 @@
         ]
       }
     },
+    "/v1/boms/{id}/price": {
+      "patch": {
+        "operationId": "BomService_UpdateBomPrice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateBomPriceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BomServiceUpdateBomPriceBody"
+            }
+          }
+        ],
+        "tags": [
+          "BomService"
+        ]
+      }
+    },
+    "/v1/equipment": {
+      "get": {
+        "operationId": "EquipmentService_ListEquipment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListEquipmentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "EquipmentService"
+        ]
+      },
+      "post": {
+        "operationId": "EquipmentService_CreateEquipment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateEquipmentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateEquipmentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "EquipmentService"
+        ]
+      }
+    },
+    "/v1/equipment/{id}": {
+      "get": {
+        "operationId": "EquipmentService_GetEquipment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetEquipmentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EquipmentService"
+        ]
+      },
+      "delete": {
+        "operationId": "EquipmentService_DeleteEquipment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteEquipmentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "EquipmentService"
+        ]
+      },
+      "patch": {
+        "operationId": "EquipmentService_UpdateEquipment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateEquipmentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EquipmentServiceUpdateEquipmentBody"
+            }
+          }
+        ],
+        "tags": [
+          "EquipmentService"
+        ]
+      }
+    },
+    "/v1/operation-classes": {
+      "get": {
+        "operationId": "OperationClassService_ListOperationClasses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListOperationClassesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "OperationClassService"
+        ]
+      },
+      "post": {
+        "operationId": "OperationClassService_CreateOperationClass",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateOperationClassResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateOperationClassRequest"
+            }
+          }
+        ],
+        "tags": [
+          "OperationClassService"
+        ]
+      }
+    },
+    "/v1/operation-classes/{id}": {
+      "get": {
+        "operationId": "OperationClassService_GetOperationClass",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetOperationClassResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OperationClassService"
+        ]
+      },
+      "delete": {
+        "operationId": "OperationClassService_DeleteOperationClass",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteOperationClassResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "OperationClassService"
+        ]
+      },
+      "patch": {
+        "operationId": "OperationClassService_UpdateOperationClass",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateOperationClassResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OperationClassServiceUpdateOperationClassBody"
+            }
+          }
+        ],
+        "tags": [
+          "OperationClassService"
+        ]
+      }
+    },
     "/v1/products/{productId}/boms": {
       "get": {
         "operationId": "BomService_ListBoms",
@@ -376,6 +898,152 @@
           "BomService"
         ]
       }
+    },
+    "/v1/tools": {
+      "get": {
+        "operationId": "ToolService_ListTools",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListToolsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "ToolService"
+        ]
+      },
+      "post": {
+        "operationId": "ToolService_CreateTool",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateToolResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateToolRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ToolService"
+        ]
+      }
+    },
+    "/v1/tools/{id}": {
+      "get": {
+        "operationId": "ToolService_GetTool",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetToolResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ToolService"
+        ]
+      },
+      "delete": {
+        "operationId": "ToolService_DeleteTool",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteToolResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ToolService"
+        ]
+      },
+      "patch": {
+        "operationId": "ToolService_UpdateTool",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateToolResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ToolServiceUpdateToolBody"
+            }
+          }
+        ],
+        "tags": [
+          "ToolService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -387,6 +1055,19 @@
         },
         "quantity": {
           "type": "string"
+        },
+        "isBase": {
+          "type": "boolean"
+        },
+        "isExcluded": {
+          "type": "boolean"
+        },
+        "referenceBomId": {
+          "type": "string"
+        },
+        "referenceRevision": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -413,6 +1094,17 @@
         }
       }
     },
+    "BomServiceUpdateBomPriceBody": {
+      "type": "object",
+      "properties": {
+        "price": {
+          "type": "string"
+        },
+        "priceManual": {
+          "type": "boolean"
+        }
+      }
+    },
     "BomServiceUpdateBomRowBody": {
       "type": "object",
       "properties": {
@@ -420,6 +1112,67 @@
           "type": "string"
         },
         "quantity": {
+          "type": "string"
+        },
+        "isBase": {
+          "type": "boolean"
+        },
+        "isExcluded": {
+          "type": "boolean"
+        },
+        "referenceBomId": {
+          "type": "string"
+        },
+        "referenceRevision": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "EquipmentServiceUpdateEquipmentBody": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "OperationClassServiceUpdateOperationClassBody": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "hourlyRate": {
+          "type": "string"
+        }
+      }
+    },
+    "RouteServiceReplaceRouteRowsBody": {
+      "type": "object",
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1RouteRowInput"
+          }
+        }
+      }
+    },
+    "ToolServiceUpdateToolBody": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
           "type": "string"
         }
       }
@@ -460,6 +1213,14 @@
         }
       }
     },
+    "v1AddRouteRowResponse": {
+      "type": "object",
+      "properties": {
+        "row": {
+          "$ref": "#/definitions/v1RouteRow"
+        }
+      }
+    },
     "v1Bom": {
       "type": "object",
       "properties": {
@@ -481,6 +1242,12 @@
             "type": "object",
             "$ref": "#/definitions/v1BomRow"
           }
+        },
+        "price": {
+          "type": "string"
+        },
+        "priceManual": {
+          "type": "boolean"
         }
       }
     },
@@ -511,6 +1278,19 @@
         },
         "quantity": {
           "type": "string"
+        },
+        "isBase": {
+          "type": "boolean"
+        },
+        "referenceBomId": {
+          "type": "string"
+        },
+        "referenceRevision": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "isExcluded": {
+          "type": "boolean"
         }
       }
     },
@@ -522,6 +1302,19 @@
         },
         "quantity": {
           "type": "string"
+        },
+        "isBase": {
+          "type": "boolean"
+        },
+        "referenceBomId": {
+          "type": "string"
+        },
+        "referenceRevision": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "isExcluded": {
+          "type": "boolean"
         }
       }
     },
@@ -533,11 +1326,97 @@
         }
       }
     },
+    "v1CreateEquipmentRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateEquipmentResponse": {
+      "type": "object",
+      "properties": {
+        "equipment": {
+          "$ref": "#/definitions/v1Equipment"
+        }
+      }
+    },
+    "v1CreateOperationClassRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "hourlyRate": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateOperationClassResponse": {
+      "type": "object",
+      "properties": {
+        "operationClass": {
+          "$ref": "#/definitions/v1OperationClass"
+        }
+      }
+    },
+    "v1CreateToolRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CreateToolResponse": {
+      "type": "object",
+      "properties": {
+        "tool": {
+          "$ref": "#/definitions/v1Tool"
+        }
+      }
+    },
     "v1DeleteBomResponse": {
       "type": "object"
     },
     "v1DeleteBomRowResponse": {
       "type": "object"
+    },
+    "v1DeleteEquipmentResponse": {
+      "type": "object"
+    },
+    "v1DeleteOperationClassResponse": {
+      "type": "object"
+    },
+    "v1DeleteRouteRowResponse": {
+      "type": "object"
+    },
+    "v1DeleteToolResponse": {
+      "type": "object"
+    },
+    "v1Equipment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
     },
     "v1ExpandBomResponse": {
       "type": "object",
@@ -576,6 +1455,37 @@
             "type": "object",
             "$ref": "#/definitions/v1BomRow"
           }
+        },
+        "routeRows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1RouteRow"
+          }
+        }
+      }
+    },
+    "v1GetEquipmentResponse": {
+      "type": "object",
+      "properties": {
+        "equipment": {
+          "$ref": "#/definitions/v1Equipment"
+        }
+      }
+    },
+    "v1GetOperationClassResponse": {
+      "type": "object",
+      "properties": {
+        "operationClass": {
+          "$ref": "#/definitions/v1OperationClass"
+        }
+      }
+    },
+    "v1GetToolResponse": {
+      "type": "object",
+      "properties": {
+        "tool": {
+          "$ref": "#/definitions/v1Tool"
         }
       }
     },
@@ -603,7 +1513,204 @@
         }
       }
     },
+    "v1ListEquipmentResponse": {
+      "type": "object",
+      "properties": {
+        "equipment": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Equipment"
+          }
+        }
+      }
+    },
+    "v1ListOperationClassesResponse": {
+      "type": "object",
+      "properties": {
+        "operationClasses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1OperationClass"
+          }
+        }
+      }
+    },
+    "v1ListRouteRowsResponse": {
+      "type": "object",
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1RouteRow"
+          }
+        }
+      }
+    },
+    "v1ListToolsResponse": {
+      "type": "object",
+      "properties": {
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Tool"
+          }
+        }
+      }
+    },
+    "v1OperationClass": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "hourlyRate": {
+          "type": "string"
+        }
+      }
+    },
     "v1ReplaceBomRowsResponse": {
+      "type": "object",
+      "properties": {
+        "bom": {
+          "$ref": "#/definitions/v1Bom"
+        }
+      }
+    },
+    "v1ReplaceRouteRowsResponse": {
+      "type": "object",
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1RouteRow"
+          }
+        }
+      }
+    },
+    "v1RouteRow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "bomId": {
+          "type": "string"
+        },
+        "seq": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "operationClassId": {
+          "type": "string"
+        },
+        "operationClassName": {
+          "type": "string"
+        },
+        "equipmentId": {
+          "type": "string"
+        },
+        "equipmentName": {
+          "type": "string"
+        },
+        "toolId": {
+          "type": "string"
+        },
+        "toolName": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "laborNorm": {
+          "type": "string"
+        },
+        "isBase": {
+          "type": "boolean"
+        },
+        "isExcluded": {
+          "type": "boolean"
+        },
+        "referenceBomId": {
+          "type": "string"
+        },
+        "referenceRevision": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "inherited": {
+          "type": "boolean"
+        },
+        "sourceBomId": {
+          "type": "string"
+        }
+      }
+    },
+    "v1RouteRowInput": {
+      "type": "object",
+      "properties": {
+        "seq": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "operationClassId": {
+          "type": "string"
+        },
+        "equipmentId": {
+          "type": "string"
+        },
+        "toolId": {
+          "type": "string"
+        },
+        "productId": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "laborNorm": {
+          "type": "string"
+        },
+        "isExcluded": {
+          "type": "boolean"
+        },
+        "referenceBomId": {
+          "type": "string"
+        },
+        "referenceRevision": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1Tool": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1UpdateBomPriceResponse": {
       "type": "object",
       "properties": {
         "bom": {
@@ -616,6 +1723,38 @@
       "properties": {
         "row": {
           "$ref": "#/definitions/v1BomRow"
+        }
+      }
+    },
+    "v1UpdateEquipmentResponse": {
+      "type": "object",
+      "properties": {
+        "equipment": {
+          "$ref": "#/definitions/v1Equipment"
+        }
+      }
+    },
+    "v1UpdateOperationClassResponse": {
+      "type": "object",
+      "properties": {
+        "operationClass": {
+          "$ref": "#/definitions/v1OperationClass"
+        }
+      }
+    },
+    "v1UpdateRouteRowResponse": {
+      "type": "object",
+      "properties": {
+        "row": {
+          "$ref": "#/definitions/v1RouteRow"
+        }
+      }
+    },
+    "v1UpdateToolResponse": {
+      "type": "object",
+      "properties": {
+        "tool": {
+          "$ref": "#/definitions/v1Tool"
         }
       }
     }

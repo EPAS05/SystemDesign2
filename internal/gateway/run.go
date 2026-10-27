@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -11,7 +12,9 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	catalogv1 "github.com/EPAS05/catalog-service/gen/go/catalog/v1"
@@ -35,6 +38,20 @@ var defaultMarshaler = &charsetMarshaler{
 	},
 }
 
+func httpErrorHandler(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
+	if status.Code(err) == codes.FailedPrecondition {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(http.StatusPreconditionFailed)
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"code":    int32(codes.FailedPrecondition),
+			"message": status.Convert(err).Message(),
+			"details": []any{},
+		})
+		return
+	}
+	runtime.DefaultHTTPErrorHandler(ctx, mux, marshaler, w, r, err)
+}
+
 func Run(httpPort, catalogAddr, configAddr string) {
 	if httpPort == "" {
 		httpPort = "8080"
@@ -47,7 +64,10 @@ func Run(httpPort, catalogAddr, configAddr string) {
 	}
 
 	ctx := context.Background()
-	mux := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, defaultMarshaler))
+	mux := runtime.NewServeMux(
+		runtime.WithMarshalerOption(runtime.MIMEWildcard, defaultMarshaler),
+		runtime.WithErrorHandler(httpErrorHandler),
+	)
 
 	catalogConn, err := grpc.NewClient(catalogAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -72,6 +92,18 @@ func Run(httpPort, catalogAddr, configAddr string) {
 
 	if err := configurationv1.RegisterBomServiceHandler(ctx, mux, configConn); err != nil {
 		log.Fatalf("register bom handler: %v", err)
+	}
+	if err := configurationv1.RegisterOperationClassServiceHandler(ctx, mux, configConn); err != nil {
+		log.Fatalf("register operation class handler: %v", err)
+	}
+	if err := configurationv1.RegisterEquipmentServiceHandler(ctx, mux, configConn); err != nil {
+		log.Fatalf("register equipment handler: %v", err)
+	}
+	if err := configurationv1.RegisterToolServiceHandler(ctx, mux, configConn); err != nil {
+		log.Fatalf("register tool handler: %v", err)
+	}
+	if err := configurationv1.RegisterRouteServiceHandler(ctx, mux, configConn); err != nil {
+		log.Fatalf("register route handler: %v", err)
 	}
 
 	targets := []pingTarget{

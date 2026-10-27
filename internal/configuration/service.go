@@ -3,17 +3,39 @@ package configuration
 import (
 	"context"
 	"errors"
+	"math"
+	"strconv"
+	"strings"
 	"time"
 )
 
 var (
-	ErrSelfReference = errors.New("product cannot contain itself")
-	ErrBomCycle      = errors.New("bom would create a cycle")
+	ErrSelfReference            = errors.New("product cannot contain itself")
+	ErrBomCycle                 = errors.New("bom would create a cycle")
+	ErrBaseOnlyDefault          = errors.New("is_base is allowed only for default bom")
+	ErrExcludedOnlyModification = errors.New("is_excluded is allowed only for modification")
+	ErrReferencePair            = errors.New("reference bom and revision must be set together")
+	ErrReferenceRevision        = errors.New("reference revision must be positive")
+	ErrInvalidQuantity          = errors.New("quantity must be positive")
+	ErrInvalidExcludedQuantity  = errors.New("excluded row must have zero quantity")
 )
 
 type BomRowInput struct {
-	ProductID string
-	Quantity  string
+	ProductID         string
+	Quantity          string
+	IsBase            *bool
+	IsExcluded        bool
+	ReferenceBomID    *string
+	ReferenceRevision *int
+}
+
+type resolvedRow struct {
+	ProductID         string
+	Quantity          string
+	IsBase            bool
+	IsExcluded        bool
+	ReferenceBomID    *string
+	ReferenceRevision *int
 }
 
 type Service struct {
@@ -56,41 +78,94 @@ func (s *Service) DeleteBom(ctx context.Context, id string) error {
 }
 
 func (s *Service) ReplaceBomRows(ctx context.Context, bomID string, inputs []BomRowInput) (*Bom, error) {
-	if bomID == "" {
-		return nil, ErrNotFound
-	}
-	owner, err := s.repo.BomOwnerProduct(ctx, bomID)
+	owner, isDefault, err := s.repo.BomInfo(ctx, bomID)
 	if err != nil {
 		return nil, err
 	}
+	resolved := make([]resolvedRow, 0, len(inputs))
+	seen := make(map[string]bool, len(inputs))
+	checked := make(map[string]bool, len(inputs))
 	for _, in := range inputs {
-		if err := s.checkRow(ctx, owner, in.ProductID); err != nil {
+		row, err := s.resolveRow(bomID, owner, isDefault, in)
+		if err != nil {
 			return nil, err
 		}
+		if seen[row.ProductID] {
+			return nil, ErrRowExists
+		}
+		seen[row.ProductID] = true
+		if !row.IsExcluded && row.ReferenceBomID == nil && !checked[row.ProductID] {
+			checked[row.ProductID] = true
+			reaches, err := s.repo.ProductReaches(ctx, row.ProductID, owner)
+			if err != nil {
+				return nil, err
+			}
+			if reaches {
+				return nil, ErrBomCycle
+			}
+		}
+		resolved = append(resolved, row)
 	}
-	return s.repo.ReplaceBomRows(ctx, bomID, inputs)
+	return s.repo.ReplaceBomRows(ctx, bomID, resolved)
 }
 
-func (s *Service) AddRow(ctx context.Context, bomID, productID, quantity string) (*BomRow, error) {
-	owner, err := s.repo.BomOwnerProduct(ctx, bomID)
+func (s *Service) AddRow(ctx context.Context, bomID, productID, quantity string, isBase *bool, referenceBomID *string, referenceRevision *int, isExcluded bool) (*BomRow, error) {
+	owner, isDefault, err := s.repo.BomInfo(ctx, bomID)
 	if err != nil {
 		return nil, err
 	}
-	if err := s.checkRow(ctx, owner, productID); err != nil {
-		return nil, err
-	}
-	return s.repo.AddRow(ctx, bomID, productID, quantity)
-}
-
-func (s *Service) UpdateRow(ctx context.Context, id, productID, quantity string) (*BomRow, error) {
-	owner, err := s.repo.RowOwnerProduct(ctx, id)
+	row, err := s.resolveRow(bomID, owner, isDefault, BomRowInput{
+		ProductID:         productID,
+		Quantity:          quantity,
+		IsBase:            isBase,
+		IsExcluded:        isExcluded,
+		ReferenceBomID:    referenceBomID,
+		ReferenceRevision: referenceRevision,
+	})
 	if err != nil {
 		return nil, err
 	}
-	if err := s.checkRow(ctx, owner, productID); err != nil {
+	if !row.IsExcluded && row.ReferenceBomID == nil {
+		reaches, err := s.repo.ProductReaches(ctx, row.ProductID, owner)
+		if err != nil {
+			return nil, err
+		}
+		if reaches {
+			return nil, ErrBomCycle
+		}
+	}
+	return s.repo.AddRow(ctx, bomID, row.ProductID, row.Quantity, row.IsBase, row.IsExcluded, row.ReferenceBomID, row.ReferenceRevision)
+}
+
+func (s *Service) UpdateRow(ctx context.Context, id, productID, quantity string, isBase *bool, referenceBomID *string, referenceRevision *int, isExcluded bool) (*BomRow, error) {
+	bomID, owner, isDefault, existingIsBase, err := s.repo.RowBomInfo(ctx, id)
+	if err != nil {
 		return nil, err
 	}
-	return s.repo.UpdateRow(ctx, id, productID, quantity)
+	if isDefault && isBase == nil {
+		isBase = &existingIsBase
+	}
+	row, err := s.resolveRow(bomID, owner, isDefault, BomRowInput{
+		ProductID:         productID,
+		Quantity:          quantity,
+		IsBase:            isBase,
+		IsExcluded:        isExcluded,
+		ReferenceBomID:    referenceBomID,
+		ReferenceRevision: referenceRevision,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if !row.IsExcluded && row.ReferenceBomID == nil {
+		reaches, err := s.repo.ProductReaches(ctx, row.ProductID, owner)
+		if err != nil {
+			return nil, err
+		}
+		if reaches {
+			return nil, ErrBomCycle
+		}
+	}
+	return s.repo.UpdateRow(ctx, id, row.ProductID, row.Quantity, row.IsBase, row.IsExcluded, row.ReferenceBomID, row.ReferenceRevision)
 }
 
 func (s *Service) DeleteRow(ctx context.Context, id string) error {
@@ -104,9 +179,9 @@ func (s *Service) ListBomRevisions(ctx context.Context, bomID string) ([]*BomRev
 	return s.repo.ListRevisions(ctx, bomID)
 }
 
-func (s *Service) GetBomRevision(ctx context.Context, bomID string, revision int) ([]*BomRow, time.Time, error) {
+func (s *Service) GetBomRevision(ctx context.Context, bomID string, revision int) ([]*BomRow, []*RouteRow, time.Time, error) {
 	if bomID == "" || revision < 1 {
-		return nil, time.Time{}, ErrNotFound
+		return nil, nil, time.Time{}, ErrNotFound
 	}
 	return s.repo.GetRevision(ctx, bomID, revision)
 }
@@ -118,16 +193,75 @@ func (s *Service) ExpandBom(ctx context.Context, bomID string) ([]*BomRow, error
 	return s.repo.ExpandBom(ctx, bomID)
 }
 
-func (s *Service) checkRow(ctx context.Context, owner, productID string) error {
-	if owner == productID {
-		return ErrSelfReference
+func (s *Service) resolveRow(bomID, owner string, isDefault bool, in BomRowInput) (resolvedRow, error) {
+	if in.ProductID == "" {
+		return resolvedRow{}, ErrInvalidRow
 	}
-	reaches, err := s.repo.ProductReaches(ctx, productID, owner)
+	if (in.ReferenceBomID == nil) != (in.ReferenceRevision == nil) {
+		return resolvedRow{}, ErrReferencePair
+	}
+	if in.ReferenceBomID != nil {
+		if *in.ReferenceBomID == "" {
+			return resolvedRow{}, ErrReferencePair
+		}
+		if *in.ReferenceBomID == bomID {
+			return resolvedRow{}, ErrSelfReference
+		}
+	}
+	if in.ReferenceRevision != nil && *in.ReferenceRevision < 1 {
+		return resolvedRow{}, ErrReferenceRevision
+	}
+	base, err := resolveIsBase(isDefault, in.IsBase)
 	if err != nil {
-		return err
+		return resolvedRow{}, err
 	}
-	if reaches {
-		return ErrBomCycle
+	if isDefault && in.IsExcluded {
+		return resolvedRow{}, ErrExcludedOnlyModification
 	}
-	return nil
+	if in.IsExcluded && in.ReferenceBomID != nil {
+		return resolvedRow{}, ErrInvalidRow
+	}
+	if in.IsExcluded {
+		q, ok := parseQuantity(in.Quantity)
+		if !ok || q != 0 {
+			return resolvedRow{}, ErrInvalidExcludedQuantity
+		}
+	} else {
+		q, ok := parseQuantity(in.Quantity)
+		if !ok || q <= 0 {
+			return resolvedRow{}, ErrInvalidQuantity
+		}
+		if in.ReferenceBomID == nil && in.ProductID == owner {
+			return resolvedRow{}, ErrSelfReference
+		}
+	}
+	return resolvedRow{
+		ProductID:         in.ProductID,
+		Quantity:          in.Quantity,
+		IsBase:            base,
+		IsExcluded:        in.IsExcluded,
+		ReferenceBomID:    in.ReferenceBomID,
+		ReferenceRevision: in.ReferenceRevision,
+	}, nil
+}
+
+func resolveIsBase(isDefault bool, in *bool) (bool, error) {
+	if isDefault {
+		if in == nil {
+			return true, nil
+		}
+		return *in, nil
+	}
+	if in != nil && *in {
+		return false, ErrBaseOnlyDefault
+	}
+	return false, nil
+}
+
+func parseQuantity(s string) (float64, bool) {
+	f, err := strconv.ParseFloat(strings.TrimSpace(s), 64)
+	if err != nil || math.IsInf(f, 0) || math.IsNaN(f) {
+		return 0, false
+	}
+	return f, true
 }
